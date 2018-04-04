@@ -1,0 +1,21 @@
+{
+  "name": "building-htm-systems",
+  "version": "1.0.0",
+  "description": "Supporting code for Building HTM Systems document.",
+  "scripts": {
+    "build": "./node_modules/.bin/webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "matt@numenta.org",
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.6.1",
+    "cell-viz": "^1.2.0",
+    "webpack": "^4.5.0"
+  },
+  "devDependencies": {
+    "webpack-cli": "^2.0.13"
+  }
+}
