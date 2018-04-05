@@ -2,5 +2,4 @@
 .DS_Store
 .idea/
 node_modules/
-out/
 package-lock.json

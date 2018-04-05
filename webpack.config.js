@@ -7,11 +7,15 @@ let pkg = JSON.parse(
 )
 let version = pkg.version
 
-let receptiveFieldWidget = {
+// Spatial Pooling
+
+let spatialPoolingWidgets = []
+
+spatialPoolingWidgets.push({
     mode: 'development',
     entry: [
-        "./widgets/1-receptive-field/visualizations.js",
-        "./widgets/1-receptive-field/src/index.js"
+        "./widgets/spatial-pooling/receptive-field.js",
+        "./widgets/spatial-pooling/index.js"
     ],
     module: {
         rules: [
@@ -28,12 +32,10 @@ let receptiveFieldWidget = {
         }
     },
     output: {
-        path: __dirname + "/widgets/1-receptive-field/out",
-        filename: `receptive-field-1.bundle.js`
+        path: __dirname + "/dist/widgets",
+        filename: `bhtms-spatial-pooling-widgets-${version}.js`
     }
-}
+})
 
 
-module.exports = [
-    receptiveFieldWidget
-];
+module.exports = spatialPoolingWidgets
