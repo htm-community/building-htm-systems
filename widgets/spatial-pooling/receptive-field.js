@@ -30,6 +30,7 @@ module.exports = () => {
     $receptiveFieldPercSlider.on('input', function () {
         let targetDensity = parseInt(this.value) / 100
         pool = SdrUtils.adjustTo(pool, targetDensity)
+        localStorage.setItem('currentPotentialPool', pool)
         sdr = new SdrDrawing(pool, 'receptiveFieldDemo')
         updateDisplays()
     });
@@ -39,15 +40,16 @@ module.exports = () => {
             parseInt($receptiveFieldPercSlider.val()) / 100,
             parseFloat($inputSpaceDimensionsSlider.val())
         )
+        localStorage.setItem('currentPotentialPool', pool)
         sdr = new SdrDrawing(pool, 'receptiveFieldDemo')
         updateDisplays()
     });
-
 
     let pool = getRandomReceptiveField(
         parseInt($receptiveFieldPercSlider.val()) / 100,
         parseFloat($inputSpaceDimensionsSlider.val())
     )
+    localStorage.setItem('currentPotentialPool', pool)
     let sdr = new SdrDrawing(pool, 'receptiveFieldDemo')
     updateDisplays()
 }

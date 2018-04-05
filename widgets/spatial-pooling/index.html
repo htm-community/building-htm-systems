@@ -9,10 +9,23 @@
     <script src="https://rhyolight.github.io/cell-viz/bin/cell-viz-1.2.0.min.js"></script>
     <script src="../../dist/widgets/bhtms-spatial-pooling-widgets-0.1.0.js"></script>
 
+    <style>
+
+        .bar rect {
+            fill: steelblue;
+        }
+
+        .bar text {
+            fill: #fff;
+            font: 10px sans-serif;
+        }
+
+    </style>
+
 </head>
 <body>
 
-<section>
+<div>
 
     <h1>Receptive Field Demo</h1>
 
@@ -36,7 +49,30 @@
         });
     </script>
 
-</section>
+</div>
+
+<div>
+
+    <svg id="receptiveFieldHistogram" width="960" height="500"></svg>
+
+    <ul>
+        <!--<li>-->
+            <!--<input type="range" min="0" max="100" value="85" id="connectionThresholdSlider" />-->
+            <!--connection threshold: <span class="connectionThresholdDisplay"></span>-->
+        <!--</li>-->
+        <li>
+            <input type="range" min="1" max="20" value="6" id="sampleSizeSlider" />
+            gaussian sample size: <span class="sampleSizeDisplay"></span>
+        </li>
+    </ul>
+
+    <script>
+        $(function() {
+            BHTMS.receptiveFieldHistogram()
+        });
+    </script>
+
+</div>
 
 <!--<section>-->
 
