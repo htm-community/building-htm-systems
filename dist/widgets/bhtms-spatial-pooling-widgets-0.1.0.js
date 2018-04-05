@@ -127,13 +127,13 @@ eval("let SdrUtils = __webpack_require__(/*! SdrUtils */ \"./node_modules/cell-v
 /***/ }),
 
 /***/ 0:
-/*!*********************************************************************************************!*\
-  !*** multi ./widgets/spatial-pooling/receptive-field.js ./widgets/spatial-pooling/index.js ***!
-  \*********************************************************************************************/
+/*!****************************************************************************************************************************************************!*\
+  !*** multi ./widgets/spatial-pooling/receptive-field.js ./widgets/spatial-pooling/receptive-field-histogram.js ./widgets/spatial-pooling/index.js ***!
+  \****************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("__webpack_require__(/*! ./widgets/spatial-pooling/receptive-field.js */\"./widgets/spatial-pooling/receptive-field.js\");\nmodule.exports = __webpack_require__(/*! ./widgets/spatial-pooling/index.js */\"./widgets/spatial-pooling/index.js\");\n\n\n//# sourceURL=webpack:///multi_./widgets/spatial-pooling/receptive-field.js_./widgets/spatial-pooling/index.js?");
+eval("__webpack_require__(/*! ./widgets/spatial-pooling/receptive-field.js */\"./widgets/spatial-pooling/receptive-field.js\");\n__webpack_require__(/*! ./widgets/spatial-pooling/receptive-field-histogram.js */\"./widgets/spatial-pooling/receptive-field-histogram.js\");\nmodule.exports = __webpack_require__(/*! ./widgets/spatial-pooling/index.js */\"./widgets/spatial-pooling/index.js\");\n\n\n//# sourceURL=webpack:///multi_./widgets/spatial-pooling/receptive-field.js_./widgets/spatial-pooling/receptive-field-histogram.js_./widgets/spatial-pooling/index.js?");
 
 /***/ })
 
