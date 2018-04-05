@@ -1,0 +1,129 @@
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "./node_modules/cell-viz/src/SdrDrawing.js":
+/*!*************************************************!*\
+  !*** ./node_modules/cell-viz/src/SdrDrawing.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("let SdrUtils = __webpack_require__(/*! ./SdrUtils */ \"./node_modules/cell-viz/src/SdrUtils.js\");\n\nlet defaultOpts = {\n    width: 400,\n    height: 400,\n    cellSize: 10,\n    rowLength: 100\n};\n\nfunction SdrDrawing(bits, element) {\n    this.bits = bits;\n    this.el = element;\n}\n\nSdrDrawing.prototype.draw = function (options) {\n    let sdrId = this.el;\n    let opts = Object.assign(defaultOpts, options);\n    let svg = d3.select('#' + this.el).attr('width', opts.width).attr('height', opts.height);\n\n    function treatCells(cells) {\n        cells.attr('id', (d, i) => {\n            return sdrId + '-' + i;\n        }).attr('fill', d => {\n            if (d === 1) return 'steelblue';\n            return 'white';\n        }).attr('stroke', 'darkgrey').attr('stroke-width', 0.5).attr('fill-opacity', 1).attr('x', function (d, i) {\n            let offset = i % opts.rowLength;\n            return offset * opts.cellSize;\n        }).attr('y', function (d, i) {\n            let offset = Math.floor(i / opts.rowLength);\n            return offset * opts.cellSize;\n        }).attr('width', opts.cellSize).attr('height', opts.cellSize);\n    }\n\n    // Update\n    let rectCells = svg.selectAll('rect').data(this.bits);\n    treatCells(rectCells);\n\n    // Enter\n    let newRectCells = rectCells.enter().append('rect');\n    treatCells(newRectCells);\n\n    // Exit\n    rectCells.exit().remove();\n\n    // if (! opts) opts = {};\n    // let sdr = this.bits\n    // let elId = this.el\n    // var title = opts.title || 'SDR';\n    // var color = opts.color || 'steelblue';\n    // var size = (opts.size || POINT_SIZE);\n    // var line = opts.line;\n    // var staticSize = opts.staticSize;\n    // var spartan = opts.spartan || false;\n    // var stretch = opts.stretch;\n    // var population = SdrUtils.population(sdr);\n    // var sparsity = SdrUtils.sparsity(sdr);\n    // var $container = $('#' + elId);\n    // var rowLength = Math.floor(Math.sqrt(sdr.length));\n    // var heightMultiplyer = stretch ? stretch : 1;\n    // var width = undefined;\n    // var height = undefined;\n    // var cssClass = opts.cssClass || '';\n    // var maxWidth = opts.maxWidth;\n    // var slide = false;\n    // var $svg;\n    // var svgId = elId + '-svg';\n    // var svgMarkup = undefined;\n    // var svgDisplay = '';\n    //\n    // if (opts.slide) {\n    //     slide = true;\n    // }\n    // if (line) {\n    //     rowLength = sdr.length;\n    // } else if (! staticSize && size > size * 15 / rowLength) {\n    //     size = size * 15 / rowLength;\n    // }\n    //\n    // // Decrease size of boxes if maxWidth is set and we are overflowing it.\n    // if (maxWidth && size * sdr.length > maxWidth) {\n    //     size = Math.floor(maxWidth / sdr.length);\n    // }\n    //\n    // width = rowLength * size;\n    // height = Math.floor(sdr.length / rowLength) * size;\n    //\n    // if (slide) {\n    //     svgDisplay = 'display=\"none\"';\n    // }\n    //\n    // svgMarkup = '<svg id=\"' + svgId\n    //     + '\" width=\"' + width\n    //     + '\" height=\"' + (size * heightMultiplyer)\n    //     + '\" class=\"' + cssClass + '\" '\n    //     + svgDisplay + '>';\n    //\n    // $svg = $(svgMarkup);\n    //\n    // // Clear out container.\n    // $container.html('');\n    //\n    // if (spartan === false) {\n    //     $container.append(propsTmpl({\n    //         title: title,\n    //         props: [{\n    //             label: 'n', data: sdr.length\n    //         }, {\n    //             label: 'w', data: population\n    //         }, {\n    //             label: 'sparsity', data: sparsity.toFixed(3)\n    //         }]\n    //     }));\n    // } else if (spartan == 'min') {\n    //     $container.append(propsTmpl({\n    //         props: [{\n    //             label: 'n', data: sdr.length\n    //         }, {\n    //             label: 'w', data: population\n    //         }]\n    //     }));\n    // }\n    //\n    // $container.append($svg);\n    // $container.css({\n    //     height: (size * heightMultiplyer * (sdr.length / rowLength)) + 'px'\n    // });\n    //\n    // d3.select('#' + svgId)\n    //     .selectAll('rect')\n    //     .data(sdr)\n    //     .enter()\n    //     .append('rect')\n    //     .attr('x', function(d, i) {\n    //         var offset = i % rowLength;\n    //         return offset * size;\n    //     })\n    //     .attr('y', function(d, i) {\n    //         var offset = Math.floor(i / rowLength);\n    //         return offset * size;\n    //     })\n    //     .attr('index', function(d, i) { return i; })\n    //     .attr('width', size)\n    //     .attr('height', size * heightMultiplyer - 1)\n    //     .attr('class', function(d) {\n    //         if (d == 1) return 'on';\n    //         return 'off';\n    //     });\n    // if (slide) $svg.slideDown(100);\n};\n\nmodule.exports = SdrDrawing;\n\n//# sourceURL=webpack:///./node_modules/cell-viz/src/SdrDrawing.js?");
+
+/***/ }),
+
+/***/ "./node_modules/cell-viz/src/SdrUtils.js":
+/*!***********************************************!*\
+  !*** ./node_modules/cell-viz/src/SdrUtils.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("let DEFAULT_SPARSITY = 0.02;\n\n/***** Private TOOLS *****/\n\n// a tool to loop x times\nconst times = x => f => {\n    if (x > 0) {\n        f();\n        times(x - 1)(f);\n    }\n};\n\nfunction getRandomInt(min, max) {\n    return Math.floor(Math.random() * (max - min)) + min;\n}\n\nfunction flip(bit) {\n    if (bit === 0) return 1;\n    return 0;\n}\n\nfunction overflowSafeUniqueness(n, w) {\n    let bigN = math.bignumber(n);\n    let bigW = math.bignumber(w);\n\n    let nf = math.factorial(bigN);\n    let wf = math.factorial(bigW);\n    let nwf = math.factorial(math.subtract(bigN, bigW));\n\n    return math.divide(nf, math.multiply(wf, nwf));\n}\n\nfunction closeEnoughSparsity(a, b) {\n    let diff = Math.abs(a - b);\n    // Close enough if within one percent.\n    return diff <= 0.01;\n}\n\n/***** PUBLIC functions start here *****/\n\n/*********\n CREATE\n*********/\n\nfunction getRandom(n, w) {\n    let out = [];\n    let randomIndex;\n    let sparsity;\n\n    if (w === undefined) {\n        w = n * DEFAULT_SPARSITY;\n    }\n\n    sparsity = w / n;\n\n    // Fill array with zeros.\n    while (out.length < n) {\n        out.push(0);\n    }\n    // If not sparse enough, randomly flip 0 bits to 1.\n    while (population(out) / n < sparsity) {\n        // Make a random 0 bit into a 1.\n        randomIndex = getRandomInt(0, n);\n        if (out[randomIndex] === 0) {\n            out[randomIndex] = 1;\n        }\n    }\n\n    return out;\n}\n\nfunction getEmpty(n) {\n    let out = [];\n\n    times(n, function () {\n        out.push(0);\n    });\n    return out;\n}\n\n/*********\n INSPECT\n *********/\n\nfunction getActiveBits(sdr) {\n    let active = [];\n    sdr.forEach((bit, i) => {\n        if (bit === 1) active.push(i);\n    });\n    return active;\n}\n\nfunction getInactiveBits(sdr) {\n    let inactive = [];\n    sdr.forEach((bit, i) => {\n        if (bit === 0) inactive.push(i);\n    });\n    return inactive;\n}\n\nfunction population(sdr) {\n    return sdr.reduce(function (sum, n) {\n        return sum + n;\n    }, 0);\n}\n\nfunction sparsity(sdr) {\n    let onBits = sdr.filter(bit => {\n        return bit === 1;\n    }).length;\n    return onBits / sdr.length;\n}\nlet density = sparsity;\n\n/*********\n UPDATE\n *********/\n\n// Flips every bit.\nfunction invert(sdr) {\n    return sdr.map(bit => {\n        if (bit === 0) return 1;\n        return 0;\n    });\n}\n\nfunction adjustTo(sdr, targetDensity) {\n    let out = sdr.slice();\n\n    let n = sdr.length;\n    let currentDensity = density(sdr);\n    let diff = targetDensity - currentDensity;\n    let diffBits = Math.abs(parseInt(diff * n));\n    let onBits = getActiveBits(sdr);\n    let offBits = getInactiveBits(sdr);\n\n    // adjust by turning bits on\n    let bitType = 1;\n    let targetIndices = offBits;\n    // adjust by turning bits off\n    if (targetDensity < currentDensity) {\n        bitType = 0;\n        targetIndices = onBits;\n    }\n\n    for (let i = 0; i < diffBits; i++) {\n        let toFlip = targetIndices.splice(getRandomInt(0, targetIndices.length - 1), 1)[0];\n        out[toFlip] = bitType;\n    }\n\n    return out;\n}\n\n// Adds a percent noise by turning on X percent of the off bits and\n// turning off X percent of the on bits.\nfunction addNoise(sdr, percentNoise) {\n    // The noiseLevel will be the number of total bits to flip.\n    let noiseLevel = Math.floor(population(sdr) * percentNoise);\n    return this.addBitNoise(sdr, noiseLevel);\n}\n\nfunction addBitNoise(sdr, noisyBits) {\n    let noisy = [];\n    let activeBits = getActiveBits(sdr);\n    let inactiveBits = getInactiveBits(sdr);\n    let toFlip = [];\n    // Populate the indices of the bits we want to flip with noise.\n    times(noisyBits, function () {\n        toFlip.push(activeBits.splice(Math.random(activeBits.length - 1), 1)[0]);\n        toFlip.push(inactiveBits.splice(Math.random(inactiveBits.length - 1), 1)[0]);\n    });\n    // Flip them bits into a new array output.\n    sdr.forEach((bit, i) => {\n        let newBit = bit;\n        if (toFlip.indexOf(i) >= 0) {\n            newBit = flip(bit);\n        }\n        noisy.push(newBit);\n    });\n    return noisy;\n}\n\nmodule.exports = {\n    getRandom: getRandom,\n    getEmpty: getEmpty,\n    getActiveBits: getActiveBits,\n    getInactiveBits: getInactiveBits,\n    population: population,\n    sparsity: sparsity,\n    density: density,\n    invert: invert,\n    addNoise: addNoise,\n    addBitNoise: addBitNoise,\n    adjustTo: adjustTo\n};\n\n//# sourceURL=webpack:///./node_modules/cell-viz/src/SdrUtils.js?");
+
+/***/ }),
+
+/***/ "./widgets/spatial-pooling/index.js":
+/*!******************************************!*\
+  !*** ./widgets/spatial-pooling/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("window.BHTMS = {\n    receptiveField: __webpack_require__(/*! ./receptive-field */ \"./widgets/spatial-pooling/receptive-field.js\")\n};\n\n//# sourceURL=webpack:///./widgets/spatial-pooling/index.js?");
+
+/***/ }),
+
+/***/ "./widgets/spatial-pooling/receptive-field.js":
+/*!****************************************************!*\
+  !*** ./widgets/spatial-pooling/receptive-field.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("let SdrUtils = __webpack_require__(/*! SdrUtils */ \"./node_modules/cell-viz/src/SdrUtils.js\");\nlet SdrDrawing = __webpack_require__(/*! SdrDrawing */ \"./node_modules/cell-viz/src/SdrDrawing.js\");\n\nmodule.exports = () => {\n    let $receptiveFieldPercSlider = $('#receptiveFieldPercSlider');\n    let $receptiveFieldPercDisplay = $('.receptiveFieldPercDisplay');\n    let $inputSpaceDimensionsSlider = $('#inputSpaceDimensionsSlider');\n    let $inputSpaceDimensionsDisplay = $('.inputSpaceDimensionsDisplay');\n\n    function getRandomReceptiveField(receptiveFieldPerc, dimensions) {\n        let n = dimensions;\n        let w = parseInt(receptiveFieldPerc * n);\n        let potentialPool = SdrUtils.getRandom(n, w);\n        return potentialPool;\n    }\n\n    let drawOptions = {\n        width: 600,\n        height: 440,\n        cellSize: 20,\n        rowLength: 28\n    };\n\n    function updateDisplays() {\n        sdr.draw(drawOptions);\n        $receptiveFieldPercDisplay.html($receptiveFieldPercSlider.val());\n        $inputSpaceDimensionsDisplay.html($inputSpaceDimensionsSlider.val());\n    }\n\n    $receptiveFieldPercSlider.on('input', function () {\n        let targetDensity = parseInt(this.value) / 100;\n        pool = SdrUtils.adjustTo(pool, targetDensity);\n        sdr = new SdrDrawing(pool, 'receptiveFieldDemo');\n        updateDisplays();\n    });\n\n    $inputSpaceDimensionsSlider.on('input', function () {\n        pool = getRandomReceptiveField(parseInt($receptiveFieldPercSlider.val()) / 100, parseFloat($inputSpaceDimensionsSlider.val()));\n        sdr = new SdrDrawing(pool, 'receptiveFieldDemo');\n        updateDisplays();\n    });\n\n    let pool = getRandomReceptiveField(parseInt($receptiveFieldPercSlider.val()) / 100, parseFloat($inputSpaceDimensionsSlider.val()));\n    let sdr = new SdrDrawing(pool, 'receptiveFieldDemo');\n    updateDisplays();\n};\n\n//# sourceURL=webpack:///./widgets/spatial-pooling/receptive-field.js?");
+
+/***/ }),
+
+/***/ 0:
+/*!*********************************************************************************************!*\
+  !*** multi ./widgets/spatial-pooling/receptive-field.js ./widgets/spatial-pooling/index.js ***!
+  \*********************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("__webpack_require__(/*! ./widgets/spatial-pooling/receptive-field.js */\"./widgets/spatial-pooling/receptive-field.js\");\nmodule.exports = __webpack_require__(/*! ./widgets/spatial-pooling/index.js */\"./widgets/spatial-pooling/index.js\");\n\n\n//# sourceURL=webpack:///multi_./widgets/spatial-pooling/receptive-field.js_./widgets/spatial-pooling/index.js?");
+
+/***/ })
+
+/******/ });
