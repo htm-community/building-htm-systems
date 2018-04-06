@@ -10,7 +10,10 @@
     <script src="../../dist/widgets/bhtms-spatial-pooling-widgets-0.1.0.js"></script>
 
     <style>
-
+        body {
+            width: 560px;
+            border: solid 1px black;
+        }
         .bar rect {
             fill: steelblue;
         }
@@ -53,7 +56,7 @@
 
 <div>
 
-    <svg id="receptiveFieldHistogram" width="960" height="500"></svg>
+    <svg id="receptiveFieldHistogram" width="560" height="200"></svg>
 
     <ul>
         <!--<li>-->
@@ -61,8 +64,8 @@
             <!--connection threshold: <span class="connectionThresholdDisplay"></span>-->
         <!--</li>-->
         <li>
-            <input type="range" min="1" max="20" value="6" id="sampleSizeSlider" />
-            gaussian sample size: <span class="sampleSizeDisplay"></span>
+            <input type="range" min="1" max="100" value="10" id="independentVariablesSlider" />
+            Bates distribution independent variables: <span class="independentVariablesDisplay"></span>
         </li>
     </ul>
 

@@ -5,36 +5,21 @@ module.exports = () => {
 
     let $connectionThresholdSlider = $('#connectionThresholdSlider')
     let $connectionThresholdDisplays = $('.connectionThresholdDisplay')
-    let $sampleSizeSlider = $('#sampleSizeSlider')
-    let $sampleSizeDisplays = $('.sampleSizeDisplay')
+    let $independentVariablesSlider = $('#independentVariablesSlider')
+    let $independentVariablesDisplays = $('.independentVariablesDisplay')
+    let $inputSpaceDimensionsSlider = $('#inputSpaceDimensionsSlider')
     let permanences
-
-    function gaussianRand(sampleSize=6) {
-        var rand = 0;
-
-        for (var i = 0; i < sampleSize; i += 1) {
-            rand += Math.random();
-        }
-
-        return rand / 6;
-    }
 
     function updatePermanences() {
         let pool = localStorage.getItem('currentPotentialPool').split(',').map(m => parseInt(m))
         let poolIndices = SdrUtils.getActiveBits(pool)
-        let potentialPool = poolIndices.map((index) => {
-            return {
-                index: index,
-                permanence: gaussianRand(parseInt($sampleSizeSlider.val()))
-            }
-        })
-
-        permanences = potentialPool.map(p => p.permanence)
+        let independentVariable = parseInt($independentVariablesSlider.val())
+        permanences = d3.range(poolIndices.length).map(d3.randomBates(independentVariable))
     }
 
     function updateDisplays() {
         $connectionThresholdDisplays.html($connectionThresholdSlider.val())
-        $sampleSizeDisplays.html($sampleSizeSlider.val())
+        $independentVariablesDisplays.html($independentVariablesSlider.val())
         drawHistogram(permanences)
     }
 
@@ -89,11 +74,11 @@ module.exports = () => {
     //     updatePermanences()
     //     updateDisplays()
     // })
-    $sampleSizeSlider.on('input', () => {
+    $independentVariablesSlider.on('input', () => {
         updatePermanences()
         updateDisplays()
     })
-    $('#inputSpaceDimensionsSlider').on('input', () => {
+    $inputSpaceDimensionsSlider.on('input', () => {
         updatePermanences()
         updateDisplays()
     })
