@@ -8,18 +8,46 @@ module.exports = () => {
     let $independentVariablesSlider = $('#independentVariablesSlider')
     let $independentVariablesDisplays = $('.independentVariablesDisplay')
     let $inputSpaceDimensionsSlider = $('#inputSpaceDimensionsSlider')
+    let $distributionCenterSlider = $('#distributionCenterSlider')
+    let $distributionCenterDisplays = $('.distributionCenterDisplay')
+    let $percConnectedDisplay = $('.percConnectedDisplay')
+    let $percConnectedInFieldDisplay = $('.percConnectedInFieldDisplay')
+
     let permanences
 
     function updatePermanences() {
         let pool = localStorage.getItem('currentPotentialPool').split(',').map(m => parseInt(m))
         let poolIndices = SdrUtils.getActiveBits(pool)
-        let independentVariable = parseInt($independentVariablesSlider.val())
-        permanences = d3.range(poolIndices.length).map(d3.randomBates(independentVariable))
+        let independentVariables = parseInt($independentVariablesSlider.val())
+        let distributionCenter = parseInt($distributionCenterSlider.val()) / 100
+        permanences = d3.range(poolIndices.length)
+                        .map(d3.randomBates(independentVariables))
+                        .map((input) => {
+                            return input + distributionCenter - 0.5
+                        })
+    }
+
+    function updatePercentConnectedDisplay() {
+        let connected = 0
+        let threshold = parseInt($connectionThresholdSlider.val()) / 100
+        let inputSpaceDimensions = parseInt($inputSpaceDimensionsSlider.val())
+        let receptiveFieldSize = permanences.length
+        permanences.forEach((perm) => {
+            if (perm >= threshold) connected++
+        })
+        $percConnectedDisplay.html(Math.round(connected / inputSpaceDimensions * 100))
+        $percConnectedInFieldDisplay.html(Math.round(connected / receptiveFieldSize * 100))
     }
 
     function updateDisplays() {
-        $connectionThresholdDisplays.html($connectionThresholdSlider.val())
+        $connectionThresholdDisplays.html(
+            parseInt($connectionThresholdSlider.val()) / 100
+        )
         $independentVariablesDisplays.html($independentVariablesSlider.val())
+        $distributionCenterDisplays.html(
+            parseInt($distributionCenterSlider.val()) / 100
+        )
+        updatePercentConnectedDisplay()
         drawHistogram(permanences)
     }
 
@@ -63,6 +91,24 @@ module.exports = () => {
             .attr("text-anchor", "middle")
             .text(function(d) { return formatCount(d.length); });
 
+        let connectionThreshold = parseInt($connectionThresholdSlider.val()) / 100
+        g.append('line')
+            .attr('id', 'connectionThreshold')
+            .attr('x1', x(connectionThreshold))
+            .attr('x2', x(connectionThreshold))
+            .attr('y1', 0)
+            .attr('y2', 200)
+            .attr('stroke', 'red')
+            .attr('stroke-width', 4)
+        // let connectionThresholdLine = svg.selectAll('#connectionThreshold')
+        //     .data(connectionThreshold)
+        //     .enter().append('line')
+        //     .attr('id', 'connectionThreshold')
+        //     .attr('x1', (d) => d)
+        //     .attr('x2', (d) => d)
+        //     .attr('y1', 10)
+        //     .attr('y2', 100)
+
         g.append("g")
             .attr("class", "axis axis--x")
             .attr("transform", "translate(0," + height + ")")
@@ -70,20 +116,19 @@ module.exports = () => {
 
     }
 
-    // $connectionThresholdSlider.on('input', () => {
-    //     updatePermanences()
-    //     updateDisplays()
-    // })
-    $independentVariablesSlider.on('input', () => {
+    function redraw() {
         updatePermanences()
         updateDisplays()
-    })
-    $inputSpaceDimensionsSlider.on('input', () => {
-        updatePermanences()
-        updateDisplays()
-    })
-    $('#receptiveFieldPercSlider').on('input', () => {
-        updatePermanences()
+
+    }
+
+    $independentVariablesSlider.on('input', redraw)
+    $inputSpaceDimensionsSlider.on('input', redraw)
+    $distributionCenterSlider.on('input', redraw)
+    $('#receptiveFieldPercSlider').on('input', redraw)
+
+    $connectionThresholdSlider.on('input', () => {
+        // We don't need to update permanences just to redraw the connection threshold line.
         updateDisplays()
     })
 

@@ -16,7 +16,7 @@ module.exports = () => {
 
     let drawOptions = {
         width: 600,
-        height: 440,
+        height: 310,
         cellSize: 20,
         rowLength: 28,
     }

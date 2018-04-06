@@ -34,16 +34,11 @@
 
     <svg id="receptiveFieldDemo"></svg>
 
-    <ul>
-        <li>
-            <input type="range" min="100" max="600" value="400" id="inputSpaceDimensionsSlider" />
-            input space: <span class="inputSpaceDimensionsDisplay"></span> cells
-        </li>
-        <li>
-            <input type="range" min="0" max="100" value="50" id="receptiveFieldPercSlider" />
-            receptive field: <span class="receptiveFieldPercDisplay"></span>%
-        </li>
-    </ul>
+    <input  disabled="disabled" type="range" min="100" max="600" value="400" id="inputSpaceDimensionsSlider" />
+    input space: <span class="inputSpaceDimensionsDisplay"></span> cells
+    <br/>
+    <input type="range" min="0" max="100" value="90" id="receptiveFieldPercSlider" />
+    receptive field: <span class="receptiveFieldPercDisplay"></span>%
 
 
     <script>
@@ -58,16 +53,17 @@
 
     <svg id="receptiveFieldHistogram" width="560" height="200"></svg>
 
-    <ul>
-        <!--<li>-->
-            <!--<input type="range" min="0" max="100" value="85" id="connectionThresholdSlider" />-->
-            <!--connection threshold: <span class="connectionThresholdDisplay"></span>-->
-        <!--</li>-->
-        <li>
-            <input type="range" min="1" max="100" value="10" id="independentVariablesSlider" />
-            Bates distribution independent variables: <span class="independentVariablesDisplay"></span>
-        </li>
-    </ul>
+    <input type="range" min="0" max="100" value="85" id="connectionThresholdSlider" />
+    connection threshold: <span class="connectionThresholdDisplay"></span>
+    <br/>
+    <input type="range" min="1" max="100" value="40" id="independentVariablesSlider" />
+    Bates distribution independent variables: <span class="independentVariablesDisplay"></span>
+    <br/>
+    <input type="range" min="0" max="100" value="85" id="distributionCenterSlider" />
+    Distribution Center: <span class="distributionCenterDisplay"></span>
+    <br/><br/>
+    <span class="percConnectedDisplay"></span>% connected total,
+    <span class="percConnectedInFieldDisplay"></span>% connected within receptive field
 
     <script>
         $(function() {
