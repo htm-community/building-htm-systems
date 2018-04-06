@@ -1,5 +1,5 @@
 let SdrUtils = require('SdrUtils')
-let SdrDrawing = require('SdrDrawing')
+let ReceptiveField = require('ReceptiveField')
 
 module.exports = () => {
     let $receptiveFieldPercSlider = $('#receptiveFieldPercSlider')
@@ -31,7 +31,7 @@ module.exports = () => {
         let targetDensity = parseInt(this.value) / 100
         pool = SdrUtils.adjustTo(pool, targetDensity)
         localStorage.setItem('currentPotentialPool', pool)
-        sdr = new SdrDrawing(pool, 'receptiveFieldDemo')
+        sdr = new ReceptiveField(pool, 'receptiveFieldDemo')
         updateDisplays()
     });
 
@@ -41,7 +41,7 @@ module.exports = () => {
             parseFloat($inputSpaceDimensionsSlider.val())
         )
         localStorage.setItem('currentPotentialPool', pool)
-        sdr = new SdrDrawing(pool, 'receptiveFieldDemo')
+        sdr = new ReceptiveField({bits}, 'receptiveFieldDemo')
         updateDisplays()
     });
 
@@ -50,6 +50,6 @@ module.exports = () => {
         parseFloat($inputSpaceDimensionsSlider.val())
     )
     localStorage.setItem('currentPotentialPool', pool)
-    let sdr = new SdrDrawing(pool, 'receptiveFieldDemo')
+    let sdr = new ReceptiveField(pool, 'receptiveFieldDemo')
     updateDisplays()
 }

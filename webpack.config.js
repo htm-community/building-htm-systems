@@ -29,7 +29,7 @@ spatialPoolingWidgets.push({
     resolve: {
         alias: {
             SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
-            SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing")
+            ReceptiveField: path.join(__dirname, "node_modules/cell-viz/src/ReceptiveField")
         }
     },
     output: {

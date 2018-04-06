@@ -1,5 +1,5 @@
 let SdrUtils = require('SdrUtils')
-let SdrDrawing = require('SdrDrawing')
+let ReceptiveField = require('ReceptiveField')
 
 module.exports = () => {
 
@@ -14,17 +14,25 @@ module.exports = () => {
     let $percConnectedInFieldDisplay = $('.percConnectedInFieldDisplay')
 
     let permanences
+    let connections
 
     function updatePermanences() {
         let pool = localStorage.getItem('currentPotentialPool').split(',').map(m => parseInt(m))
         let poolIndices = SdrUtils.getActiveBits(pool)
         let independentVariables = parseInt($independentVariablesSlider.val())
         let distributionCenter = parseInt($distributionCenterSlider.val()) / 100
+        let threshold = parseInt($connectionThresholdSlider.val()) / 100
         permanences = d3.range(poolIndices.length)
                         .map(d3.randomBates(independentVariables))
                         .map((input) => {
                             return input + distributionCenter - 0.5
                         })
+        localStorage.setItem('permanences', permanences)
+        connections = permanences.map((perm) => {
+            if (perm > threshold) return 1
+            return 0
+        })
+        localStorage.setItem('connections', connections)
     }
 
     function updatePercentConnectedDisplay() {
