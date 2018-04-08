@@ -57,7 +57,7 @@ module.exports = () => {
     function updatePercentConnectedDisplay() {
         let connected = 0
         let threshold = parseInt($connectionThresholdSlider.val()) / 100
-        let receptiveFieldSize = permanences.length
+        let receptiveFieldSize = SdrUtils.population(pool)
         permanences.forEach((perm) => {
             if (perm >= threshold) connected++
         })
