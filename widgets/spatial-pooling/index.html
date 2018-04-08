@@ -6,7 +6,7 @@
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="https://rhyolight.github.io/cell-viz/cell-viz-2d-1.3.1.min.js"></script>
+    <script src="https://rhyolight.github.io/cell-viz/cell-viz-2d-1.4.0.min.js"></script>
     <script src="../../dist/widgets/bhtms-spatial-pooling-widgets-0.1.0.js"></script>
 
     <style>
@@ -40,19 +40,6 @@
     <input type="range" min="0" max="100" value="90" id="receptiveFieldPercSlider" />
     receptive field: <span class="receptiveFieldPercDisplay"></span>%
 
-
-    <script>
-        $(function() {
-            BHTMS.receptiveField()
-        });
-    </script>
-
-</div>
-
-<div>
-
-    <h1>Receptive Field Histogram</h1>
-
     <svg id="receptiveFieldHistogram" width="560" height="200"></svg>
 
     <input type="range" min="0" max="100" value="85" id="connectionThresholdSlider" />
@@ -69,110 +56,11 @@
 
     <script>
         $(function() {
-            BHTMS.receptiveFieldHistogram()
+            BHTMS.receptiveField()
         });
     </script>
 
 </div>
-
-<!--<section>-->
-
-    <!--<h1>Mini-Column Receptive Field Demo</h1>-->
-
-    <!--<table><tbody><tr>-->
-        <!--<td>-->
-            <!--<svg id="miniColumnOverhead"></svg>-->
-        <!--</td>-->
-        <!--<td>-->
-            <!--<svg id="inputSpaceOverhead"></svg>-->
-        <!--</td>-->
-    <!--</tr></tbody></table>-->
-
-    <!--<ul>-->
-        <!--<li>-->
-            <!--<input type="range" min="0" max="2048" value="128" id="miniColumnCountSlider" />-->
-            <!--mini-column count: <span class="miniColumnCountDisplay"></span>-->
-        <!--</li>-->
-    <!--</ul>-->
-
-
-    <!--<script>-->
-        <!--$(function() {-->
-            <!--// let SdrUtils = require('SdrUtils')-->
-            <!--// let SdrDrawing = require('SdrDrawing')-->
-
-            <!--// module.exports = () => {-->
-
-
-            <!--/** WIDGET CODE STARTS HERE **/-->
-
-            <!--let miniColumnDrawing, inputSpace-->
-            <!--let potentialPools-->
-
-            <!--let $miniColumnCountSlider = $('#miniColumnCountSlider')-->
-            <!--let $miniColumnCountDisplay = $('.miniColumnCountDisplay')-->
-
-            <!--let $inputSpaceDimensionsSlider = $('#inputSpaceDimensionsSlider')-->
-            <!--let $receptiveFieldPercSlider = $('#receptiveFieldPercSlider')-->
-
-            <!--let miniColumnCount = parseInt($miniColumnCountSlider.val())-->
-            <!--let inputSpaceCount = parseInt($inputSpaceDimensionsSlider.val())-->
-            <!--let receptiveFieldPerc = parseInt($receptiveFieldPercSlider.val())-->
-
-            <!--function getRandomReceptiveField(receptiveFieldPerc, dimensions) {-->
-                <!--let n = dimensions-->
-                <!--let w = parseInt(receptiveFieldPerc * n)-->
-                <!--let potentialPool = SdrUtils.getRandom(n, w)-->
-                <!--return potentialPool-->
-            <!--}-->
-
-            <!--function updatePotentialPools() {-->
-                <!--potentialPools = []-->
-                <!--for (let i = 0; i < miniColumnCount; i++) {-->
-                    <!--let pools = []-->
-                    <!--for (let j = 0; j < inputSpaceCount; j++) {-->
-                        <!--let pool = getRandomReceptiveField(receptiveFieldPerc / 100, inputSpaceCount)-->
-                        <!--pools.push(pool)-->
-                    <!--}-->
-                    <!--potentialPools.push(pools)-->
-                <!--}-->
-
-            <!--}-->
-
-            <!--let miniColumnDrawOptions = {-->
-                <!--width: 300,-->
-                <!--height: 300,-->
-                <!--cellSize: 20,-->
-                <!--rowLength: 28,-->
-            <!--}-->
-            <!--let inputSpaceDrawOptions = Object.assign(miniColumnDrawOptions, {-->
-                <!--cellSize: 10,-->
-                <!--rowLength: 30,-->
-            <!--});-->
-
-            <!--function updateDisplays() {-->
-                <!--// miniColumnDrawing.draw(miniColumnDrawOptions)-->
-                <!--$miniColumnCountDisplay.html($miniColumnCountSlider.val())-->
-            <!--}-->
-
-            <!--$miniColumnCountSlider.on('input', function () {-->
-                <!--miniColumnCount = parseInt(this.value)-->
-                <!--// updatePotentialPools()-->
-                <!--// miniColumnDrawing = new SdrDrawing(potentialPools, 'miniColumnOverhead')-->
-                <!--updateDisplays()-->
-            <!--});-->
-
-            <!--// updatePotentialPools()-->
-            <!--// miniColumnDrawing = new SdrDrawing(potentialPools, 'miniColumnOverhead')-->
-            <!--updateDisplays()-->
-
-
-
-            <!--/** WIDGET CODE ENDS HERE **/-->
-
-            <!--// }-->
-        <!--});-->
-    <!--</script>-->
 
 </section>
 

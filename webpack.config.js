@@ -15,7 +15,6 @@ spatialPoolingWidgets.push({
     mode: 'development',
     entry: [
         "./widgets/spatial-pooling/receptive-field.js",
-        "./widgets/spatial-pooling/receptive-field-histogram.js",
         "./widgets/spatial-pooling/index.js"
     ],
     module: {

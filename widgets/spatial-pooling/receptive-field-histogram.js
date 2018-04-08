@@ -127,7 +127,6 @@ module.exports = () => {
     function redraw() {
         updatePermanences()
         updateDisplays()
-
     }
 
     $independentVariablesSlider.on('input', redraw)
