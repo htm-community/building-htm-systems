@@ -5,8 +5,6 @@ let utils = require('../utils')
 module.exports = () => {
     let $receptiveFieldPercSlider = $('#receptiveFieldPercSlider')
     let $receptiveFieldPercDisplay = $('.receptiveFieldPercDisplay')
-    let $inputSpaceDimensionsSlider = $('#inputSpaceDimensionsSlider')
-    let $inputSpaceDimensionsDisplay = $('.inputSpaceDimensionsDisplay')
     let $connectionThresholdSlider = $('#connectionThresholdSlider')
     let $connectionThresholdDisplays = $('.connectionThresholdDisplay')
     let $independentVariablesSlider = $('#independentVariablesSlider')
@@ -15,12 +13,15 @@ module.exports = () => {
     let $distributionCenterDisplays = $('.distributionCenterDisplay')
     let $percConnectedDisplay = $('.percConnectedDisplay')
     let $percConnectedInFieldDisplay = $('.percConnectedInFieldDisplay')
+    let inputSpaceDimensions = 400
 
     let drawOptions = {
         width: 600,
         height: 310,
         cellSize: 20,
         rowLength: 28,
+        gradientFill: true,
+        connectionColor: 'navy',
     }
     let pool
     let permanences
@@ -29,7 +30,7 @@ module.exports = () => {
     function updatePotentialPools() {
         pool = utils.getRandomReceptiveField(
             parseInt($receptiveFieldPercSlider.val()) / 100,
-            parseFloat($inputSpaceDimensionsSlider.val())
+            inputSpaceDimensions
         )
     }
 
@@ -56,7 +57,6 @@ module.exports = () => {
     function updatePercentConnectedDisplay() {
         let connected = 0
         let threshold = parseInt($connectionThresholdSlider.val()) / 100
-        let inputSpaceDimensions = parseInt($inputSpaceDimensionsSlider.val())
         let receptiveFieldSize = permanences.length
         permanences.forEach((perm) => {
             if (perm >= threshold) connected++
@@ -73,7 +73,6 @@ module.exports = () => {
         drawOptions.threshold = connectionThreshold
         sdr.draw(drawOptions)
         $receptiveFieldPercDisplay.html($receptiveFieldPercSlider.val())
-        $inputSpaceDimensionsDisplay.html($inputSpaceDimensionsSlider.val())
 
         $connectionThresholdDisplays.html(
             parseInt($connectionThresholdSlider.val()) / 100
@@ -159,9 +158,7 @@ module.exports = () => {
         updateDisplays()
     });
 
-    $inputSpaceDimensionsSlider.on('input', redraw);
     $independentVariablesSlider.on('input', redraw)
-    $inputSpaceDimensionsSlider.on('input', redraw)
     $distributionCenterSlider.on('input', redraw)
     $('#receptiveFieldPercSlider').on('input', redraw)
 
