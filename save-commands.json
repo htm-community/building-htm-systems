@@ -1,5 +1,7 @@
 {
     "commands": [
-        "*.js : npm run build"
+        "save-commands.json : npm run build",
+        "webpack.config.js : npm run build",
+        "widgets/**/*.js : npm run build"
     ]
 }

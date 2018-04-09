@@ -16,10 +16,10 @@ module.exports = () => {
     let inputSpaceDimensions = 400
 
     let drawOptions = {
-        width: 600,
+        width: 560,
         height: 310,
         cellSize: 20,
-        rowLength: 28,
+        rowLength: 27,
         gradientFill: true,
         connectionColor: 'navy',
     }

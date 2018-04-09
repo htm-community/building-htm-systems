@@ -14,6 +14,7 @@ let spatialPoolingWidgets = []
 spatialPoolingWidgets.push({
     mode: 'development',
     entry: [
+        "./widgets/spatial-pooling/potential-pools.js",
         "./widgets/spatial-pooling/receptive-field.js",
         "./widgets/spatial-pooling/index.js"
     ],

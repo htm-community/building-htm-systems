@@ -6,13 +6,18 @@
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="https://rhyolight.github.io/cell-viz/cell-viz-2d-1.4.0.min.js"></script>
-    <script src="../../dist/widgets/bhtms-spatial-pooling-widgets-0.1.0.js"></script>
+    <script src="../../dist/widgets/bhtms-spatial-pooling-widgets-0.1.1.js"></script>
 
     <style>
         body {
+            background-color: LIGHTSTEELBLUE;
+        }
+
+        .widget {
             width: 560px;
             border: solid 1px black;
+            background-color: white;
+            margin-bottom: 20px;
         }
         .bar rect {
             fill: steelblue;
@@ -22,15 +27,38 @@
             fill: #fff;
             font: 10px sans-serif;
         }
+        svg {
+            border: solid 1px orange;
+        }
 
     </style>
 
 </head>
 <body>
 
-<div>
+<div class="widget">
 
-    <h1>Receptive Field</h1>
+    <h1>Each Mini-Column's Potential Pool of Connections</h1>
+
+    <table><tbody>
+    <tr>
+        <td><svg id="inputSpacePools"></svg></td>
+        <td><svg id="miniColumnPools"></svg></td>
+    </tr>
+    </tbody></table>
+
+    <script>
+        $(function() {
+            BHTMS.potentialPools()
+        });
+    </script>
+
+</div>
+
+
+<div class="widget">
+
+    <h1>One Mini-Column's Receptive Field</h1>
 
     <svg id="receptiveFieldDemo"></svg>
 

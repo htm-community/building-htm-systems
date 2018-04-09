@@ -1,3 +1,4 @@
 window.BHTMS = {
-    receptiveField: require('./receptive-field')
+    potentialPools: require('./potential-pools'),
+    receptiveField: require('./receptive-field'),
 }
