@@ -17,47 +17,31 @@ module.exports = () => {
 
     let drawOptions = {
         width: 560,
-        height: 310,
-        cellSize: 20,
-        rowLength: 27,
+        rowLength: 19,
         gradientFill: true,
         connectionColor: 'navy',
     }
-    let pool
+    let potentialPool
     let permanences
-    let connections
-
-    function updatePotentialPools() {
-        pool = utils.getRandomReceptiveField(
-            parseInt($receptiveFieldPercSlider.val()) / 100,
-            inputSpaceDimensions
-        )
-    }
 
     function updatePermanences() {
-        let poolIndices = SdrUtils.getActiveBits(pool)
         let independentVariables = parseInt($independentVariablesSlider.val())
         let distributionCenter = parseInt($distributionCenterSlider.val()) / 100
-        let threshold = parseInt($connectionThresholdSlider.val()) / 100
-        permanences = d3.range(pool.length)
-                        .map(d3.randomBates(independentVariables))
-                        .map((val, i) => {
-                            if (pool[i] === 1) {
-                                return val + distributionCenter - 0.5
-                            } else {
-                                return null
-                            }
-                        })
-        connections = permanences.map((perm) => {
-            if (perm > threshold) return 1
-            return 0
-        })
+        permanences = d3.range(potentialPool.length)
+            .map(d3.randomBates(independentVariables))
+            .map((val, i) => {
+                if (potentialPool[i] === 1) {
+                    return val + distributionCenter - 0.5
+                } else {
+                    return null
+                }
+            })
     }
 
     function updatePercentConnectedDisplay() {
         let connected = 0
         let threshold = parseInt($connectionThresholdSlider.val()) / 100
-        let receptiveFieldSize = SdrUtils.population(pool)
+        let receptiveFieldSize = SdrUtils.population(permanences)
         permanences.forEach((perm) => {
             if (perm >= threshold) connected++
         })
@@ -68,7 +52,6 @@ module.exports = () => {
 
     function updateDisplays() {
         let connectionThreshold = parseInt($connectionThresholdSlider.val()) / 100
-        updatePermanences()
         let sdr = new SdrDrawing(permanences, 'receptiveFieldDemo')
         drawOptions.threshold = connectionThreshold
         sdr.draw(drawOptions)
@@ -143,33 +126,22 @@ module.exports = () => {
 
     }
 
-    function redraw() {
-        // updatePotentialPools()
+    $connectionThresholdSlider.on('input', updateDisplays)
+
+    $independentVariablesSlider.on('input', () => {
         updatePermanences()
-        updateDisplays()
-    }
-
-
-    $receptiveFieldPercSlider.on('input', function () {
-        let targetDensity = parseInt(this.value) / 100
-        pool = SdrUtils.adjustTo(pool, targetDensity)
-        updatePermanences()
-        drawHistogram(permanences)
-        updateDisplays()
-    });
-
-    $independentVariablesSlider.on('input', redraw)
-    $distributionCenterSlider.on('input', redraw)
-    $('#receptiveFieldPercSlider').on('input', redraw)
-
-    $connectionThresholdSlider.on('input', () => {
-        // We don't need to update permanences just to redraw the connection threshold line.
         updateDisplays()
     })
 
+    $distributionCenterSlider.on('input', () => {
+        updatePermanences()
+        updateDisplays()
+    })
 
-    updatePotentialPools()
-    updatePermanences()
-    drawHistogram(permanences)
-    updateDisplays()
+    $(document).on('potentialPoolUpdate', (event, pool) => {
+        potentialPool = pool
+        updatePermanences()
+        updateDisplays()
+    })
+
 }

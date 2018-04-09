@@ -40,12 +40,21 @@
 
     <h1>Each Mini-Column's Potential Pool of Connections</h1>
 
-    <table><tbody>
-    <tr>
-        <td><svg id="inputSpacePools"></svg></td>
-        <td><svg id="miniColumnPools"></svg></td>
-    </tr>
-    </tbody></table>
+    <div id="potentialPoolWidget">
+        <svg width="560px" height="280px">
+            <g id="miniColumnPools"></g>
+            <g id="inputSpacePools"></g>
+        </svg>
+        <br/>
+        <input type="range" min="100" max="600" value="300" id="inputSpaceSizeSlider" />
+        input space size: <span class="inputSpaceSizeDisplay"></span> bits
+        <br/>
+        <input type="range" min="100" max="600" value="300" id="miniColumnCountSlider" />
+        mini-column count: <span class="miniColumnCountDisplay"></span> columns
+        <br/>
+        <input type="range" min="0" max="100" value="90" step="5" id="receptiveFieldPercSlider" />
+        receptive field: <span class="receptiveFieldPercDisplay"></span>%
+    </div>
 
     <script>
         $(function() {
@@ -61,9 +70,6 @@
     <h1>One Mini-Column's Receptive Field</h1>
 
     <svg id="receptiveFieldDemo"></svg>
-
-    <input type="range" min="0" max="100" value="90" id="receptiveFieldPercSlider" />
-    receptive field: <span class="receptiveFieldPercDisplay"></span>%
 
     <svg id="receptiveFieldHistogram" width="560" height="200"></svg>
 
