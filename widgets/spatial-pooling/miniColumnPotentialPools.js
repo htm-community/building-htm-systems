@@ -1,6 +1,5 @@
 let SdrUtils = require('SdrUtils')
 let SdrDrawing = require('SdrDrawing')
-let utils = require('../utils')
 
 module.exports = () => {
 

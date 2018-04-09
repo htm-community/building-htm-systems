@@ -1,4 +1,4 @@
 window.BHTMS = {
-    potentialPools: require('./potential-pools'),
-    receptiveField: require('./receptive-field'),
+    miniColumnPotentialPools: require('./miniColumnPotentialPools'),
+    miniColumnInitialPerms: require('./miniColumnInitialPerms'),
 }
