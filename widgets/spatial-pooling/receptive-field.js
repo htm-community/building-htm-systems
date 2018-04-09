@@ -1,5 +1,5 @@
 let SdrUtils = require('SdrUtils')
-let ReceptiveField = require('ReceptiveField')
+let SdrDrawing = require('SdrDrawing')
 let utils = require('../utils')
 
 module.exports = () => {
@@ -69,7 +69,7 @@ module.exports = () => {
     function updateDisplays() {
         let connectionThreshold = parseInt($connectionThresholdSlider.val()) / 100
         updatePermanences()
-        let sdr = new ReceptiveField(permanences, 'receptiveFieldDemo')
+        let sdr = new SdrDrawing(permanences, 'receptiveFieldDemo')
         drawOptions.threshold = connectionThreshold
         sdr.draw(drawOptions)
         $receptiveFieldPercDisplay.html($receptiveFieldPercSlider.val())
