@@ -14,9 +14,10 @@ let spatialPoolingWidgets = []
 spatialPoolingWidgets.push({
     mode: 'development',
     entry: [
-        "./widgets/spatial-pooling/miniColumnPotentialPools.js",
-        "./widgets/spatial-pooling/miniColumnInitialPerms.js",
-        "./widgets/spatial-pooling/index.js"
+        "./src/widgets/spatial-pooling/miniColumnPotentialPools.js",
+        "./src/widgets/spatial-pooling/miniColumnInitialPerms.js",
+        "./src/widgets/spatial-pooling/cells.js",
+        "./src/widgets/spatial-pooling/index.js"
     ],
     module: {
         rules: [
@@ -38,5 +39,26 @@ spatialPoolingWidgets.push({
     }
 })
 
+// HTM System
+let htmSystem = []
+
+htmSystem.push({
+    mode: 'development',
+    entry: [
+        "./src/htm/cells.js",
+    ],
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                loader: "babel-loader"
+            }
+        ]
+    },
+    output: {
+        path: __dirname + "/docs/htm",
+        filename: `bhtms-htm-system-${version}.js`
+    }
+})
 
 module.exports = spatialPoolingWidgets

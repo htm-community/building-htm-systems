@@ -47,6 +47,7 @@ module.exports = () => {
                     return null
                 }
             })
+        $(document).trigger('permanenceUpdate', [permanences])
     }
 
     function updatePercentConnectedDisplay() {
@@ -56,6 +57,7 @@ module.exports = () => {
         permanences.forEach((perm) => {
             if (perm >= threshold) connected++
         })
+        console.log(receptiveFieldSize)
         $percConnectedDisplay.html(Math.round(connected / inputSpaceDimensions * 100))
         $percConnectedInFieldDisplay.html(Math.round(connected / receptiveFieldSize * 100))
     }
