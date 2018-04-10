@@ -33,7 +33,7 @@ spatialPoolingWidgets.push({
         }
     },
     output: {
-        path: __dirname + "/dist/widgets",
+        path: __dirname + "/docs/widgets",
         filename: `bhtms-spatial-pooling-widgets-${version}.js`
     }
 })
