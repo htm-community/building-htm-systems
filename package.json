@@ -4,7 +4,7 @@
   "description": "Supporting code for Building HTM Systems document.",
   "scripts": {
     "build": "./node_modules/.bin/webpack",
-    "deploy": "git subtree push --prefix dist origin gh-pages",
+    "deploy": "git push origin :gh-pages && git subtree push --prefix dist origin gh-pages",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "matt@numenta.org",

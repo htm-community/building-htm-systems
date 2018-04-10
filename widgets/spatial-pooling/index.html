@@ -40,21 +40,7 @@
 
     <h1>Each Mini-Column's Potential Pool of Connections</h1>
 
-    <div id="potentialPoolWidget">
-        <svg width="560px" height="280px">
-            <g id="miniColumnPools"></g>
-            <g id="inputSpacePools"></g>
-        </svg>
-        <br/>
-        <input type="range" min="100" max="600" value="300" id="inputSpaceSizeSlider" />
-        input space size: <span class="inputSpaceSizeDisplay"></span> bits
-        <br/>
-        <input type="range" min="100" max="600" value="300" id="miniColumnCountSlider" />
-        mini-column count: <span class="miniColumnCountDisplay"></span> columns
-        <br/>
-        <input type="range" min="0" max="100" value="90" step="5" id="receptiveFieldPercSlider" />
-        receptive field: <span class="receptiveFieldPercDisplay"></span>%
-    </div>
+<div id="potentialPoolWidget"><svg width="560px" height="280px"><g id="miniColumnPools"></g><g id="inputSpacePools"></g></svg><br/><input type="range" min="100" max="600" value="300" id="inputSpaceSizeSlider" />input space size: <span class="inputSpaceSizeDisplay"></span> bits<br/><input type="range" min="100" max="600" value="300" id="miniColumnCountSlider" />mini-column count: <span class="miniColumnCountDisplay"></span> columns<br/><input type="range" min="0" max="100" value="90" step="5" id="receptiveFieldPercSlider" />receptive field: <span class="receptiveFieldPercDisplay"></span>%</div>
 
     <script>
         $(function() {
@@ -69,21 +55,7 @@
 
     <h1>One Mini-Column's Receptive Field</h1>
 
-    <svg id="receptiveFieldDemo"></svg>
-
-    <svg id="receptiveFieldHistogram" width="560" height="200"></svg>
-
-    <input type="range" min="0" max="100" value="50" id="connectionThresholdSlider" />
-    connection threshold: <span class="connectionThresholdDisplay"></span>
-    <br/>
-    <input type="range" min="1" max="100" value="10" id="independentVariablesSlider" />
-    Bates distribution independent variables: <span class="independentVariablesDisplay"></span>
-    <br/>
-    <input type="range" min="0" max="100" value="50" id="distributionCenterSlider" />
-    Distribution Center: <span class="distributionCenterDisplay"></span>
-    <br/><br/>
-    <span class="percConnectedDisplay"></span>% connected total,
-    <span class="percConnectedInFieldDisplay"></span>% connected within receptive field
+<svg id="receptiveFieldDemo"></svg><svg id="receptiveFieldHistogram" width="560" height="200"></svg><input type="range" min="0" max="100" value="50" id="connectionThresholdSlider" />connection threshold: <span class="connectionThresholdDisplay"></span><br/><input type="range" min="1" max="100" value="10" id="independentVariablesSlider" />Bates distribution independent variables: <span class="independentVariablesDisplay"></span><br/><input type="range" min="0" max="100" value="50" id="distributionCenterSlider" />Distribution Center: <span class="distributionCenterDisplay"></span><br/><br/><span class="percConnectedDisplay"></span>% connected total,<span class="percConnectedInFieldDisplay"></span>% connected within receptive field
 
     <script>
         $(function() {
