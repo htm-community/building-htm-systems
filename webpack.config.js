@@ -7,11 +7,36 @@ let pkg = JSON.parse(
 )
 let version = pkg.version
 
+// Input Space
+let widgets = []
+
+widgets.push({
+    mode: 'development',
+    entry: [
+        "./widgets/input-space/index.js"
+    ],
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                loader: "babel-loader"
+            }
+        ]
+    },
+    resolve: {
+        alias: {
+            SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
+            SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing")
+        }
+    },
+    output: {
+        path: __dirname + "/docs/widgets",
+        filename: `bhtms-input-space-widgets-${version}.js`
+    }
+})
+
 // Spatial Pooling
-
-let spatialPoolingWidgets = []
-
-spatialPoolingWidgets.push({
+widgets.push({
     mode: 'development',
     entry: [
         "./widgets/spatial-pooling/miniColumnPotentialPools.js",
@@ -38,5 +63,4 @@ spatialPoolingWidgets.push({
     }
 })
 
-
-module.exports = spatialPoolingWidgets
+module.exports = widgets
