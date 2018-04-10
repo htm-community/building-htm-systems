@@ -14,6 +14,12 @@ module.exports = () => {
     let $percConnectedInFieldDisplay = $('.percConnectedInFieldDisplay')
     let inputSpaceDimensions = 400
 
+    let currentMousePos = { x: -1, y: -1 };
+    $(document).mousemove(function(event) {
+        currentMousePos.x = event.pageX;
+        currentMousePos.y = event.pageY;
+    });
+
     let drawOptions = {
         width: 560,
         rowLength: 19,
@@ -71,8 +77,10 @@ module.exports = () => {
         )
         sdr.onCell('mouseenter', (perm, index) => {
             let formattedPerm = Math.round(perm * 100) / 100
-            let coords = d3.mouse(d3.select('body').node())
-            $hoverBox.css({left: coords[0] + 10, top: coords[1] + 10})
+            $hoverBox.css({
+                left: currentMousePos.x + 10,
+                top: currentMousePos.y + 10
+            })
             $hoverBox.html(formattedPerm).show()
         }).onCell('mouseout', (perm, index) => {
             $hoverBox.hide()
