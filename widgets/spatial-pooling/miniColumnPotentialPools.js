@@ -83,7 +83,11 @@ module.exports = () => {
 
     // This allows time for other widgets to load before sharing data.
     setTimeout(() => {
-        $(document).trigger('potentialPoolUpdate', [potentialPools[selectedMiniColumnIndex]])
+        let miniColumnCount = parseInt($miniColumnCountSlider.val())
+        $(document).trigger(
+            'potentialPoolUpdate',
+            [potentialPools[selectedMiniColumnIndex], miniColumnCount]
+        )
     }, 500)
 
 }
