@@ -32,7 +32,10 @@ module.exports = () => {
             }
             potentialPools.push(pool)
         }
-        $(document).trigger('potentialPoolUpdate', [potentialPools[selectedMiniColumnIndex]])
+        $(document).trigger(
+            'potentialPoolUpdate',
+            [potentialPools[selectedMiniColumnIndex], miniColumnCount]
+        )
     }
 
     function updateSelectedMiniColumn(index) {
@@ -40,7 +43,10 @@ module.exports = () => {
         let miniColumnCount = parseInt($miniColumnCountSlider.val())
         miniColumns = SdrUtils.getEmpty(miniColumnCount)
         miniColumns[selectedMiniColumnIndex] = 1
-        $(document).trigger('potentialPoolUpdate', [potentialPools[selectedMiniColumnIndex]])
+        $(document).trigger(
+            'potentialPoolUpdate',
+            [potentialPools[selectedMiniColumnIndex], miniColumnCount]
+        )
     }
 
     function updateDisplays() {
