@@ -22,6 +22,12 @@ module.exports = () => {
     }
     let potentialPool
     let permanences
+    let $hoverBox = createHoverBox()
+
+    function createHoverBox() {
+        $('<div id="hoverBox" style="position:absolute;display:none">').appendTo('body')
+        return $('#hoverBox')
+    }
 
     function updatePermanences() {
         let independentVariables = parseInt($independentVariablesSlider.val())
@@ -63,6 +69,14 @@ module.exports = () => {
         $distributionCenterDisplays.html(
             parseInt($distributionCenterSlider.val()) / 100
         )
+        sdr.onCell('mouseenter', (perm, index) => {
+            let formattedPerm = Math.round(perm * 100) / 100
+            let coords = d3.mouse(d3.select('body').node())
+            $hoverBox.css({left: coords[0] + 10, top: coords[1] + 10})
+            $hoverBox.html(formattedPerm).show()
+        }).onCell('mouseout', (perm, index) => {
+            $hoverBox.hide()
+        })
         updatePercentConnectedDisplay()
         drawHistogram(permanences)
     }
