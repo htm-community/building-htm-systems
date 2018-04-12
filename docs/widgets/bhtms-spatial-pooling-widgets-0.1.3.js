@@ -123,7 +123,7 @@ eval("let SdrUtils = __webpack_require__(/*! SdrUtils */ \"./node_modules/cell-v
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony default export */ __webpack_exports__[\"default\"] = (`<svg id=\"receptiveFieldDemo\"></svg>\n<svg id=\"receptiveFieldHistogram\" width=\"560\" height=\"200\"></svg>\n\n<ul>\n    <li>\n        <input type=\"range\" min=\"0\" max=\"100\" value=\"50\" id=\"connectionThresholdSlider\">\n        connection threshold: <span class=\"connectionThresholdDisplay\"></span>\n    </li>\n    <li>\n        <input type=\"range\" min=\"1\" max=\"100\" value=\"10\" id=\"independentVariablesSlider\">\n        Bates distribution independent variables: <span class=\"independentVariablesDisplay\"></span>\n    </li>\n    <li>\n        <input type=\"range\" min=\"0\" max=\"100\" value=\"50\" id=\"distributionCenterSlider\">\n        Distribution Center: <span class=\"distributionCenterDisplay\"></span>\n    </li>\n</ul>\n\n<p>\n    <span class=\"percConnectedDisplay\"></span>% connected total, <span class=\"percConnectedInFieldDisplay\"></span>% connected within receptive field\n</p>\n`);\n\n//# sourceURL=webpack:///./src/widgets/spatial-pooling/initialPerms/template.html?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony default export */ __webpack_exports__[\"default\"] = (`<svg id=\"receptiveFieldDemo\"></svg>\n<svg id=\"receptiveFieldHistogram\" width=\"560\" height=\"200\"></svg>\n\n<ul>\n    <li>\n        <input type=\"range\" min=\"0\" max=\"100\" value=\"50\" id=\"connectionThresholdSlider\">\n        connection threshold: <span class=\"connectionThresholdDisplay\"></span>\n    </li>\n    <li>\n        <input type=\"range\" min=\"1\" max=\"100\" value=\"10\" id=\"independentVariablesSlider\">\n        distribution spread: <span class=\"independentVariablesDisplay\"></span>\n    </li>\n    <li>\n        <input type=\"range\" min=\"0\" max=\"100\" value=\"50\" id=\"distributionCenterSlider\">\n        distribution Center: <span class=\"distributionCenterDisplay\"></span>\n    </li>\n</ul>\n\n<p>\n    <span class=\"percConnectedDisplay\"></span>% connected total, <span class=\"percConnectedInFieldDisplay\"></span>% connected within receptive field\n</p>\n`);\n\n//# sourceURL=webpack:///./src/widgets/spatial-pooling/initialPerms/template.html?");
 
 /***/ }),
 
@@ -157,7 +157,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony default export */ 
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("function loadHtml(html, elementId, cb) {\n    console.log(\"Loading %s HTML\", elementId);\n    console.log(cb);\n    console.log(html);\n    let $el = $('#' + elementId);\n    $el.one('DOMNodeInserted', () => {\n        console.log(\"Loaded %s HTML\", elementId);\n        cb();\n    });\n    $el.html(html);\n}\n\nmodule.exports = {\n    loadHtml: loadHtml\n};\n\n//# sourceURL=webpack:///./src/widgets/utils.js?");
+eval("// Loads given html into an element, calls the cb one time when loaded.\nfunction loadHtml(html, elementId, cb) {\n    let $el = $('#' + elementId);\n    $el.one('DOMNodeInserted', cb);\n    $el.html(html);\n}\n\nmodule.exports = {\n    loadHtml: loadHtml\n};\n\n//# sourceURL=webpack:///./src/widgets/utils.js?");
 
 /***/ }),
 
