@@ -1,0 +1,21 @@
+<svg id="receptiveFieldDemo"></svg>
+<svg id="receptiveFieldHistogram" width="560" height="200"></svg>
+
+<ul>
+    <li>
+        <input type="range" min="0" max="100" value="50" id="connectionThresholdSlider" />
+        connection threshold: <span class="connectionThresholdDisplay"></span>
+    </li>
+    <li>
+        <input type="range" min="1" max="100" value="10" id="independentVariablesSlider" />
+        Bates distribution independent variables: <span class="independentVariablesDisplay"></span>
+    </li>
+    <li>
+        <input type="range" min="0" max="100" value="50" id="distributionCenterSlider" />
+        Distribution Center: <span class="distributionCenterDisplay"></span>
+    </li>
+</ul>
+
+<p>
+    <span class="percConnectedDisplay"></span>% connected total, <span class="percConnectedInFieldDisplay"></span>% connected within receptive field
+</p>

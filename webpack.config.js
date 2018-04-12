@@ -66,23 +66,28 @@ modules.push({
 modules.push({
     mode: mode,
     entry: [
-        "./src/widgets/spatial-pooling/miniColumnPotentialPools.js",
-        "./src/widgets/spatial-pooling/miniColumnInitialPerms.js",
-        "./src/widgets/spatial-pooling/cells.js",
-        "./src/widgets/spatial-pooling/index.js"
+        "./src/widgets/spatial-pooling/index.js",
+        "./src/widgets/spatial-pooling/potentialPools/template.html",
+        "./src/widgets/spatial-pooling/potentialPools/index.js",
+        "./src/widgets/spatial-pooling/initialPerms/template.html",
+        "./src/widgets/spatial-pooling/initialPerms/index.js",
     ],
     module: {
         rules: [
             {
                 test: /\.js$/,
                 loader: "babel-loader"
+            },
+            {
+                test: /template\.html/,
+                loader: "posthtml-loader"
             }
         ]
     },
     resolve: {
         alias: {
             SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
-            SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing")
+            SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
         }
     },
     output: {
