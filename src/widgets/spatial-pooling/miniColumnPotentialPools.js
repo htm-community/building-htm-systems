@@ -22,10 +22,10 @@ module.exports = () => {
     function loadRandomPotentialPools() {
         let inputSpaceDimensions = parseInt($inputSpaceSizeSlider.val())
         let miniColumnCount = parseInt($miniColumnCountSlider.val())
+        let receptiveFieldPerc = parseInt($receptiveFieldPercSlider.val()) / 100
         potentialPools = []
         for (let i = 0; i < miniColumnCount; i++) {
             let pool = []
-            let receptiveFieldPerc = parseInt($receptiveFieldPercSlider.val()) / 100
             for (let j = 0; j < inputSpaceDimensions; j++) {
                 if (Math.random() > receptiveFieldPerc) pool.push(0)
                 else pool.push(1)

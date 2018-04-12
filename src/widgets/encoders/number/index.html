@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spatial Pooling Widgets</title>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="../../../../docs/widgets/bhtms-number-encoder-widgets-0.1.3.js"></script>
+
+    <style>
+        body {
+            background-color: LIGHTSTEELBLUE;
+        }
+
+        .widget {
+            width: 560px;
+            border: solid 1px black;
+            background-color: white;
+            margin-bottom: 20px;
+        }
+        svg {
+            border: solid 1px orange;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="widget">
+
+    <h1>Scalar Number Encoder</h1>
+
+    <script>
+        $(function() {
+            let encoder = BHTMS.encoders.ScalarEncoder()
+        });
+    </script>
+
+</div>
+
+</section>
+
+</body>
+</html>

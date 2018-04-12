@@ -6,14 +6,15 @@ let pkg = JSON.parse(
     fs.readFileSync(path.join(__dirname, "package.json"), "utf-8")
 )
 let version = pkg.version
+let mode = 'development'
 
-// Input Space
-let widgets = []
+let modules = []
 
-widgets.push({
-    mode: 'development',
+// Encoder widgets
+modules.push({
+    mode: mode,
     entry: [
-        "./widgets/input-space/index.js"
+        "./src/widgets/encoders/number/index.js"
     ],
     module: {
         rules: [
@@ -31,17 +32,44 @@ widgets.push({
     },
     output: {
         path: __dirname + "/docs/widgets",
-        filename: `bhtms-input-space-widgets-${version}.js`
+        filename: `bhtms-number-encoder-widgets-${version}.js`
     }
 })
 
+// // Input Space
+// modules.push({
+//     mode: mode,
+//     entry: [
+//         "./src/widgets/input-space/index.js"
+//     ],
+//     module: {
+//         rules: [
+//             {
+//                 test: /\.js$/,
+//                 loader: "babel-loader"
+//             }
+//         ]
+//     },
+//     resolve: {
+//         alias: {
+//             SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
+//             SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing")
+//         }
+//     },
+//     output: {
+//         path: __dirname + "/docs/widgets",
+//         filename: `bhtms-input-space-widgets-${version}.js`
+//     }
+// })
+
 // Spatial Pooling
-widgets.push({
-    mode: 'development',
+modules.push({
+    mode: mode,
     entry: [
-        "./widgets/spatial-pooling/miniColumnPotentialPools.js",
-        "./widgets/spatial-pooling/miniColumnInitialPerms.js",
-        "./widgets/spatial-pooling/index.js"
+        "./src/widgets/spatial-pooling/miniColumnPotentialPools.js",
+        "./src/widgets/spatial-pooling/miniColumnInitialPerms.js",
+        "./src/widgets/spatial-pooling/cells.js",
+        "./src/widgets/spatial-pooling/index.js"
     ],
     module: {
         rules: [
@@ -63,4 +91,25 @@ widgets.push({
     }
 })
 
-module.exports = widgets
+// HTM System
+modules.push({
+    mode: mode,
+    entry: [
+        "./src/htm/encoders/scalar.js",
+        "./src/htm/index.js",
+    ],
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                loader: "babel-loader"
+            }
+        ]
+    },
+    output: {
+        path: __dirname + "/docs/htm",
+        filename: `bhtms-htm-system-${version}.js`
+    }
+})
+
+module.exports = modules
