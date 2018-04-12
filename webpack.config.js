@@ -14,63 +14,9 @@ let modules = []
 modules.push({
     mode: mode,
     entry: [
-        "./src/widgets/encoders/number/index.js"
-    ],
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                loader: "babel-loader"
-            }
-        ]
-    },
-    resolve: {
-        alias: {
-            SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
-            SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing")
-        }
-    },
-    output: {
-        path: __dirname + "/docs/widgets",
-        filename: `bhtms-number-encoder-widgets-${version}.js`
-    }
-})
-
-// // Input Space
-// modules.push({
-//     mode: mode,
-//     entry: [
-//         "./src/widgets/input-space/index.js"
-//     ],
-//     module: {
-//         rules: [
-//             {
-//                 test: /\.js$/,
-//                 loader: "babel-loader"
-//             }
-//         ]
-//     },
-//     resolve: {
-//         alias: {
-//             SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
-//             SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing")
-//         }
-//     },
-//     output: {
-//         path: __dirname + "/docs/widgets",
-//         filename: `bhtms-input-space-widgets-${version}.js`
-//     }
-// })
-
-// Spatial Pooling
-modules.push({
-    mode: mode,
-    entry: [
-        "./src/widgets/spatial-pooling/index.js",
-        "./src/widgets/spatial-pooling/potentialPools/template.html",
-        "./src/widgets/spatial-pooling/potentialPools/index.js",
-        "./src/widgets/spatial-pooling/initialPerms/template.html",
-        "./src/widgets/spatial-pooling/initialPerms/index.js",
+        "./src/widgets/encoders/numbers/index.js",
+        "./src/widgets/encoders/numbers/simpleNumberEncoder.js",
+        "./src/widgets/encoders/numbers/simpleNumberEncoder.tmpl.html",
     ],
     module: {
         rules: [
@@ -79,7 +25,41 @@ modules.push({
                 loader: "babel-loader"
             },
             {
-                test: /template\.html/,
+                test: /tmpl\.html$/,
+                loader: "posthtml-loader"
+            }
+        ]
+    },
+    resolve: {
+        alias: {
+            SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
+            // SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing")
+        }
+    },
+    output: {
+        path: __dirname + "/docs/widgets",
+        filename: `bhtms-encoder-widgets-${version}.js`
+    }
+})
+
+// Spatial Pooling widgets
+modules.push({
+    mode: mode,
+    entry: [
+        "./src/widgets/spatial-pooling/index.js",
+        "./src/widgets/spatial-pooling/potentialPools.tmpl.html",
+        "./src/widgets/spatial-pooling/potentialPools.js",
+        "./src/widgets/spatial-pooling/initialPerms.tmpl.html",
+        "./src/widgets/spatial-pooling/initialPerms.js",
+    ],
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                loader: "babel-loader"
+            },
+            {
+                test: /tmpl\.html$/,
                 loader: "posthtml-loader"
             }
         ]

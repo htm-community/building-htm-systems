@@ -1,4 +1,4 @@
 window.BHTMS = {
-    miniColumnPotentialPools: require('./potentialPools/index'),
-    miniColumnInitialPerms: require('./initialPerms/index'),
+    miniColumnPotentialPools: require('./potentialPools'),
+    miniColumnInitialPerms: require('./initialPerms'),
 }
