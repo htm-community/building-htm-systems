@@ -8,7 +8,7 @@ module.exports = (elementId) => {
 
     utils.loadHtml(html.default, elementId, () => {
 
-        let width = 1000,
+        let width = 560,
             height = 200,
             minValue = 0,
             maxValue = 55,
