@@ -12,13 +12,13 @@ module.exports = (elementId) => {
             height = 200,
             minValue = 0,
             maxValue = 55,
-            bits = 100
+            bits = 100,
+            value = 30
 
         let valueScaleTopMargin = 40,
             valueScaleSideMargins = 10
 
-        let $valueSlider = $('#valueSlider'),
-            $rangeSlider = $('#rangeSlider'),
+        let $rangeSlider = $('#rangeSlider'),
             $valueDisplays = $('.valueDisplay'),
             $rangeDisplays = $('.rangeDisplay'),
             $hoverIndexDisplay = $('.hoverIndexDisplay'),
@@ -30,13 +30,14 @@ module.exports = (elementId) => {
             .attr('height', height)
 
         let valueToX
+        let xToValue
         let bitsToValue = d3.scaleLinear()
             .domain([0, bits])
             .range([minValue, maxValue])
 
         function updateOutputBits(encoding, maxWidth) {
             let topMargin = 120
-            let padding = 20
+            let padding = 10
             let bits = encoding.length
             let width = maxWidth - (padding * 2)
             let bitsToOutputDisplay = d3.scaleLinear()
@@ -68,7 +69,7 @@ module.exports = (elementId) => {
                     })
                     .attr('y', padding)
                     .attr('width', cellWidth)
-                    .attr('height', cellWidth * 3)
+                    .attr('height', cellWidth * 4)
             }
 
             // Update
@@ -90,7 +91,7 @@ module.exports = (elementId) => {
             rects.on('mouseenter', (bit, index) => {
                 let centerValueForBit = bitsToValue(index)
                 let cx = padding + bitsToOutputDisplay(index) + (cellWidth / 2)
-                let cy = topMargin + 26
+                let cy = topMargin + 12
                 $hoverGroup.select('g.range circle')
                     .attr('r', cellWidth / 2)
                     .attr('cx', cx)
@@ -205,24 +206,31 @@ module.exports = (elementId) => {
             valueToX = d3.scaleLinear()
                 .domain([min, max])
                 .range([0, width])
+            xToValue = d3.scaleLinear()
+                .domain([0, width])
+                .range([min, max])
             let xAxis = d3.axisBottom(valueToX)
-            $svg.append('g')
+            let g = $svg.append('g')
                 .attr('transform', 'translate(' + x + ',' + y + ')')
                 .call(xAxis)
+            $svg.on('mousemove', () => {
+                if (d3.event.clientY > 160) return
+                let mouseX = d3.event.clientX
+                value = utils.precisionRound(xToValue(mouseX), 2)
+                runEncode()
+            })
         }
 
         setUpValueAxis(minValue, maxValue, width)
 
 
         function runEncode() {
-            let value = parseInt($valueSlider.val())
             let range = parseInt($rangeSlider.val()) / 100
             encode(value, range)
             $valueDisplays.html(value)
             $rangeDisplays.html(range)
         }
 
-        $valueSlider.on('input', runEncode)
         $rangeSlider.on('input', runEncode)
 
         runEncode()
