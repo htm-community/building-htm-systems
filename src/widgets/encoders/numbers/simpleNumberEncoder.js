@@ -96,8 +96,8 @@ module.exports = (elementId) => {
                     .attr('cx', cx)
                     .attr('cy', cy)
                     .attr('fill', 'royalblue')
-                let leftValueBound = Math.max(minValue, centerValueForBit - range),
-                    rightValueBound = Math.min(maxValue, centerValueForBit + range)
+                let leftValueBound = Math.max(minValue, centerValueForBit - (range/2)),
+                    rightValueBound = Math.min(maxValue, centerValueForBit + (range/2))
                 let leftLineData = []
                 let rightLineData = []
                 // Circle point
@@ -153,7 +153,7 @@ module.exports = (elementId) => {
         function updateValue(value) {
             let xOffset = valueScaleSideMargins,
                 yOffset = valueScaleTopMargin,
-                markerWidth = 10,
+                markerWidth = 1,
                 markerHeight = 30
 
             let x = valueToX(value) - (markerWidth / 2)
@@ -191,7 +191,7 @@ module.exports = (elementId) => {
                 // TODO: floor() or ceil()?
                 let bitValue = bitsToValue(i)
                 let bit = 0
-                if (Math.abs(bitValue - value) <= range) bit = 1
+                if (Math.abs(bitValue - value) <= range/2) bit = 1
                 encoding.push(bit)
             }
             updateDisplays(encoding, value)
@@ -207,14 +207,16 @@ module.exports = (elementId) => {
                 .domain([0, width])
                 .range([min, max])
             let xAxis = d3.axisBottom(valueToX)
-            let g = $svg.append('g')
+            $svg.append('g')
                 .attr('transform', 'translate(' + x + ',' + y + ')')
                 .call(xAxis)
             $svg.on('mousemove', () => {
                 let mouse = d3.mouse($svg.node())
                 if (mouse[1] > 80) return
-                let mouseX = mouse[0]
-                value = utils.precisionRound(xToValue(mouseX), 2)
+                let mouseX = mouse[0] - valueScaleSideMargins
+                mouseX = Math.min(maxWidth - (valueScaleSideMargins * 2), mouseX)
+                mouseX = Math.max(0, mouseX)
+                value = utils.precisionRound(xToValue(mouseX), 1)
                 runEncode()
             })
         }
