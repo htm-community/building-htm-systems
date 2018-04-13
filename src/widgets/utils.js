@@ -9,7 +9,13 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
+function precisionRound(number, precision) {
+    let factor = Math.pow(10, precision);
+    return Math.round(number * factor) / factor;
+}
+
 module.exports = {
     loadHtml: loadHtml,
     getRandomInt: getRandomInt,
+    precisionRound: precisionRound,
 }

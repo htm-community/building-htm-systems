@@ -1,5 +1,31 @@
 <svg>
-    <rect class="value"></rect>
+    <g class="value">
+        <text></text>
+        <rect></rect>
+    </g>
+    <g class="encoding"></g>
+    <g class="range" visibility="hidden">
+        <circle></circle>
+        <path class="left"></path>
+        <path class="right"></path>
+    </g>
 </svg>
 
-
+<ul>
+    <li>
+        <input type="range" min="0" max="55" value="35" id="valueSlider" /> value to encode:
+        <span class="valueDisplay"></span>
+    </li>
+    <li>
+        <input type="range" min="1" max="5500" value="500" id="rangeSlider" /> number range to encode in one bit:
+        <span class="rangeDisplay"></span>
+    </li>
+</ul>
+<ul class="hoverDetails" style="display:none">
+    <li>
+        index: <span class="hoverIndexDisplay"></span>
+    </li>
+    <li>
+        range: <span class="hoverLeftRangeDisplay"></span> - <span class="hoverRightRangeDisplay"></span>
+    </li>
+</ul>
