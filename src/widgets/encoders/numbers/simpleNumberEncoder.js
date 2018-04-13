@@ -188,7 +188,6 @@ module.exports = (elementId) => {
             let encoding = []
 
             for (let i = 0; i < bits; i++) {
-                // TODO: floor() or ceil()?
                 let bitValue = bitsToValue(i)
                 let bit = 0
                 if (Math.abs(bitValue - value) <= range/2) bit = 1
