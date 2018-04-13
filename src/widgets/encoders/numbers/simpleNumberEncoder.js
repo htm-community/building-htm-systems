@@ -9,7 +9,7 @@ module.exports = (elementId) => {
     utils.loadHtml(html.default, elementId, () => {
 
         let width = 560,
-            height = 200,
+            height = 160,
             minValue = 0,
             maxValue = 55,
             bits = 100,
@@ -46,7 +46,6 @@ module.exports = (elementId) => {
             let cellWidth = Math.floor(width / bits)
             let $outputGroup = $svg.select('g.encoding')
             let $hoverGroup = $svg.select('g.range')
-            let $hoverDetails = $('.hoverDetails')
             let range = parseInt($rangeSlider.val()) / 100
 
             let lineFunction = d3.line()
@@ -145,11 +144,9 @@ module.exports = (elementId) => {
                 $hoverIndexDisplay.html(index)
                 $hoverLeftRangeDisplay.html(utils.precisionRound(leftValueBound, 2))
                 $hoverRightRangeDisplay.html(utils.precisionRound(rightValueBound, 2))
-                $hoverDetails.show()
             })
             $outputGroup.on('mouseout', () => {
                 $hoverGroup.attr('visibility', 'hidden')
-                $hoverDetails.hide()
             })
         }
 
@@ -214,8 +211,9 @@ module.exports = (elementId) => {
                 .attr('transform', 'translate(' + x + ',' + y + ')')
                 .call(xAxis)
             $svg.on('mousemove', () => {
-                if (d3.event.clientY > 160) return
-                let mouseX = d3.event.clientX
+                let mouse = d3.mouse($svg.node())
+                if (mouse[1] > 80) return
+                let mouseX = mouse[0]
                 value = utils.precisionRound(xToValue(mouseX), 2)
                 runEncode()
             })
