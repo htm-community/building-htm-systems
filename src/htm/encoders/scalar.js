@@ -1,47 +1,43 @@
+class ScalarEncoder {
 
-function ScalarEncoder(n, w, minValue, maxValue) {
-    let extentWidth = maxValue - minValue;
-    // Distribute nBuckets points along the domain [minValue, maxValue],
-    // including the endpoints. The resolution is the width of each band
-    // between the points.
-    let nBuckets = n - (w - 1);
-    let nBands = nBuckets - 1;
-    this.n = n;
-    this.w = w;
-    this.bucketWidth = extentWidth / nBands;
-    this.minValue = minValue;
-    this.maxValue = maxValue;
+    constructor(n, w, min, max) {
+        this.n = n
+        this.w = w
+        this.numBuckets = n - w + 1
+        this.range = max - min
+        this.min = min
+        this.max = max
+        this._valueToBitIndex = d3.scaleLinear()
+            .domain([0, this.n])
+            .range([min, max])
+        this.sparsity = w / n
+    }
+
+    encode(input) {
+        let output = [];
+        let firstBit;
+        let min = this.min;
+        firstBit = Math.floor(this.numBuckets * (input - min) / this.range)
+        for (let i = 0; i < this.n; i ++) {
+            output.push(0)
+        }
+        for (let i = 0; i < this.w; i++) {
+            if (firstBit + i < output.length) output[firstBit + i] = 1;
+        }
+        return output;
+    }
+
+    getRangeFromBitIndex(i) {
+        let value = this._valueToBitIndex(i)
+        let start = value - this.max * this.sparsity / 2
+        let end = value + this.max * this.sparsity / 2
+        let out = []
+        out.push(start)
+        out.push(end)
+        return out
+    }
 }
 
-ScalarEncoder.prototype.encode = function(input) {
-    let i;
-    let iBucket;
-    let firstBit;
-    let output = [];
-    let minValue = this.minValue;
-    let maxValue = this.maxValue;
-
-    // Always clip input.
-    if (input < minValue) {
-        input = minValue;
-    }
-    if (input > maxValue ) {
-        input = maxValue;
-    }
-
-    iBucket = Math.round((input - minValue) / this.bucketWidth);
-    firstBit = iBucket;
-
-    _.times(this.n, function() {
-        output.push(0);
-    });
-
-    for (i = 0; i < this.w; i++) {
-        output[firstBit + i] = 1;
-    }
-
-    return output;
-};
 
 function PeriodicScalarEncoder(n, w, radius, minValue, maxValue) {
     let neededBuckets;
@@ -94,9 +90,9 @@ PeriodicScalarEncoder.prototype.encode = function(input) {
         throw Error('Input out of bounds: ' + input);
     }
 
-    _.times(this.n, function() {
+    for (let i = 0; i < this.n; i ++) {
         output.push(0);
-    });
+    }
 
     output[middleBit] = 1;
 

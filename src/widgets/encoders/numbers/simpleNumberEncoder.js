@@ -1,3 +1,5 @@
+let RelativeScalarEncoder =require('../../../htm/encoders/relativeScalarEncoder')
+let ScalarEncoder = require('../../../htm/encoders/scalar').ScalarEncoder
 let utils = require('../../utils')
 let html = require('./simpleNumberEncoder.tmpl.html')
 
@@ -9,7 +11,7 @@ module.exports = (elementId) => {
     utils.loadHtml(html.default, elementId, () => {
 
         let width = 560,
-            height = 160,
+            height = 200,
             minValue = 0,
             maxValue = 55,
             bits = 100,
@@ -20,10 +22,9 @@ module.exports = (elementId) => {
 
         let $rangeSlider = $('#rangeSlider'),
             $valueDisplays = $('.valueDisplay'),
-            $rangeDisplays = $('.rangeDisplay'),
-            $hoverIndexDisplay = $('.hoverIndexDisplay'),
-            $hoverLeftRangeDisplay = $('.hoverLeftRangeDisplay'),
-            $hoverRightRangeDisplay = $('.hoverRightRangeDisplay')
+            $rangeDisplays = $('.rangeDisplay')
+
+        let range = parseInt(parseInt($rangeSlider.val()) / 100)
 
         let $svg = d3.select('#' + elementId).select('svg')
             .attr('width', width)
@@ -31,13 +32,12 @@ module.exports = (elementId) => {
 
         let valueToX
         let xToValue
-        let bitsToValue = d3.scaleLinear()
-            .domain([0, bits])
-            .range([minValue, maxValue])
+
+        let encoder
 
         function updateOutputBits(encoding, maxWidth) {
             let topMargin = 120
-            let padding = 10
+            let padding = 30
             let bits = encoding.length
             let width = maxWidth - (padding * 2)
             let bitsToOutputDisplay = d3.scaleLinear()
@@ -46,13 +46,6 @@ module.exports = (elementId) => {
             let cellWidth = Math.floor(width / bits)
             let $outputGroup = $svg.select('g.encoding')
             let $hoverGroup = $svg.select('g.range')
-            let range = parseInt($rangeSlider.val()) / 100
-
-            let lineFunction = d3.line()
-                                 .x(function(d) { return d.x; })
-                                 .y(function(d) { return d.y; })
-                                 .curve(d3.curveCatmullRom.alpha(0.5));
-
 
             function treatCellRects(r) {
                 r.attr('class', 'bit')
@@ -87,20 +80,24 @@ module.exports = (elementId) => {
 
             rects = $outputGroup.selectAll('rect.bit')
 
+            let lineFunction = d3.line()
+                                 .x(function(d) { return d.x; })
+                                 .y(function(d) { return d.y; })
+                                 .curve(d3.curveCatmullRom.alpha(0.5));
             rects.on('mouseenter', (bit, index) => {
-                let centerValueForBit = bitsToValue(index)
                 let cx = padding + bitsToOutputDisplay(index) + (cellWidth / 2)
-                let cy = topMargin + 12
+                let cy = topMargin + 30
+                let valueRange = encoder.getRangeFromBitIndex(index)
+                // Circle point
                 $hoverGroup.select('g.range circle')
                     .attr('r', cellWidth / 2)
                     .attr('cx', cx)
                     .attr('cy', cy)
                     .attr('fill', 'royalblue')
-                let leftValueBound = Math.max(minValue, centerValueForBit - (range/2)),
-                    rightValueBound = Math.min(maxValue, centerValueForBit + (range/2))
+                let leftValueBound = Math.max(minValue, valueRange[0]),
+                    rightValueBound = Math.min(maxValue, valueRange[1])
                 let leftLineData = []
                 let rightLineData = []
-                // Circle point
                 leftLineData.push({x: cx, y: cy})
                 rightLineData.push({x: cx, y: cy})
                 let nearX = valueScaleSideMargins + valueToX(leftValueBound)
@@ -141,9 +138,6 @@ module.exports = (elementId) => {
                     .attr('stroke', 'black')
                     .attr('fill', 'none')
                 $hoverGroup.attr('visibility', 'visible')
-                $hoverIndexDisplay.html(index)
-                $hoverLeftRangeDisplay.html(utils.precisionRound(leftValueBound, 2))
-                $hoverRightRangeDisplay.html(utils.precisionRound(rightValueBound, 2))
             })
             $outputGroup.on('mouseout', () => {
                 $hoverGroup.attr('visibility', 'hidden')
@@ -184,15 +178,9 @@ module.exports = (elementId) => {
             updateValue(value)
         }
 
-        function encode(value, range) {
-            let encoding = []
-
-            for (let i = 0; i < bits; i++) {
-                let bitValue = bitsToValue(i)
-                let bit = 0
-                if (Math.abs(bitValue - value) <= range/2) bit = 1
-                encoding.push(bit)
-            }
+        function encode(value) {
+            encoder.w = range
+            let encoding = encoder.encode(value)
             updateDisplays(encoding, value)
         }
 
@@ -224,14 +212,19 @@ module.exports = (elementId) => {
 
 
         function runEncode() {
-            let range = parseInt($rangeSlider.val()) / 100
-            encode(value, range)
+            range = parseInt(parseInt($rangeSlider.val()) / 100)
+            encode(value)
             $valueDisplays.html(value)
             $rangeDisplays.html(range)
         }
 
-        $rangeSlider.on('input', runEncode)
+        $rangeSlider.on('input', () => {
+            range = parseInt(parseInt($rangeSlider.val()) / 100);
+            encoder = new RelativeScalarEncoder(bits, range, minValue, maxValue)
+            runEncode()
+        })
 
+        encoder = new RelativeScalarEncoder(bits, range, minValue, maxValue)
         runEncode()
 
     })

@@ -14,6 +14,7 @@ let modules = []
 modules.push({
     mode: mode,
     entry: [
+        "./src/htm/encoders/relativeScalarEncoder.js",
         "./src/widgets/encoders/numbers/index.js",
         "./src/widgets/encoders/numbers/simpleNumberEncoder.js",
         "./src/widgets/encoders/numbers/simpleNumberEncoder.tmpl.html",
@@ -76,11 +77,12 @@ modules.push({
     }
 })
 
-// HTM System
+// HTM Encoders
 modules.push({
     mode: mode,
     entry: [
         "./src/htm/encoders/scalar.js",
+        "./src/htm/encoders/relativeScalarEncoder.js",
         "./src/htm/index.js",
     ],
     module: {
@@ -93,7 +95,7 @@ modules.push({
     },
     output: {
         path: __dirname + "/docs/htm",
-        filename: `bhtms-htm-system-${version}.js`
+        filename: `bhtms-htm-encoders-${version}.js`
     }
 })
 
