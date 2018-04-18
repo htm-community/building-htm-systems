@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spatial Pooling Widgets</title>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="../../../docs/widgets/bhtms-spatial-pooling-widgets-0.1.3.js"></script>
+
+    <style>
+        body {
+            background-color: white;
+        }
+        #hoverBox {
+            margin: 0;
+            padding: 5px;
+            font-size: 12pt;
+            background-color: white;
+            border: solid darkslategrey 1px;
+            opacity: 0.8
+        }
+
+        .widget {
+            width: 560px;
+            /*border: solid 1px black;*/
+            background-color: white;
+            margin-bottom: 20px;
+        }
+        .bar rect {
+            fill: steelblue;
+        }
+
+        .bar text {
+            fill: #fff;
+            font: 10px sans-serif;
+        }
+        svg {
+            border: solid 1px orange;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="widget">
+
+    <h1>Each Mini-Column's Potential Pool of Connections</h1>
+
+    <div id="potentialPoolWidget"></div>
+
+    <script>
+        $(function() {
+            BHTMS.miniColumnPotentialPools("potentialPoolWidget")
+        });
+    </script>
+
+</div>
+
+
+<div class="widget">
+
+    <h1>One Mini-Column's Receptive Field</h1>
+
+    <div id="initialPermsWidget"></div>
+
+    <script>
+        $(function() {
+            BHTMS.miniColumnInitialPerms("initialPermsWidget")
+        });
+    </script>
+
+</div>
+
+<div class="widget">
+
+    <h1>Building Structures?</h1>
+
+    <script>
+        $(function() {
+            // BHTMS.cells()
+        });
+    </script>
+
+</div>
+
+</body>
+</html>
