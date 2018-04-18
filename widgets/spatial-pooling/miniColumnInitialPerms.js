@@ -2,6 +2,9 @@ let SdrUtils = require('SdrUtils')
 let SdrDrawing = require('SdrDrawing')
 
 module.exports = () => {
+
+    var store = JSDS.get('spatial-pooling');
+
     let $receptiveFieldPercSlider = $('#receptiveFieldPercSlider')
     let $receptiveFieldPercDisplay = $('.receptiveFieldPercDisplay')
     let $connectionThresholdSlider = $('#connectionThresholdSlider')
@@ -159,7 +162,7 @@ module.exports = () => {
         updateDisplays()
     })
 
-    $(document).on('potentialPoolUpdate', (event, pool) => {
+    $(BHTMS).on('potentialPoolUpdate', (event, pool) => {
         potentialPool = pool
         updatePermanences()
         updateDisplays()
