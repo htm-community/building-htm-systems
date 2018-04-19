@@ -1,14 +1,17 @@
-let RelativeScalarEncoder =require('../../../htm/encoders/relativeScalarEncoder')
-let ScalarEncoder = require('../../../htm/encoders/scalar').ScalarEncoder
+let RelativeScalarEncoder = require('../../../htm/encoders/relativeScalarEncoder')
+let JSDS = require('JSDS')
 let utils = require('../../utils')
 let html = require('./simpleNumberEncoder.tmpl.html')
 
 const onColor = 'skyblue'
 const offColor = 'white'
+let jsds = JSDS.create('simple-number-encoder')
 
-module.exports = (elementId) => {
+module.exports = (elementId, bounded=false) => {
 
     utils.loadHtml(html.default, elementId, () => {
+        let $d3El = d3.select('#' + elementId),
+            $jqEl = $('#' + elementId)
 
         let width = 560,
             height = 200,
@@ -17,16 +20,17 @@ module.exports = (elementId) => {
             bits = 100,
             value = 30
 
+        let jsdsHandles = []
+
         let valueScaleTopMargin = 40,
             valueScaleSideMargins = 10
 
-        let $resolutionSlider = $('#resolutionSlider'),
-            $valueDisplays = $('.valueDisplay'),
-            $resolutionDisplays = $('.resolutionDisplay')
+        let $resolutionSlider = $jqEl.find('.resolutionSlider'),
+            $resolutionDisplays = $jqEl.find('.resolutionDisplay')
 
         let resolution = parseInt(parseInt($resolutionSlider.val()) / 100)
 
-        let $svg = d3.select('#' + elementId).select('svg')
+        let $svg = $d3El.select('svg')
             .attr('width', width)
             .attr('height', height)
 
@@ -34,6 +38,30 @@ module.exports = (elementId) => {
         let xToValue
 
         let encoder
+
+        function setUpValueAxis(min, max, maxWidth) {
+            let width = maxWidth - valueScaleSideMargins * 2
+            let x = valueScaleSideMargins, y = valueScaleTopMargin
+            valueToX = d3.scaleLinear()
+                .domain([min, max])
+                .range([0, width])
+            xToValue = d3.scaleLinear()
+                .domain([0, width])
+                .range([min, max])
+            let xAxis = d3.axisBottom(valueToX)
+            $svg.append('g')
+                .attr('transform', 'translate(' + x + ',' + y + ')')
+                .call(xAxis)
+            $svg.on('mousemove', () => {
+                let mouse = d3.mouse($svg.node())
+                if (mouse[1] > 80) return
+                let mouseX = mouse[0] - valueScaleSideMargins
+                mouseX = Math.min(maxWidth - (valueScaleSideMargins * 2), mouseX)
+                mouseX = Math.max(0, mouseX)
+                value = utils.precisionRound(xToValue(mouseX), 1)
+                jsds.set('value', value)
+            })
+        }
 
         function updateOutputBits(encoding, maxWidth) {
             let topMargin = 120
@@ -84,11 +112,12 @@ module.exports = (elementId) => {
                                  .x(function(d) { return d.x; })
                                  .y(function(d) { return d.y; })
                                  .curve(d3.curveCatmullRom.alpha(0.5));
-            rects.on('mouseenter', (bit, index) => {
+
+            function hoverRange(selectedOutputBit) {
+                let index = selectedOutputBit.index
                 let cx = padding + bitsToOutputDisplay(index) + (cellWidth / 2)
                 let cy = topMargin + 30
                 let valueRange = encoder.getRangeFromBitIndex(index)
-                // Circle point
                 $hoverGroup.select('g.range circle')
                     .attr('r', cellWidth / 2)
                     .attr('cx', cx)
@@ -138,10 +167,23 @@ module.exports = (elementId) => {
                     .attr('stroke', 'black')
                     .attr('fill', 'none')
                 $hoverGroup.attr('visibility', 'visible')
+            }
+
+            rects.on('mouseenter', (bit, index) => {
+                jsds.set('selectedOutputBit', {state: bit, index: index})
             })
-            $outputGroup.on('mouseout', () => {
-                $hoverGroup.attr('visibility', 'hidden')
+
+            while (jsdsHandles.length) {
+                jsdsHandles.pop().remove()
+            }
+
+            let setBitHandle = jsds.after('set', 'selectedOutputBit', hoverRange)
+            let setResHandle = jsds.after('set', 'resolution', () => {
+                let selectedBit = jsds.get('selectedOutputBit')
+                if (selectedBit) hoverRange(selectedBit)
             })
+            jsdsHandles.push(setBitHandle)
+            jsdsHandles.push(setResHandle)
         }
 
         function updateValue(value) {
@@ -178,54 +220,42 @@ module.exports = (elementId) => {
             updateValue(value)
         }
 
-        function encode(value) {
-            encoder.resolution = resolution
-            let encoding = encoder.encode(value)
-            updateDisplays(encoding, value)
+        function redraw() {
+            updateDisplays(jsds.get(elementId + '-encoding'), jsds.get('value'))
         }
 
-        function setUpValueAxis(min, max, maxWidth) {
-            let width = maxWidth - valueScaleSideMargins * 2
-            let x = valueScaleSideMargins, y = valueScaleTopMargin
-            valueToX = d3.scaleLinear()
-                .domain([min, max])
-                .range([0, width])
-            xToValue = d3.scaleLinear()
-                .domain([0, width])
-                .range([min, max])
-            let xAxis = d3.axisBottom(valueToX)
-            $svg.append('g')
-                .attr('transform', 'translate(' + x + ',' + y + ')')
-                .call(xAxis)
-            $svg.on('mousemove', () => {
-                let mouse = d3.mouse($svg.node())
-                if (mouse[1] > 80) return
-                let mouseX = mouse[0] - valueScaleSideMargins
-                mouseX = Math.min(maxWidth - (valueScaleSideMargins * 2), mouseX)
-                mouseX = Math.max(0, mouseX)
-                value = utils.precisionRound(xToValue(mouseX), 1)
-                runEncode()
-            })
-        }
-
-        setUpValueAxis(minValue, maxValue, width)
-
-
-        function runEncode() {
-            resolution = parseInt(parseInt($resolutionSlider.val()) / 100)
-            encode(value)
-            $valueDisplays.html(value)
-            $resolutionDisplays.html(resolution)
-        }
-
+        // User interaction via resolution slider.
         $resolutionSlider.on('input', () => {
-            resolution = parseInt(parseInt($resolutionSlider.val()) / 100);
-            encoder = new RelativeScalarEncoder(bits, resolution, minValue, maxValue)
-            runEncode()
+            jsds.set('resolution', Math.max(1, parseInt(parseInt($resolutionSlider.val()) / 100)))
         })
 
-        encoder = new RelativeScalarEncoder(bits, resolution, minValue, maxValue)
-        runEncode()
+        // Once an encoding is set, we can draw.
+        jsds.after('set', elementId + '-encoding', redraw)
+
+        // When user changes resolution, we must re-create the encoder and re-encode the value.
+        jsds.after('set', 'resolution', (v) => {
+            console.log("%s creating encoder bounded %s", elementId, bounded)
+            encoder = new RelativeScalarEncoder(bits, v, minValue, maxValue, bounded, id=elementId)
+            $resolutionDisplays.html(v)
+            $resolutionSlider.val(v * 100)
+            let value = jsds.get('value')
+            console.log("Encoder %s encoding value %s", encoder.id, value)
+            jsds.set(elementId + '-encoding', encoder.encode(value))
+        })
+
+        // When a new value is set, it should be encoded.
+        jsds.after('set', 'value', (v) => {
+            console.log("Encoder %s encoding value %s", encoder.id, v)
+            jsds.set(elementId + '-encoding', encoder.encode(v))
+        })
+
+        // Start Program
+
+        setUpValueAxis(minValue, maxValue, width)
+        encoder = new RelativeScalarEncoder(bits, resolution, minValue, maxValue, bounded, id=elementId)
+        jsds.set('value', value)
+        jsds.set('resolution', parseInt(parseInt($resolutionSlider.val()) / 100))
+
 
     })
 

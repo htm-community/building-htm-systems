@@ -30,13 +30,23 @@
 
 <div class="widget">
 
-    <h1>Scalar</h1>
+    <h1>Raw Relative Scalar</h1>
 
-    <div id="scalar"></div>
+    <div id="raw-relative-scalar"></div>
 
     <script>
         $(function() {
-            BHTMS.simpleNumberEncoder("scalar")
+            BHTMS.simpleNumberEncoder("raw-relative-scalar")
+        });
+    </script>
+
+    <h1>Bounded Relative Scalar</h1>
+
+    <div id="bounded-relative-scalar"></div>
+
+    <script>
+        $(function() {
+            BHTMS.simpleNumberEncoder("bounded-relative-scalar", true)
         });
     </script>
 
