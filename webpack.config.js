@@ -18,6 +18,8 @@ modules.push({
         "./src/widgets/encoders/numbers/index.js",
         "./src/widgets/encoders/numbers/simpleNumberEncoder.js",
         "./src/widgets/encoders/numbers/simpleNumberEncoder.tmpl.html",
+        "./src/widgets/encoders/numbers/scalarWindow.js",
+        "./src/widgets/encoders/numbers/scalarWindow.tmpl.html",
     ],
     module: {
         rules: [
@@ -35,7 +37,7 @@ modules.push({
         alias: {
             JSDS: path.join(__dirname, "node_modules/javascript-data-store/src/jsds"),
             SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
-            // SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing")
+            SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing")
         }
     },
     output: {

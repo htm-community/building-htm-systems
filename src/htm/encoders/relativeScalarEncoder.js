@@ -1,7 +1,6 @@
 class RelativeScalarEncoder {
 
-    constructor(n, resolution, min, max, bounded=false, id=null) {
-        this.id = id
+    constructor(n, resolution, min, max, bounded=false) {
         this.n = n
         this.resolution = resolution
         this.min = min

@@ -14,8 +14,13 @@ function precisionRound(number, precision) {
     return Math.round(number * factor) / factor;
 }
 
+function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
 module.exports = {
     loadHtml: loadHtml,
     getRandomInt: getRandomInt,
+    getRandomArbitrary: getRandomArbitrary,
     precisionRound: precisionRound,
 }

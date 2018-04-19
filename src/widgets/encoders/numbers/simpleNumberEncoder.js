@@ -234,25 +234,22 @@ module.exports = (elementId, bounded=false) => {
 
         // When user changes resolution, we must re-create the encoder and re-encode the value.
         jsds.after('set', 'resolution', (v) => {
-            console.log("%s creating encoder bounded %s", elementId, bounded)
-            encoder = new RelativeScalarEncoder(bits, v, minValue, maxValue, bounded, id=elementId)
+            encoder = new RelativeScalarEncoder(bits, v, minValue, maxValue, bounded)
             $resolutionDisplays.html(v)
             $resolutionSlider.val(v * 100)
             let value = jsds.get('value')
-            console.log("Encoder %s encoding value %s", encoder.id, value)
             jsds.set(elementId + '-encoding', encoder.encode(value))
         })
 
         // When a new value is set, it should be encoded.
         jsds.after('set', 'value', (v) => {
-            console.log("Encoder %s encoding value %s", encoder.id, v)
             jsds.set(elementId + '-encoding', encoder.encode(v))
         })
 
         // Start Program
 
         setUpValueAxis(minValue, maxValue, width)
-        encoder = new RelativeScalarEncoder(bits, resolution, minValue, maxValue, bounded, id=elementId)
+        encoder = new RelativeScalarEncoder(bits, resolution, minValue, maxValue, bounded)
         jsds.set('value', value)
         jsds.set('resolution', parseInt(parseInt($resolutionSlider.val()) / 100))
 

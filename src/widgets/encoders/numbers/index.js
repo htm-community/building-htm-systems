@@ -1,3 +1,4 @@
 window.BHTMS = {
-    simpleNumberEncoder: require('./simpleNumberEncoder')
+    simpleNumberEncoder: require('./simpleNumberEncoder'),
+    scalarWindow: require('./scalarWindow'),
 }
