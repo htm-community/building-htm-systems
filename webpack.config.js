@@ -47,7 +47,6 @@ modules.push({
 modules.push({
     mode: mode,
     entry: [
-        "./src/jsds.js",
         "./src/widgets/spatial-pooling/index.js",
         "./src/widgets/spatial-pooling/potentialPools.tmpl.html",
         "./src/widgets/spatial-pooling/potentialPools.js",
@@ -68,6 +67,7 @@ modules.push({
     },
     resolve: {
         alias: {
+            JSDS: path.join(__dirname, "node_modules/javascript-data-store/src/jsds"),
             SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
             SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
         }

@@ -1,8 +1,7 @@
-let SdrUtils = require('SdrUtils')
 let SdrDrawing = require('SdrDrawing')
 let utils = require('../utils')
 let html = require('./potentialPools.tmpl.html')
-let JSDS = require('../../jsds')
+let JSDS = require('JSDS')
 
 function render(elementId) {
 

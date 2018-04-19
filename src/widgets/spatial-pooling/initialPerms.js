@@ -1,6 +1,6 @@
 let SdrUtils = require('SdrUtils')
 let SdrDrawing = require('SdrDrawing')
-let JSDS = require('../../jsds')
+let JSDS = require('JSDS')
 let utils = require('../utils')
 let html = require('./initialPerms.tmpl.html')
 
