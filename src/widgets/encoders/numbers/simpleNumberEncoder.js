@@ -20,11 +20,11 @@ module.exports = (elementId) => {
         let valueScaleTopMargin = 40,
             valueScaleSideMargins = 10
 
-        let $rangeSlider = $('#rangeSlider'),
+        let $resolutionSlider = $('#resolutionSlider'),
             $valueDisplays = $('.valueDisplay'),
-            $rangeDisplays = $('.rangeDisplay')
+            $resolutionDisplays = $('.resolutionDisplay')
 
-        let range = parseInt(parseInt($rangeSlider.val()) / 100)
+        let resolution = parseInt(parseInt($resolutionSlider.val()) / 100)
 
         let $svg = d3.select('#' + elementId).select('svg')
             .attr('width', width)
@@ -179,7 +179,7 @@ module.exports = (elementId) => {
         }
 
         function encode(value) {
-            encoder.w = range
+            encoder.resolution = resolution
             let encoding = encoder.encode(value)
             updateDisplays(encoding, value)
         }
@@ -212,19 +212,19 @@ module.exports = (elementId) => {
 
 
         function runEncode() {
-            range = parseInt(parseInt($rangeSlider.val()) / 100)
+            resolution = parseInt(parseInt($resolutionSlider.val()) / 100)
             encode(value)
             $valueDisplays.html(value)
-            $rangeDisplays.html(range)
+            $resolutionDisplays.html(resolution)
         }
 
-        $rangeSlider.on('input', () => {
-            range = parseInt(parseInt($rangeSlider.val()) / 100);
-            encoder = new RelativeScalarEncoder(bits, range, minValue, maxValue)
+        $resolutionSlider.on('input', () => {
+            resolution = parseInt(parseInt($resolutionSlider.val()) / 100);
+            encoder = new RelativeScalarEncoder(bits, resolution, minValue, maxValue)
             runEncode()
         })
 
-        encoder = new RelativeScalarEncoder(bits, range, minValue, maxValue)
+        encoder = new RelativeScalarEncoder(bits, resolution, minValue, maxValue)
         runEncode()
 
     })

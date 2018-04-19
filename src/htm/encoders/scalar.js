@@ -2,7 +2,7 @@ class ScalarEncoder {
 
     constructor(n, w, min, max) {
         this.n = n
-        this.w = w
+        this.resolution = w
         this.numBuckets = n - w + 1
         this.range = max - min
         this.min = min
@@ -21,7 +21,7 @@ class ScalarEncoder {
         for (let i = 0; i < this.n; i ++) {
             output.push(0)
         }
-        for (let i = 0; i < this.w; i++) {
+        for (let i = 0; i < this.resolution; i++) {
             if (firstBit + i < output.length) output[firstBit + i] = 1;
         }
         return output;
@@ -50,7 +50,7 @@ function PeriodicScalarEncoder(n, w, radius, minValue, maxValue) {
         throw new Error('Exactly one of n / radius must be defined.');
     }
 
-    this.w = w;
+    this.resolution = w;
     this.radius = radius;
     this.minValue = minValue;
     this.maxValue = maxValue;
@@ -59,15 +59,15 @@ function PeriodicScalarEncoder(n, w, radius, minValue, maxValue) {
 
     if (n) {
         this.n = n;
-        this.radius = this.w * (this.range / this.n);
+        this.radius = this.resolution * (this.range / this.n);
         this.bucketWidth = this.range / this.n;
     } else {
-        this.bucketWidth = this.radius / this.w;
+        this.bucketWidth = this.radius / this.resolution;
         neededBuckets = Math.ceil((this.range) / this.bucketWidth);
-        if (neededBuckets > this.w) {
+        if (neededBuckets > this.resolution) {
             this.n = neededBuckets;
         } else {
-            this.n = this.w + 1;
+            this.n = this.resolution + 1;
         }
     }
 
@@ -82,7 +82,7 @@ PeriodicScalarEncoder.prototype.encode = function(input) {
     let i, index;
     let iBucket = Math.floor((input - this.minValue) / this.bucketWidth);
     let middleBit = iBucket;
-    let reach = (this.w - 1) / 2.0;
+    let reach = (this.resolution - 1) / 2.0;
     let left = Math.floor(reach);
     let right = Math.ceil(reach);
 
