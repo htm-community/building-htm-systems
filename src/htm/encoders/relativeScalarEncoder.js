@@ -16,6 +16,7 @@ class RelativeScalarEncoder {
         let encoding = [],
             resolution = this.resolution,
             n = this.n,
+            min = this.min,
             max = this.max
         // For each bit in the encoding.
         for (let i = 0; i < n; i++) {
@@ -27,7 +28,7 @@ class RelativeScalarEncoder {
             if (valueDistance <= radius) bit = 1
             // Keeps the bucket from changing size at min/max values
             if (this.bounded) {
-                if (value < radius && bitValue < resolution) bit = 1
+                if (value < (min + radius) && bitValue < (min + resolution)) bit = 1
                 if (value > (max - radius) && bitValue > (max - resolution)) bit = 1
             }
             encoding.push(bit)
@@ -38,13 +39,14 @@ class RelativeScalarEncoder {
     getRangeFromBitIndex(i) {
         let v = this._bitIndexToValue(i),
             res = this.resolution,
+            min = this.min,
             max = this.max,
             radius = res / 2,
             left = Math.max(this.min, v - radius),
             right = Math.min(this.max, v + radius)
         // Keeps the bucket from changing size at min/max values
         if (this.bounded) {
-            if (left < radius) left = 0
+            if (left < (min + radius)) left = min
             if (right > (max - radius)) right = max
         }
         return [left, right]

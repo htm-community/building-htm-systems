@@ -50,23 +50,21 @@ module.exports = (elementId) => {
         let windowSize = 100
         let index = 40
 
-        let scaleX = d3.scaleLinear().domain([0, windowSize]).range([10, width - 10])
-        let scaleY = d3.scaleLinear().domain([-1, 1]).range([30, height/2 - 30])
+        let scaleX = d3.scaleLinear().domain([0, windowSize]).range([0, width])
+        let scaleY = d3.scaleLinear().domain([1, -1]).range([30, height/2 - 30])
         let lineFunction = d3.line()
-            .x(function(d) { return d.x; })
-            .y(function(d) { return d.y; })
+            .x(function(d, i) {
+                return scaleX(i)
+            })
+            .y(function(d, i) {
+                return scaleY(d)
+            })
             .curve(d3.curveCatmullRom.alpha(0.01))
         let rectWidth = 20
 
         jsds.after('set', 'data', (data) => {
-            let lineData = data.map((d, i) => {
-                return {
-                    x: scaleX(i),
-                    y: scaleY(d)
-                }
-            })
             $svg.select('path#plot')
-                .attr('d', lineFunction(lineData))
+                .attr('d', lineFunction(data))
                 .attr('stroke', 'black')
                 .attr('fill', 'none')
             $svg.select('rect#index')
@@ -99,6 +97,13 @@ module.exports = (elementId) => {
                 .attr('r', 2)
                 .attr('fill', 'red')
                 .attr('stroke', 'none')
+            $svg.select('text#label')
+                .attr('x', scaleX(index) + 20)
+                .attr('y', 190)
+                .attr('stroke', 'black')
+                .attr('fill', 'black')
+                .attr('font-size', '12pt')
+                .html(utils.precisionRound(value, 2))
             let encoding = encoder.encode(value)
             jsds.set('encoding', encoding)
         })
