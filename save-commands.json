@@ -2,6 +2,6 @@
     "commands": [
         "save-commands.json : npm run build",
         "webpack.config.js : npm run build",
-        "widgets/**/*.js : npm run build"
+        "src/**/*.js : npm run build"
     ]
 }

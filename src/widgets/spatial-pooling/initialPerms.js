@@ -1,9 +1,12 @@
 let SdrUtils = require('SdrUtils')
 let SdrDrawing = require('SdrDrawing')
+let JSDS = require('../../jsds')
 let utils = require('../utils')
 let html = require('./initialPerms.tmpl.html')
 
 module.exports = (elementId) => {
+
+    let jsds = JSDS.get('spatial-pooling')
 
     utils.loadHtml(html.default, elementId, () => {
         console.log("Running %s JS", elementId)
@@ -31,8 +34,6 @@ module.exports = (elementId) => {
             gradientFill: true,
             connectionColor: 'navy',
         }
-        let potentialPool
-        let permanences
         let $hoverBox = createHoverBox()
 
         function createHoverBox() {
@@ -43,7 +44,9 @@ module.exports = (elementId) => {
         function updatePermanences() {
             let independentVariables = parseInt($independentVariablesSlider.val())
             let distributionCenter = parseInt($distributionCenterSlider.val()) / 100
-            permanences = d3.range(potentialPool.length)
+            let selectedMiniColumn = jsds.get('selectedMiniColumn')
+            let potentialPool = jsds.get('potentialPools')[selectedMiniColumn]
+            let permanences = d3.range(potentialPool.length)
                 .map(d3.randomBates(independentVariables))
                 .map((val, i) => {
                     if (potentialPool[i] === 1) {
@@ -52,12 +55,13 @@ module.exports = (elementId) => {
                         return null
                     }
                 })
-            $(document).trigger('permanenceUpdate', [permanences])
+            jsds.set('permanences', permanences)
         }
 
         function updatePercentConnectedDisplay() {
             let connected = 0
             let threshold = parseInt($connectionThresholdSlider.val()) / 100
+            let permanences = jsds.get('permanences')
             let receptiveFieldSize = SdrUtils.population(permanences)
             permanences.forEach((perm) => {
                 if (perm >= threshold) connected++
@@ -69,6 +73,7 @@ module.exports = (elementId) => {
 
         function updateDisplays() {
             let connectionThreshold = parseInt($connectionThresholdSlider.val()) / 100
+            let permanences = jsds.get('permanences')
             let sdr = new SdrDrawing(permanences, 'receptiveFieldDemo')
             drawOptions.threshold = connectionThreshold
             sdr.draw(drawOptions)
@@ -153,23 +158,19 @@ module.exports = (elementId) => {
 
         }
 
+        function redraw() {
+            updatePermanences()
+            updateDisplays()
+        }
+
         $connectionThresholdSlider.on('input', updateDisplays)
+        $independentVariablesSlider.on('input', redraw)
+        $distributionCenterSlider.on('input', redraw)
 
-        $independentVariablesSlider.on('input', () => {
-            updatePermanences()
-            updateDisplays()
-        })
+        jsds.after('set', 'selectedMiniColumn', redraw)
+        jsds.after('set', 'potentialPools', redraw)
 
-        $distributionCenterSlider.on('input', () => {
-            updatePermanences()
-            updateDisplays()
-        })
-
-        $(document).on('potentialPoolUpdate', (event, pool) => {
-            potentialPool = pool
-            updatePermanences()
-            updateDisplays()
-        })
+        redraw()
 
     })
 

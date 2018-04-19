@@ -2,11 +2,13 @@ let SdrUtils = require('SdrUtils')
 let SdrDrawing = require('SdrDrawing')
 let utils = require('../utils')
 let html = require('./potentialPools.tmpl.html')
+let JSDS = require('../../jsds')
 
 function render(elementId) {
 
+    let jsds = JSDS.create('spatial-pooling')
+
     utils.loadHtml(html.default, elementId, () => {
-        console.log("Running %s JS", elementId)
 
         let $receptiveFieldPercSlider = $('#receptiveFieldPercSlider')
         let $receptiveFieldPercDisplay = $('.receptiveFieldPercDisplay')
@@ -15,14 +17,14 @@ function render(elementId) {
         let $miniColumnCountSlider = $('#miniColumnCountSlider')
         let $miniColumnCountDisplay = $('.miniColumnCountDisplay')
 
-        let selectedMiniColumnIndex = 0
-        let potentialPools = []
-        let miniColumns = []
-
         let drawOptions = {
             width: 270,
             height: 270,
         }
+
+        jsds.set('inputSpaceDimensions', parseInt($inputSpaceSizeSlider.val()))
+        jsds.set('miniColumnCount', parseInt($miniColumnCountSlider.val()))
+        jsds.set('receptiveFieldPerc', parseInt($receptiveFieldPercSlider.val()) / 100)
 
         function loadRandomPotentialPools() {
             let inputSpaceDimensions = parseInt($inputSpaceSizeSlider.val())
@@ -37,63 +39,53 @@ function render(elementId) {
                 }
                 potentialPools.push(pool)
             }
-            $(document).trigger(
-                'potentialPoolUpdate',
-                [potentialPools[selectedMiniColumnIndex], miniColumnCount]
-            )
+            let selectedMiniColumn = jsds.get('selectedMiniColumn')
+            if (selectedMiniColumn >= potentialPools.length) {
+                jsds.set('selectedMiniColumn', potentialPools.length - 1)
+            }
+            jsds.set('potentialPools', potentialPools)
         }
 
         function updateSelectedMiniColumn(index) {
-            selectedMiniColumnIndex = index
-            let miniColumnCount = parseInt($miniColumnCountSlider.val())
-            miniColumns = SdrUtils.getEmpty(miniColumnCount)
-            miniColumns[selectedMiniColumnIndex] = 1
-            $(document).trigger(
-                'potentialPoolUpdate',
-                [potentialPools[selectedMiniColumnIndex], miniColumnCount]
-            )
+            jsds.set('selectedMiniColumn', index)
         }
 
         function updateDisplays() {
-            let pool = potentialPools[selectedMiniColumnIndex]
-            let poolDrawing = new SdrDrawing(pool, 'inputSpacePools')
-            poolDrawing.draw(drawOptions)
-
-            let miniColumnsDrawing = new SdrDrawing(miniColumns, 'miniColumnPools')
+            let selectedMiniColumn = jsds.get('selectedMiniColumn')
+            let miniColumnCount = parseInt($miniColumnCountSlider.val())
+            let miniColumnPools = new Array(miniColumnCount)
+            miniColumnPools[selectedMiniColumn] = 1
+            let miniColumnsDrawing = new SdrDrawing(
+                miniColumnPools, 'miniColumnPools'
+            )
             let mcOpts = Object.assign({}, drawOptions)
             mcOpts.onColor = 'khaki'
             miniColumnsDrawing.draw(mcOpts)
             miniColumnsDrawing.$drawing.attr('transform', 'translate(280)')
             miniColumnsDrawing.onCell('mouseover', (d, i) => {
-                updateSelectedMiniColumn(i)
-                updateDisplays()
+                jsds.set('selectedMiniColumn', i)
             })
 
+            let pool = jsds.get('potentialPools')[selectedMiniColumn]
+            let poolDrawing = new SdrDrawing(pool, 'inputSpacePools')
+            poolDrawing.draw(drawOptions)
             $receptiveFieldPercDisplay.html($receptiveFieldPercSlider.val())
             $inputSpaceSizeDisplay.html($inputSpaceSizeSlider.val())
             $miniColumnCountDisplay.html($miniColumnCountSlider.val())
         }
 
+        jsds.set('selectedMiniColumn', 0)
+        jsds.after('set', 'selectedMiniColumn', updateDisplays)
+
+        jsds.after('set', 'potentialPools', updateDisplays)
+
         loadRandomPotentialPools()
-        updateSelectedMiniColumn(0)
-        updateDisplays()
 
         $('#potentialPoolWidget input').on('input', (event) => {
-            updateSelectedMiniColumn(selectedMiniColumnIndex)
             loadRandomPotentialPools()
-            updateDisplays()
             event.preventDefault()
             event.stopPropagation()
         })
-
-        // This allows time for other widgets to load before sharing data.
-        setTimeout(() => {
-            let miniColumnCount = parseInt($miniColumnCountSlider.val())
-            $(document).trigger(
-                'potentialPoolUpdate',
-                [potentialPools[selectedMiniColumnIndex], miniColumnCount]
-            )
-        }, 500)
 
     })
 

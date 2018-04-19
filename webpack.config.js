@@ -47,6 +47,7 @@ modules.push({
 modules.push({
     mode: mode,
     entry: [
+        "./src/jsds.js",
         "./src/widgets/spatial-pooling/index.js",
         "./src/widgets/spatial-pooling/potentialPools.tmpl.html",
         "./src/widgets/spatial-pooling/potentialPools.js",
