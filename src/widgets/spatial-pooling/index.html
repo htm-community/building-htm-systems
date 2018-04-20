@@ -6,7 +6,7 @@
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="../../../docs/widgets/bhtms-spatial-pooling-widgets-0.1.4.js"></script>
+    <script src="../../../docs/widgets/bhtms-spatial-pooling-widgets-0.1.5.js"></script>
 
     <style>
         body {
@@ -23,7 +23,7 @@
 
         .widget {
             width: 560px;
-            /*border: solid 1px black;*/
+            border: solid 1px black;
             background-color: white;
             margin-bottom: 20px;
         }
@@ -39,14 +39,18 @@
             border: solid 1px orange;
         }
 
+        .figure-description {
+            font-style: italic;
+            font-size: 10pt;
+            padding: 0 20px;
+        }
+
     </style>
 
 </head>
 <body>
 
 <div class="widget">
-
-    <h1>Each Mini-Column's Potential Pool of Connections</h1>
 
     <div id="potentialPoolWidget"></div>
 
@@ -60,8 +64,6 @@
 
 
 <div class="widget">
-
-    <h1>One Mini-Column's Receptive Field</h1>
 
     <div id="initialPermsWidget"></div>
 

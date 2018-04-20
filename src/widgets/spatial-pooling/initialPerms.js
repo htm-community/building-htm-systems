@@ -106,7 +106,9 @@ module.exports = (elementId) => {
 
             $('svg#receptiveFieldHistogram').html('')
             let svg = d3.select("svg#receptiveFieldHistogram")
-            margin = {top: 10, right: 30, bottom: 30, left: 30},
+            svg.attr('transform', 'translate(0, -40)')
+
+            let margin = {top: 10, right: 30, bottom: 30, left: 30},
                 width = +svg.attr("width") - margin.left - margin.right,
                 height = +svg.attr("height") - margin.top - margin.bottom,
                 g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");

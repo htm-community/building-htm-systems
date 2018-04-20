@@ -1,18 +1,36 @@
 <svg width="560px" height="280px">
     <g id="miniColumnPools"></g>
     <g id="inputSpacePools"></g>
+    <text x="0" y="275">
+        Input Space
+    </text>
+    <text x="280" y="275">
+        Mini-Columns
+    </text>
 </svg>
-<ul>
-    <li>
-        <input type="range" min="100" max="600" value="300" id="inputSpaceSizeSlider" />
-        input space size: <span class="inputSpaceSizeDisplay"></span> bits
-    </li>
-    <li>
+
+<div>
+    <div style="float:right">
         <input type="range" min="100" max="600" value="300" id="miniColumnCountSlider" />
-        mini-column count: <span class="miniColumnCountDisplay"></span> columns
-    </li>
-    <li>
+        <span class="miniColumnCountDisplay"></span> mini-columns
+    </div>
+    <div>
+        <input type="range" min="100" max="600" value="300" id="inputSpaceSizeSlider" />
+        <span class="inputSpaceSizeDisplay"></span> input bits
+        <br/>
         <input type="range" min="0" max="100" value="90" step="5" id="receptiveFieldPercSlider" />
-        receptive field: <span class="receptiveFieldPercDisplay"></span>%
-    </li>
-</ul>
+        <span class="receptiveFieldPercDisplay"></span>% receptive field
+    </div>
+</div>
+
+<div class="figure-description">
+    <p>
+        To the left is a binary input space, where blue indicates cells that are part of a mini-column's potential pool
+        of proximal connections. To the right, looking down at an array of mini-columns, where only the topmost cell in
+        each can be seen. <strong>Mouse over</strong> the mini-columns to make a selection.</p>
+    <p>
+
+    <p>
+        Use the sliders to change sizes or change how large each mini-column's receptive field is.
+    </p>
+</div>
