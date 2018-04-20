@@ -8,7 +8,7 @@ let html = require('./scalarWindow.tmpl.html')
 
 const onColor = 'skyblue'
 const offColor = 'white'
-let jsds = JSDS.create('scalar-window')
+let jsds = JSDS.create()
 
 module.exports = (elementId) => {
 
