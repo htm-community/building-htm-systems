@@ -50,7 +50,8 @@ module.exports = (elementId) => {
             .attr('height', height)
 
         let $resolutionSlider = $('#windowRes'),
-            $resolutionValues = $('.windowRes')
+            $resolutionValues = $('.windowRes'),
+            $speedSlider = $('#speed')
 
         let windowSize = 100
         let index = 40
@@ -182,6 +183,17 @@ module.exports = (elementId) => {
                 .html(utils.precisionRound(value, 2))
         }
 
+        function startTimer(speed) {
+            // If speed is larger than .5 second, we'll assume they just want to stop.
+            if (speed >= 500) speed = 99999999
+            return setInterval(() => {
+                let data = jsds.get('data')
+                data.push(nextSemiRandomSineWaveDataPoint())
+                data.shift()
+                jsds.set('data', data)
+            }, speed)
+        }
+
         jsds.after('set', 'data', (data) => {
             $svg.select('path#plot')
                 .attr('d', lineFunction(data))
@@ -217,12 +229,14 @@ module.exports = (elementId) => {
             jsds.set('resolution', res)
         })
 
-        setInterval(() => {
-            let data = jsds.get('data')
-            data.push(nextSemiRandomSineWaveDataPoint())
-            data.shift()
-            jsds.set('data', data)
-        }, 100)
+        $speedSlider.on('input', () => {
+            clearInterval(timerHandle)
+            let speed = parseInt($speedSlider.val())
+            timerHandle = startTimer(speed)
+        })
+
+        let speed = parseInt($speedSlider.val())
+        let timerHandle = startTimer(speed)
 
         let res = parseInt($resolutionSlider.val()) / 100
         jsds.set('resolution', res)
