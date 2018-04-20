@@ -253,7 +253,6 @@ module.exports = (elementId, bounded=false) => {
         jsds.set('value', value)
         jsds.set('resolution', parseInt(parseInt($resolutionSlider.val()) / 100))
 
-
     })
 
 }

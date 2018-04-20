@@ -111,7 +111,7 @@ eval("class ScalarEncoder {\n\n    constructor(n, w, min, max) {\n        this.n
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("window.BHTMS = {\n    simpleNumberEncoder: __webpack_require__(/*! ./simpleNumberEncoder */ \"./src/widgets/encoders/numbers/simpleNumberEncoder.js\"),\n    scalarWindow: __webpack_require__(/*! ./scalarWindow */ \"./src/widgets/encoders/numbers/scalarWindow.js\")\n};\n\n//# sourceURL=webpack:///./src/widgets/encoders/numbers/index.js?");
+eval("window.BHTMS = {\n    simpleNumberEncoder: __webpack_require__(/*! ./simpleNumberEncoder */ \"./src/widgets/encoders/numbers/simpleNumberEncoder.js\"),\n    scalarWindow: __webpack_require__(/*! ./scalarWindow */ \"./src/widgets/encoders/numbers/scalarWindow.js\"),\n    JSDS: __webpack_require__(/*! JSDS */ \"./node_modules/javascript-data-store/src/jsds.js\")\n};\n\n//# sourceURL=webpack:///./src/widgets/encoders/numbers/index.js?");
 
 /***/ }),
 
