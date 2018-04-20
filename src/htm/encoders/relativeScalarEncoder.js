@@ -1,3 +1,43 @@
+function encode(value, n, resolution, min, max) {
+    let bitIndexToValue = d3.scaleLinear()
+        .domain([0, n])
+        .range([min, max])
+    let encoding = []
+    // For each bit in the encoding.
+    for (let i = 0; i < n; i++) {
+        let bitScalarValue = bitIndexToValue(i),
+            bitValue = 0,
+            valueDiff = bitScalarValue - value,
+            valueDistance = Math.abs(valueDiff),
+            radius = resolution / 2
+        if (valueDistance <= radius) bitValue = 1
+        encoding.push(bitValue)
+    }
+    return encoding
+}
+
+function encodeBounded(value, n, resolution, min, max) {
+    let bitIndexToValue = d3.scaleLinear()
+        .domain([0, n])
+        .range([min, max])
+    let encoding = []
+    // For each bit in the encoding.
+    for (let i = 0; i < n; i++) {
+        let bitValue = bitIndexToValue(i),
+            bit = 0,
+            valueDiff = bitValue - value,
+            valueDistance = Math.abs(valueDiff),
+            radius = resolution / 2
+        if (valueDistance <= radius) bit = 1
+        // Keeps the bucket from changing size at min/max values
+        if (value < (min + radius) && bitValue < (min + resolution)) bit = 1
+        if (value > (max - radius) && bitValue > (max - resolution)) bit = 1
+        encoding.push(bit)
+    }
+    return encoding
+}
+
+
 class RelativeScalarEncoder {
 
     constructor(n, resolution, min, max, bounded=false) {
@@ -13,27 +53,10 @@ class RelativeScalarEncoder {
     }
 
     encode(value) {
-        let encoding = [],
-            resolution = this.resolution,
-            n = this.n,
-            min = this.min,
-            max = this.max
-        // For each bit in the encoding.
-        for (let i = 0; i < n; i++) {
-            let bitValue = this._bitIndexToValue(i),
-                bit = 0,
-                valueDiff = bitValue - value,
-                valueDistance = Math.abs(valueDiff),
-                radius = resolution / 2
-            if (valueDistance <= radius) bit = 1
-            // Keeps the bucket from changing size at min/max values
-            if (this.bounded) {
-                if (value < (min + radius) && bitValue < (min + resolution)) bit = 1
-                if (value > (max - radius) && bitValue > (max - resolution)) bit = 1
-            }
-            encoding.push(bit)
+        if (this.bounded) {
+            return encodeBounded(value, this.n, this.resolution, this.min, this.max)
         }
-        return encoding
+        return encode(value, this.n, this.resolution, this.min, this.max)
     }
 
     getRangeFromBitIndex(i) {
