@@ -6,7 +6,6 @@ let html = require('./simpleNumberEncoder.tmpl.html')
 const onColor = 'skyblue'
 const offColor = 'white'
 let jsds = JSDS.create('simple-number-encoder')
-let jsdsHandles = []
 
 module.exports = (elementId, bounded=false) => {
 
@@ -20,6 +19,8 @@ module.exports = (elementId, bounded=false) => {
             maxValue = 55,
             bits = 100,
             value = 30
+
+        let jsdsHandles = []
 
         let valueScaleTopMargin = 40,
             valueScaleSideMargins = 10

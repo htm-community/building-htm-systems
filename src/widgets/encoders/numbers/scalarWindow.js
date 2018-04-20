@@ -7,7 +7,6 @@ let html = require('./scalarWindow.tmpl.html')
 const onColor = 'skyblue'
 const offColor = 'white'
 let jsds = JSDS.create()
-let jsdsHandles = []
 
 module.exports = (elementId) => {
 
@@ -15,6 +14,8 @@ module.exports = (elementId) => {
     let n = 100
     let min = -1.25
     let max = 1.25
+
+    let jsdsHandles = []
 
     let dataStep = 0.25
     let counter = 0
