@@ -10,7 +10,7 @@ let mode = 'development'
 
 let modules = []
 
-// Encoder widgets
+// encoding-numbers/
 modules.push({
     mode: mode,
     entry: [
@@ -43,11 +43,11 @@ modules.push({
     },
     output: {
         path: __dirname + "/docs",
-        filename: `bhtms-encoder-widgets-${version}.js`
+        filename: `bhtms-encoding-numbers-${version}.js`
     }
 })
 
-// Spatial Pooling widgets
+// /input-space/
 modules.push({
     mode: mode,
     entry: [
@@ -78,7 +78,7 @@ modules.push({
     },
     output: {
         path: __dirname + "/docs",
-        filename: `bhtms-sp-widgets-${version}.js`
+        filename: `bhtms-input-space-${version}.js`
     }
 })
 
