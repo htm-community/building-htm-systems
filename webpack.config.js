@@ -14,7 +14,6 @@ let modules = []
 modules.push({
     mode: mode,
     entry: [
-        "./src/htm/encoders/relativeScalarEncoder.js",
         "./src/widgets/encoders/numbers/index.js",
         "./src/widgets/encoders/numbers/simpleNumberEncoder.js",
         "./src/widgets/encoders/numbers/simpleNumberEncoder.tmpl.html",
@@ -37,11 +36,13 @@ modules.push({
         alias: {
             JSDS: path.join(__dirname, "node_modules/javascript-data-store/src/jsds"),
             SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
-            SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing")
+            SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
+            ScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/scalar"),
+            RelativeScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/relativeScalar"),
         }
     },
     output: {
-        path: __dirname + "/docs/widgets",
+        path: __dirname + "/docs",
         filename: `bhtms-encoder-widgets-${version}.js`
     }
 })
@@ -76,30 +77,8 @@ modules.push({
         }
     },
     output: {
-        path: __dirname + "/docs/widgets",
-        filename: `bhtms-spatial-pooling-widgets-${version}.js`
-    }
-})
-
-// HTM Encoders
-modules.push({
-    mode: mode,
-    entry: [
-        "./src/htm/encoders/scalar.js",
-        "./src/htm/encoders/relativeScalarEncoder.js",
-        "./src/htm/index.js",
-    ],
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                loader: "babel-loader"
-            }
-        ]
-    },
-    output: {
-        path: __dirname + "/docs/htm",
-        filename: `bhtms-htm-encoders-${version}.js`
+        path: __dirname + "/docs",
+        filename: `bhtms-sp-widgets-${version}.js`
     }
 })
 

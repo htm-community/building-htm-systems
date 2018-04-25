@@ -1,4 +1,4 @@
-let RelativeScalarEncoder = require('../../../htm/encoders/relativeScalarEncoder')
+let RelativeScalarEncoder = require('RelativeScalarEncoder')
 let JSDS = require('JSDS')
 let utils = require('../../utils')
 let html = require('./simpleNumberEncoder.tmpl.html')

@@ -1,5 +1,5 @@
-let RelativeScalarEncoder = require('../../../htm/encoders/relativeScalarEncoder')
-let ScalarEncoder = require('../../../htm/encoders/scalar')
+let RelativeScalarEncoder = require('RelativeScalarEncoder')
+let ScalarEncoder = require('ScalarEncoder')
 let JSDS = require('JSDS')
 let utils = require('../../utils')
 let html = require('./scalarWindow.tmpl.html')

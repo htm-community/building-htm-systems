@@ -2,7 +2,7 @@
 
 # Building HTM Systems
 
-See website at [htmtheory.org](http://htmtheory.org) for now. This is a work in progress. Very early stages.
+See website at [buildinghtm.systems](http://buildinghtm.systems) for now. This is a work in progress. Very early stages.
 
 This uses webpack to package some custom visualization libraries we uses for displaying HTM systems. It packages up binaries in bundles for use on the website above, to show interactive widgets.
 
@@ -15,11 +15,7 @@ Widget binaries are constructed by webpack and chucked into URL/folder.
 
 ### Building widgets:
 
-    npm run build
+    npm start
 
-See `out` folders in widget subdirectories.
-
-## HTM Example Code
-
-coming soon...
+Webpack bundles go into `docs` for easy deployment on push to github-pages.
 
