@@ -23,3 +23,4 @@ Widget binaries are constructed by webpack and chucked into URL/folder.
 
 Webpack bundles go into `docs` for easy deployment on push to github-pages.
 
+See [widgets.html](./widgets.html) for examples.
