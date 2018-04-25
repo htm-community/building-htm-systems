@@ -51,11 +51,11 @@ modules.push({
 modules.push({
     mode: mode,
     entry: [
-        "./src/widgets/spatial-pooling/index.js",
-        "./src/widgets/spatial-pooling/potentialPools.tmpl.html",
-        "./src/widgets/spatial-pooling/potentialPools.js",
-        "./src/widgets/spatial-pooling/initialPerms.tmpl.html",
-        "./src/widgets/spatial-pooling/initialPerms.js",
+        "./src/widgets/input-space/index.js",
+        "./src/widgets/input-space/potentialPools.tmpl.html",
+        "./src/widgets/input-space/potentialPools.js",
+        "./src/widgets/input-space/initialPerms.tmpl.html",
+        "./src/widgets/input-space/initialPerms.js",
     ],
     module: {
         rules: [
