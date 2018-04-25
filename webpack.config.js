@@ -14,11 +14,11 @@ let modules = []
 modules.push({
     mode: mode,
     entry: [
-        "./src/widgets/encoders/numbers/index.js",
-        "./src/widgets/encoders/numbers/simpleNumberEncoder.js",
-        "./src/widgets/encoders/numbers/simpleNumberEncoder.tmpl.html",
-        "./src/widgets/encoders/numbers/scalarWindow.js",
-        "./src/widgets/encoders/numbers/scalarWindow.tmpl.html",
+        "./src/widgets/encoding-numbers/index.js",
+        "./src/widgets/encoding-numbers/simpleNumberEncoder.js",
+        "./src/widgets/encoding-numbers/simpleNumberEncoder.tmpl.html",
+        "./src/widgets/encoding-numbers/scalarWindow.js",
+        "./src/widgets/encoding-numbers/scalarWindow.tmpl.html",
     ],
     module: {
         rules: [
