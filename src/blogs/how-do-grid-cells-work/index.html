@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>How Do Grid Cells Work?</title>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="../../../docs/bhtms-how-do-grid-cells-work-0.2.2.js"></script>
+
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            background-color:  #fff;
+            color: #000;
+            font-weight: 300;
+            cursor: default;
+            font-family: "Lato", "Helvetica", serif;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+        a {
+            text-decoration: none;
+        }
+        .unselectable {
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+        #canvas-container {
+            position: relative;
+            height: 300px;
+            width: 300px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+        .navbar {
+            height: 40px;
+            /*background-color: #aaa;*/
+            border: 1px solid #fff;
+        }
+        .navbar .btn, .navbar .label{
+            float: left;
+
+            border-right: 2px solid #fff;
+            height: 40px;
+            line-height: 40px;
+
+        }
+        .navbar .btn {
+            color: #000;
+            width: 40px;
+            text-align: center;
+            background-color: #ccc;
+        }
+        .navbar .btn:active {
+            color: #000;
+            background-color: #eee;
+        }
+        .navbar .label{
+            font-size: 1em;
+            padding: 0px 10px 0 15px;
+        }
+        #color-palette {
+            height: 50px;
+            background-color: #ccc;
+            border: 0px solid #fff;
+        }
+        #color-palette .color{
+            float: left;
+            width: 30px;
+            border-right: 2px solid #fff;
+            height: 50px;
+        }
+        .clear { clear: right; }    </style>
+
+</head>
+
+<body class="unselectable">
+
+<div class="widget">
+
+    <div id="gridCellFiringFields"></div>
+
+    <script>
+        $(function() {
+            BHTMS.gridCellFiringFields("gridCellFiringFields")
+        });
+    </script>
+
+</div>
+
+</body>
+
+</html>

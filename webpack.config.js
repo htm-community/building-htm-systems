@@ -82,4 +82,40 @@ modules.push({
     }
 })
 
+// For Blogs
+
+// How Do Grid Cells Work?
+modules.push({
+    mode: mode,
+    entry: [
+        "./src/blogs/how-do-grid-cells-work/index.js",
+        "./src/blogs/how-do-grid-cells-work/firingFields.js",
+        "./src/blogs/how-do-grid-cells-work/firingFields.tmpl.html",
+    ],
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                loader: "babel-loader"
+            },
+            {
+                test: /tmpl\.html$/,
+                loader: "posthtml-loader"
+            }
+        ]
+    },
+    resolve: {
+        alias: {
+            JSDS: path.join(__dirname, "node_modules/javascript-data-store/src/jsds"),
+            SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
+            SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
+        }
+    },
+    output: {
+        path: __dirname + "/docs",
+        filename: `bhtms-how-do-grid-cells-work-${version}.js`
+    }
+})
+
+
 module.exports = modules
