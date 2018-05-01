@@ -7,9 +7,9 @@ let FiringPatch = require('./firingPatch')
 // colors for... [[ background, agent, big circle, small circle ]]
 //
 let colors = [
-    ["rgba(0, 0, 0, 1.0)", "rgba(255, 255, 255, 1.0)", "rgba(255,   0,   0, 0.01)", "rgba(255, 0, 0, 1.0)" ],
-    ["rgba(0, 0, 0, 1.0)", "rgba(255, 255, 255, 1.0)", "rgba(55, 255, 255, 0.01)", "rgba(55, 255, 255, 1.0)" ],
-    ["rgba(255, 255, 255, 1.0)", "rgba(0, 0, 0, 1.0)", "rgba(55, 0, 255, 0.01)", "rgba(55, 0, 255, 1.0)" ],
+    ["rgba(0, 0, 0, 1.0)", "rgba(255, 255, 255, 1.0)", "rgba(255,   0,   0, 0.1)", "rgba(255, 0, 0, 1.0)" ],
+    ["rgba(0, 0, 0, 1.0)", "rgba(255, 255, 255, 1.0)", "rgba(55, 255, 255, 0.1)", "rgba(55, 255, 255, 1.0)" ],
+    ["rgba(255, 255, 255, 1.0)", "rgba(0, 0, 0, 1.0)", "rgba(55, 0, 255, 0.1)", "rgba(55, 0, 255, 1.0)" ],
     ["rgba(255, 255, 255, 1.0)", "rgba(0, 0, 0, 1.0)", "rgba(255, 0, 0, 0.01)", "rgba(255, 0, 0, 1.0)" ]
 ]
 
@@ -268,6 +268,8 @@ function goSvg(elId) {
 module.exports = (elId) => {
 
     utils.loadHtml(html.default, elId, () => {
+
+        let mouseOver = false
 
         let $speedSlider = $('#speed')
 
