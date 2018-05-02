@@ -1,11 +1,16 @@
-<svg style='stroke-width: 0px; background-color: grey;'>
+<svg>
+    <defs></defs>
     <circle id="current-location"></circle>
 </svg>
 
-<div>
-    slow <input type="range"
-                id="speed"
-                style="direction:rtl"
-                min="1" max="500" step="1" value="100"
-    /> fast
+<br/>
+
+<div class="cell-selection">
+    <input id="grid-cell-0" type="checkbox" checked="checked"><label for="grid-cell-0">Cell A</label>
+    &nbsp;&nbsp;
+    <input id="grid-cell-1" type="checkbox" checked="checked"><label for="grid-cell-1">Cell B</label>
+    &nbsp;&nbsp;
+    <input id="grid-cell-2" type="checkbox" checked="checked"><label for="grid-cell-2">Cell C</label>
 </div>
+
+<input id="beeps" type="checkbox"><label for="beeps">Emit Beeps</label>

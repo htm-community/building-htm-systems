@@ -14,9 +14,11 @@ class FiringPatch {
         let c = this.center;
         let r = this.radius;
         let d = dist(p, c);
-
-        if (d < r) return Math.exp(- (d^2)/10.);
-        else return 0;
+        let out = 0
+        if (d < r) {
+            out = Math.exp(- (d^2)/10.)
+        }
+        return out
     }
 
     spike(p) {

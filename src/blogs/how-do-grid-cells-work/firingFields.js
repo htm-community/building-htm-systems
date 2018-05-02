@@ -3,15 +3,20 @@ let html = require('./firingFields.tmpl.html')
 let JSDS = require('JSDS')
 let FiringPatch = require('./firingPatch')
 
-//
-// colors for... [[ background, agent, big circle, small circle ]]
-//
-let colors = [
-    ["rgba(0, 0, 0, 1.0)", "rgba(255, 255, 255, 1.0)", "rgba(255,   0,   0, 0.1)", "rgba(255, 0, 0, 1.0)" ],
-    ["rgba(0, 0, 0, 1.0)", "rgba(255, 255, 255, 1.0)", "rgba(55, 255, 255, 0.1)", "rgba(55, 255, 255, 1.0)" ],
-    ["rgba(255, 255, 255, 1.0)", "rgba(0, 0, 0, 1.0)", "rgba(55, 0, 255, 0.1)", "rgba(55, 0, 255, 1.0)" ],
-    ["rgba(255, 255, 255, 1.0)", "rgba(0, 0, 0, 1.0)", "rgba(255, 0, 0, 0.01)", "rgba(255, 0, 0, 1.0)" ]
-]
+let w = 560
+let h = 560
+
+let maxQueue = 100
+let dotSize = 2
+let fuzzSize = 34
+let emitBeeps = false
+
+let walkDistance = 10000
+let walkSpeed = 15.0
+
+let $svg
+
+let newColors = ['red', 'blue', 'green']
 
 let jsds = JSDS.create('grid-cell-firing-fields')
 
@@ -197,34 +202,87 @@ let random_torus_walk = function(d, w, h, speed) {
     return [X,V]
 }
 
+function treatStops(points, key) {
+    points
+        .attr('offset', d => d[0] + '%')
+        .attr('stop-color', newColors[key])
+        .attr('stop-opacity', d => d[1] / 2)
+}
+
+function treatGradients(points, key, numPoints) {
+    points.attr('id', (d, i) => {
+            return 'gradient-' + key + '-' + i
+        })
+        .attr('cx', '50%')
+        .attr('cy', '50%')
+        .attr('r', (d, i) => {
+            return i / numPoints
+        })
+
+    // Update stops
+    let $stops = points.selectAll('stop')
+        .data([[0, 1], [100, 0]])
+    treatStops($stops, key)
+
+    // Enter stops
+    let $newStops = $stops.enter().append('stop')
+    treatStops($newStops, key)
+
+    // Exit stops
+    $stops.exit().remove()
+}
+
+function treatCircles(type, points, key, radius, color, useGradient=false) {
+    points.attr('cx', d => d.x)
+        .attr('cy', d => d.y)
+        .attr('r', radius)
+    if (useGradient) {
+        points.attr('fill', (d, i) => {
+            return 'url("#gradient-' + key + '-' + i + '")'
+        })
+    } else {
+        points.attr('fill', newColors[key])
+    }
+}
+
 function redraw($el, data, currentLocation) {
 
     let keys = Object.keys(data)
-
-    function treatCircle(points, key, radius, color) {
-        points.attr('cx', d => d.x)
-            .attr('cy', d => d.y)
-            .attr('r', radius)
-            .attr('fill', color)
-    }
 
     for (let key of keys) {
         let $dotGroup = $el.select('g#group-' + key + ' g.dots')
         let $fuzzGroup = $el.select('g#group-' + key + ' g.fuzz')
 
+        // First let's deal with the gradients
+        let numPoints = data[key].length
+
+        // Update
+        let $gradients = $fuzzGroup.select('defs').selectAll('radialGradient')
+            .data(data[key])
+        treatGradients($gradients, key, numPoints)
+
+        // Enter
+        let $newGradients = $gradients.enter().append('radialGradient')
+        treatGradients($newGradients, key, numPoints)
+
+        // Exit
+        $gradients.exit().remove()
+
+        // Now deal with circles, using radial gradients for fuzzy circles
+
         // Update
         let $dots = $dotGroup.selectAll('circle')
             .data(data[key])
-        treatCircle($dots, key, 1, colors[key][3])
+        treatCircles('dot', $dots, key, dotSize, newColors[key])
         let $fuzz = $fuzzGroup.selectAll('circle')
             .data(data[key])
-        treatCircle($fuzz, key, 10, colors[key][2])
+        treatCircles('fuzz', $fuzz, key, fuzzSize, newColors[key], true)
 
         // Enter
         let $newDots = $dots.enter().append('circle')
-        treatCircle($newDots, key, 1, colors[key][3])
+        treatCircles('dot', $newDots, key, 1, newColors[key])
         let $newFuzz = $fuzz.enter().append('circle')
-        treatCircle($newFuzz, key, 10, colors[key][2])
+        treatCircles('fuzz', $newFuzz, key, 10, newColors[key])
         // Exit
         $dots.exit().remove()
         $fuzz.exit().remove()
@@ -233,16 +291,17 @@ function redraw($el, data, currentLocation) {
     $el.select('#current-location')
         .attr('cx', currentLocation.x)
         .attr('cy', currentLocation.y)
-        .attr('r', 10)
-        .attr('stroke', 'red')
-        .attr('stroke-width', '2px')
+        .attr('r', fuzzSize / 2)
+        .attr('stroke-dasharray', [5, 1])
+        .attr('stroke', 'grey')
+        .attr('stroke-width', '1px')
         .attr('fill', 'none')
 
 }
 
 function prepSvg($svg, keys) {
-    $svg.attr('width', 300)
-        .attr('height', 300)
+    $svg.attr('width', w)
+        .attr('height', h)
 
     let $gcGroups = $svg.selectAll('g.grid-cell')
         .data(keys)
@@ -252,17 +311,23 @@ function prepSvg($svg, keys) {
         .attr('class', 'grid-cell')
 
     $gcGroups.append('g').attr('class', 'dots')
-    $gcGroups.append('g').attr('class', 'fuzz')
+    $gcGroups.append('g').attr('class', 'fuzz').append('defs')
 }
 
 function goSvg(elId) {
-    let $svg = d3.select('#' + elId + ' svg')
+    $svg = d3.select('#' + elId + ' svg')
 
     prepSvg($svg, ["0", "1", "2"])
 
     jsds.after('set', 'spikes', () => {
         redraw($svg, jsds.get('spikes'), jsds.get('currentLocation'))
     })
+}
+
+function setVisible(gcId, visible) {
+    let visibility = 'hidden'
+    if (visible) visibility = 'visible'
+    d3.select('#group-' + gcId).attr('visibility', visibility)
 }
 
 module.exports = (elId) => {
@@ -272,9 +337,6 @@ module.exports = (elId) => {
         let mouseOver = false
 
         let $speedSlider = $('#speed')
-
-        let w = 300
-        let h = 300
 
         let zeros = function (dimensions) {
             let array = [];
@@ -290,8 +352,7 @@ module.exports = (elId) => {
         let t=0;
         let grid_cells = []
 
-        let d = 1000000
-        let [X,V] = random_torus_walk(d, w, h, 2.0)
+        let [X,V] = random_torus_walk(walkDistance, w, h, walkSpeed)
         let speed = parseInt($speedSlider.val())
 
         let mx = X[t][0];
@@ -299,7 +360,7 @@ module.exports = (elId) => {
 
 
         let theta = 1.43
-        let c = 110
+        let c = 220
         grid_cells.push(create_firing_field(
             [
                 [c*Math.cos(theta), c*Math.cos(theta + Math.PI/3.0)],
@@ -307,11 +368,11 @@ module.exports = (elId) => {
             ],
             [0, 0],
             [20, 20],
-            60
+            400
         ))
 
         theta = 0.43
-        c = 115
+        c = 180
         grid_cells.push(create_firing_field(
             [
                 [c*Math.cos(theta), c*Math.cos(theta + Math.PI/3.0)],
@@ -319,18 +380,19 @@ module.exports = (elId) => {
             ],
             [10, 0],
             [20, 20],
-            70
+            400
         ))
 
-
+        theta = 2.0
+        c = 200
         grid_cells.push(create_firing_field(
             [
-                [100,   0],
-                [  0, 100]
+                [c*Math.cos(theta), c*Math.cos(theta + Math.PI/3.0)],
+                [c*Math.sin(theta), c*Math.sin(theta + Math.PI/3.0)]
             ],
-            [150, 150],
+            [10, 0],
             [20, 20],
-            100
+            400
         ))
 
         jsds.set('gridCells', grid_cells)
@@ -345,7 +407,8 @@ module.exports = (elId) => {
                 for (let f of grid_cells[gcId]) {
                     if(f.spike([x,y])) {
                         gcStore.push(loc)
-                        // beep()
+                        if (gcStore.length > maxQueue) gcStore.shift()
+                        if (emitBeeps) beep()
                     }
                 }
                 if (gcStore.length) {
@@ -357,29 +420,28 @@ module.exports = (elId) => {
             t+= 1
         }
 
-        function startTimer(speed) {
-            // If speed is larger than .5 second, we'll assume they just want to stop.
-            if (speed >= 500) speed = 99999999
-            return setInterval(() => {
-                mx = X[t%d][0];
-                my = X[t%d][1];
-                updateLocation(mx, my)
-            }, speed)
+        function step(timestamp) {
+            mx = X[t%walkDistance][0];
+            my = X[t%walkDistance][1];
+            updateLocation(mx, my)
+            window.requestAnimationFrame(step)
         }
 
         goSvg(elId)
 
-        $speedSlider.on('input', () => {
-            clearInterval(timerHandle)
-            let speed = parseInt($speedSlider.val())
-            console.log(speed)
-            timerHandle = startTimer(speed)
+        $('.cell-selection input').change((evt) => {
+            let elid = evt.target.id
+            let gcid = elid.split('-').pop()
+            let isOn = document.getElementById(elid).checked
+            setVisible(gcid, isOn)
         })
 
-        let timerHandle = startTimer(speed)
+        $('input#beeps').change((evt) => {
+            let elid = evt.target.id
+            emitBeeps = document.getElementById(elid).checked
+        })
 
+        window.requestAnimationFrame(step)
     })
 
 }
-
-
