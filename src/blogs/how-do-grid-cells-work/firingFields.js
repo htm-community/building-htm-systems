@@ -10,6 +10,9 @@ let maxQueue = 100
 let dotSize = 2
 let fuzzSize = 34
 let emitBeeps = false
+let walks = true
+
+let frameRef
 
 let walkDistance = 10000
 let walkSpeed = 15.0
@@ -424,7 +427,9 @@ module.exports = (elId) => {
             mx = X[t%walkDistance][0];
             my = X[t%walkDistance][1];
             updateLocation(mx, my)
-            window.requestAnimationFrame(step)
+            if (walks) {
+                frameRef = window.requestAnimationFrame(step)
+            }
         }
 
         goSvg(elId)
@@ -437,11 +442,19 @@ module.exports = (elId) => {
         })
 
         $('input#beeps').change((evt) => {
-            let elid = evt.target.id
-            emitBeeps = document.getElementById(elid).checked
+            emitBeeps = document.getElementById(evt.target.id).checked
         })
 
-        window.requestAnimationFrame(step)
+        $('input#walks').change((evt) => {
+            walks = document.getElementById(evt.target.id).checked
+            if (walks) {
+                frameRef = window.requestAnimationFrame(step)
+            } else {
+                window.cancelAnimationFrame(frameRef)
+            }
+        })
+
+        frameRef = window.requestAnimationFrame(step)
     })
 
 }
