@@ -6,10 +6,9 @@ let FiringPatch = require('./firingPatch')
 let w = 560
 let h = 560
 
-let maxQueue = 100
+let maxQueue = 200
 let dotSize = 2
-let fuzzSize = 34
-let emitBeeps = false
+let fuzzSize = 30
 let walks = true
 
 let frameRef
@@ -23,132 +22,10 @@ let newColors = ['red', 'blue', 'green']
 
 let jsds = JSDS.create('grid-cell-firing-fields')
 
+/************** UTILS **********************/
 let mod = function (a, b) {
     return ((a % b) + b) % b;
-};
-
-if(!Number.prototype.mod) {
-    Number.prototype.mod = function (b) {
-        return ((this % b) + b) % b;
-    };
 }
-
-let bind = function(that, f) {
-    return function() {
-        return f.apply(that, arguments);
-    }
-};
-
-if(!Array.prototype.last) {
-    Array.prototype.last = function() {
-        return this[this.length - 1];
-    }
-}
-
-let extractMousePosition = function(e) {
-    let posx = 0;
-    let posy = 0;
-    if (!e) e = window.event;
-    if (e.pageX || e.pageY) 	{
-        posx = e.pageX;
-        posy = e.pageY;
-    }
-    else if (e.clientX || e.clientY) 	{
-        posx = e.clientX + document.body.scrollLeft
-            + document.documentElement.scrollLeft;
-        posy = e.clientY + document.body.scrollTop
-            + document.documentElement.scrollTop;
-    }
-    return [posx, posy];
-}
-
-let Stage = function (canvasElement) {
-    let canvas = canvasElement;
-    let ctx = canvas.getContext('2d');
-
-    this.size = function() {
-        return [canvas.width, canvas.height]
-    }
-
-    this.pixel = function(position, color) {
-        ctx.fillStyle = color;
-        ctx.fillRect(position[0], position[1], 2, 2);
-    };
-
-    this.rect = function(position, size, color) {
-        ctx.fillStyle = color;
-        ctx.fillRect(position[0], position[1], size[0], size[1]);
-    };
-
-    this.circle = function(position, radius, color) {
-        ctx.fillStyle = color;
-        hidden_ctx.beginPath();
-        hidden_ctx.arc(position[0],position[1],radius,0,2*Math.PI);
-        hidden_ctx.fill();
-    };
-
-    this.clear = function () {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    };
-
-    this.imshow= function(imagedata) {
-        ctx.putImageData(imageata, 0, 0)
-    }
-};
-
-let makeObservable = function (obj) {
-    let callbacks =  {};
-
-    obj.on =  function (type, f) {
-        (callbacks[type] = callbacks[type] || []).push(f);
-        return obj;
-    };
-
-    obj.fire = function (type, data) {
-        let args = [].slice.call(arguments, 1);
-        (callbacks[type] || []).map(function (f) {
-            f.apply(obj, args || null);
-        });
-
-        (callbacks["any"] || []).map(function (f) {
-            f.apply(obj, [type].concat(args) );
-        });
-        return obj;
-    };
-
-    obj.fireMany = function (events) {
-        let that = this;
-        events.map(function (args) {
-            that.fire.apply(that, args);
-        });
-    };
-
-    obj.onAny = function (f) {
-        (callbacks["any"] = callbacks["any"] || []).push(f);
-        return obj;
-    };
-
-    return obj;
-}
-
-
-let beep = (function () {
-    let context = new AudioContext()
-    let o = new OscillatorNode(context)
-    let g = context.createGain()
-    o.connect(g)
-    g.connect(context.destination)
-    o.connect(g)
-    g.connect(context.destination)
-    o.start(0)
-    g.gain.linearRampToValueAtTime(0, context.currentTime)
-
-    return function () {
-        g.gain.linearRampToValueAtTime(1, context.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.00001, context.currentTime + 0.04);
-        g.gain.linearRampToValueAtTime(0, context.currentTime + 0.4);}
-})()
-
 
 let create_firing_field = function(B, v, num_fields, r) {
     let [w,h] = num_fields
@@ -169,7 +46,6 @@ let create_firing_field = function(B, v, num_fields, r) {
     }
     return firing_field
 };
-
 
 // Standard Normal variate using Box-Muller transform.
 let randn_bm = function() {
@@ -205,6 +81,8 @@ let random_torus_walk = function(d, w, h, speed) {
     return [X,V]
 }
 
+/***** graphic treatments *******/
+
 function treatStops(points, key) {
     points
         .attr('offset', d => d[0] + '%')
@@ -235,7 +113,7 @@ function treatGradients(points, key, numPoints) {
     $stops.exit().remove()
 }
 
-function treatCircles(type, points, key, radius, color, useGradient=false) {
+function treatCircles(points, key, radius, useGradient=false) {
     points.attr('cx', d => d.x)
         .attr('cy', d => d.y)
         .attr('r', radius)
@@ -247,6 +125,7 @@ function treatCircles(type, points, key, radius, color, useGradient=false) {
         points.attr('fill', newColors[key])
     }
 }
+
 
 function redraw($el, data, currentLocation) {
 
@@ -276,16 +155,16 @@ function redraw($el, data, currentLocation) {
         // Update
         let $dots = $dotGroup.selectAll('circle')
             .data(data[key])
-        treatCircles('dot', $dots, key, dotSize, newColors[key])
+        treatCircles($dots, key, dotSize)
         let $fuzz = $fuzzGroup.selectAll('circle')
             .data(data[key])
-        treatCircles('fuzz', $fuzz, key, fuzzSize, newColors[key], true)
+        treatCircles($fuzz, key, fuzzSize, true)
 
         // Enter
         let $newDots = $dots.enter().append('circle')
-        treatCircles('dot', $newDots, key, 1, newColors[key])
+        treatCircles($newDots, key, 1)
         let $newFuzz = $fuzz.enter().append('circle')
-        treatCircles('fuzz', $newFuzz, key, 10, newColors[key])
+        treatCircles($newFuzz, key, 10)
         // Exit
         $dots.exit().remove()
         $fuzz.exit().remove()
@@ -337,26 +216,10 @@ module.exports = (elId) => {
 
     utils.loadHtml(html.default, elId, () => {
 
-        let mouseOver = false
-
-        let $speedSlider = $('#speed')
-
-        let zeros = function (dimensions) {
-            let array = [];
-
-            for (let i = 0; i < dimensions[0]; ++i) {
-                array.push(dimensions.length == 1 ? 0 : zeros(dimensions.slice(1)));
-            }
-
-            return array;
-        };
-
-
         let t=0;
         let grid_cells = []
 
         let [X,V] = random_torus_walk(walkDistance, w, h, walkSpeed)
-        let speed = parseInt($speedSlider.val())
 
         let mx = X[t][0];
         let my = X[t][1];
@@ -411,7 +274,6 @@ module.exports = (elId) => {
                     if(f.spike([x,y])) {
                         gcStore.push(loc)
                         if (gcStore.length > maxQueue) gcStore.shift()
-                        if (emitBeeps) beep()
                     }
                 }
                 if (gcStore.length) {
@@ -423,12 +285,20 @@ module.exports = (elId) => {
             t+= 1
         }
 
-        function step(timestamp) {
+        function start() {
+            frameRef = window.requestAnimationFrame(step)
+        }
+
+        function stop() {
+            window.cancelAnimationFrame(frameRef)
+        }
+
+        function step() {
             mx = X[t%walkDistance][0];
             my = X[t%walkDistance][1];
             updateLocation(mx, my)
             if (walks) {
-                frameRef = window.requestAnimationFrame(step)
+                start()
             }
         }
 
@@ -441,20 +311,28 @@ module.exports = (elId) => {
             setVisible(gcid, isOn)
         })
 
-        $('input#beeps').change((evt) => {
-            emitBeeps = document.getElementById(evt.target.id).checked
-        })
-
         $('input#walks').change((evt) => {
             walks = document.getElementById(evt.target.id).checked
             if (walks) {
-                frameRef = window.requestAnimationFrame(step)
+                start()
             } else {
-                window.cancelAnimationFrame(frameRef)
+                stop()
             }
         })
 
-        frameRef = window.requestAnimationFrame(step)
+        $svg.on('mouseenter', () => {
+            if (walks) stop()
+        })
+        $svg.on('mousemove', () => {
+            let mouse = d3.mouse($svg.node())
+            updateLocation(mouse[0], mouse[1])
+            //start()
+        })
+        $svg.on('mouseleave', () => {
+            if (walks) start()
+        })
+
+        start()
     })
 
 }
