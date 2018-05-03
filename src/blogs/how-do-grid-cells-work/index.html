@@ -8,6 +8,14 @@
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="../../../docs/bhtms-how-do-grid-cells-work-0.2.2.js"></script>
 
+    <style>
+        .widget {
+            width: 560px;
+            border: 1px black;
+            margin: 20px 0;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -23,6 +31,20 @@
     </script>
 
 </div>
+
+
+<div class="widget">
+
+    <div id="oneDimensionalMapping"></div>
+
+    <script>
+        $(function() {
+            BHTMS.oneDimensionalMapping("oneDimensionalMapping")
+        });
+    </script>
+
+</div>
+
 
 </body>
 

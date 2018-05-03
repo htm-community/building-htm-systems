@@ -188,7 +188,9 @@ function redraw($el, data, currentLocation) {
 
 }
 
-function prepSvg($svg, keys) {
+function prepSvg($svg) {
+    let keys = ["0", "1", "2"]
+
     $svg.attr('width', w)
         .attr('height', h)
 
@@ -203,12 +205,6 @@ function prepSvg($svg, keys) {
     $gcGroups.append('g').attr('class', 'fuzz').append('defs')
     // Add the current location circle over top of everything else
     $svg.append('circle').attr('id', 'current-location')
-}
-
-function goSvg(elId) {
-    $svg = d3.select('#' + elId + ' svg')
-
-    prepSvg($svg, ["0", "1", "2"])
 
     jsds.after('set', 'spikes', () => {
         redraw($svg, jsds.get('spikes'), jsds.get('currentLocation'))
@@ -313,8 +309,6 @@ let moduleOut = (elId) => {
             }
         }
 
-        goSvg(elId)
-
         $('.cell-selection input').change((evt) => {
             let elid = evt.target.id
             let gcid = elid.split('-').pop()
@@ -331,6 +325,8 @@ let moduleOut = (elId) => {
             }
         })
 
+        $svg = d3.select('#' + elId + ' svg')
+
         $svg.on('mouseenter', () => {
             if (walks) stop()
         })
@@ -343,12 +339,13 @@ let moduleOut = (elId) => {
             if (walks) start()
         })
 
+        prepSvg($svg)
         start()
     })
 
 }
 
-// Just a hack to shove in more functionality without opening up the API.
+// A hack to shove in more functionality without opening up the API.
 moduleOut.selectCellByColor = (clr) => {
     newColors.forEach((color, gcId) => {
         setVisible(gcId, color === clr)
