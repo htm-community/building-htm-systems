@@ -3,12 +3,12 @@ let html = require('./firingFields.tmpl.html')
 let JSDS = require('JSDS')
 let FiringPatch = require('./firingPatch')
 
-let w = 560
-let h = 560
+let w = 558
+let h = 400
 
 let maxQueue = 200
-let dotSize = 2
-let fuzzSize = 30
+let dotSize = 1
+let fuzzSize = 60
 let walks = true
 
 let frameRef
@@ -102,7 +102,7 @@ function treatGradients(points, key, numPoints) {
 
     // Update stops
     let $stops = points.selectAll('stop')
-        .data([[0, 1], [100, 0]])
+        .data([[0, 1], [50, 0]])
     treatStops($stops, key)
 
     // Enter stops
@@ -226,7 +226,7 @@ module.exports = (elId) => {
 
 
         let theta = 1.43
-        let c = 220
+        let c = 180
         grid_cells.push(create_firing_field(
             [
                 [c*Math.cos(theta), c*Math.cos(theta + Math.PI/3.0)],
@@ -237,8 +237,8 @@ module.exports = (elId) => {
             400
         ))
 
-        theta = 0.43
-        c = 180
+        theta = 1.1
+        c = 190
         grid_cells.push(create_firing_field(
             [
                 [c*Math.cos(theta), c*Math.cos(theta + Math.PI/3.0)],
