@@ -219,9 +219,11 @@ function setVisible(gcId, visible) {
     let visibility = 'hidden'
     if (visible) visibility = 'visible'
     d3.select('#group-' + gcId).attr('visibility', visibility)
+    // Toggle the checkbox
+    $('#grid-cell-' + gcId).prop('checked', visible)
 }
 
-module.exports = (elId) => {
+let moduleOut = (elId) => {
 
     utils.loadHtml(html.default, elId, () => {
 
@@ -345,3 +347,12 @@ module.exports = (elId) => {
     })
 
 }
+
+// Just a hack to shove in more functionality without opening up the API.
+moduleOut.selectCellByColor = (clr) => {
+    newColors.forEach((color, gcId) => {
+        setVisible(gcId, color === clr)
+    })
+}
+
+module.exports = moduleOut

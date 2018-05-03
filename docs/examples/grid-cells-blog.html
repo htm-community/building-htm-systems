@@ -8,13 +8,21 @@
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="../bhtms-how-do-grid-cells-work-0.2.2.js"></script>
 
+    <style>
+        body {
+            font-family: Helvetica;
+        }
+        a {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 
 <body>
 <h1>How Do Grid Cells Work?</h1>
 
 <p>
-    We have learned a lot about the brain over the past few decades. One of the most exciting discoveries of modern neuroscience is how certain cells in the brain respond to and represent location in space. In 2014, the Nobel Prize for Physiology or Medicine was awarded to Drs May-Britt Moser, Edvard Moser, and and John O'Keefe for their work discovering cells that deal with location in the brain. This included cells called "grid cells", which are pyramidal neurons that seem create cognitive maps of space.
+    We have learned a lot about the brain over the past few decades. One of the most exciting discoveries of modern neuroscience is how certain cells in the brain respond to and represent location in space. In 2014, the Nobel Prize for Physiology or Medicine was awarded to Drs May-Britt Moser, Edvard Moser, and and John O'Keefe for their work discovering cells that deal with location in the brain. This included cells called "grid cells", which are pyramidal neurons that seem to create cognitive maps of space.
 </p>
 
 <h3>A simulation of Grid Cells in Action</h3>
@@ -23,15 +31,32 @@
     In the interactive visualization below, you can see an object moving through a 2-dimensional space, where the space wraps at the edges. This 2D space is being mapped by 3 grid cells, each one being represented with a different color. The color splotches are each grid cell's firing fields, or the locations in the space where the cell has fired in response to the object's location.
 </p>
 
-<div id="gridCellFiringFields" class="widget"/>
+<p>
+    As the grid cells' firing fields fill in, notice that each one is a hexagonal lattice, and that they project slightly differently across the space.
+</p>
+<div id="gridCellFiringFields" class="widget"></div>
 
+<p>
+    Use the checkboxes above to show only <a onclick="showOnly('red')">red cell's firing fields</a>, then compare it to the <a onclick="showOnly('blue')">blue</a> and <a onclick="showOnly('green')">green</a> cells. You can turn them back on by toggling the checkboxes above. 
+</p>
+
+<hr/>
+
+<h3>Other Location Cells</h3>
 <p>
     In addition to grid cells, neuroscientists have identified similar cells in the hippocampus called place cells. There are also things called border cells and head direction cells, but we're going to focus on the functionality of grid cells and their ability to uniquely map huge spaces with only a handful of neurons.
 </p>
 
+<h4>Place Cells</h4>
+<h4>Head Direction Cells</h4>
+<h4>Band Cells</h4>
+
 <script type="text/javascript">
     $(function() {
         BHTMS.gridCellFiringFields("gridCellFiringFields")
+        window.showOnly = (color) => {
+            BHTMS.gridCellFiringFields.selectCellByColor(color)
+        }
     });
 </script>
 
