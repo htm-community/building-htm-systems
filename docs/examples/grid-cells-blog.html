@@ -19,13 +19,24 @@
 </head>
 
 <body>
+
 <h1>How Do Grid Cells Work?</h1>
 
 <p>
     We have learned a lot about the brain over the past few decades. One of the most exciting discoveries of modern neuroscience is how certain cells in the brain respond to and represent location in space. In 2014, the Nobel Prize for Physiology or Medicine was awarded to Drs May-Britt Moser, Edvard Moser, and and John O'Keefe for their work discovering cells that deal with location in the brain. This included cells called "grid cells", which are pyramidal neurons that seem to create cognitive maps of space.
 </p>
 
-<h3>A simulation of Grid Cells in Action</h3>
+<h2>The Discover of Grid Cells</h2>
+
+<p>
+    In this experiment, a mouse has an apparatus that is monitoring one particular neuron in its entorhinal cortex suspected to be involved with location. Every time the neuron fires an action potential, a dot is rendered to the screen in this video.
+</p>
+
+<p>
+    At first, it looks like the neuron is just firing randomly, but as the mouse explores the room completely, you can clearly see a grid-like firing field appear across the 2d space. This shows that this one neuron, called a "grid cell", responds when the mouse is in particular places in the room, and those places are spaced out in a hexagonal lattice.
+</p>
+
+<h2>A simulation of Grid Cells in Action</h2>
 
 <p>
     In the interactive visualization below, you can see an object moving through a 2-dimensional space, where the space wraps at the edges. This 2D space is being mapped by 3 grid cells, each one being represented with a different color. The color splotches are each grid cell's firing fields, or the locations in the space where the cell has fired in response to the object's location.
@@ -37,12 +48,34 @@
 <div id="gridCellFiringFields" class="widget"></div>
 
 <p>
-    Use the checkboxes above to show only <a onclick="showOnly('red')">red cell's firing fields</a>, then compare it to the <a onclick="showOnly('blue')">blue</a> and <a onclick="showOnly('green')">green</a> cells. You can turn them back on by toggling the checkboxes above. 
+    If you're a fast reader, the firing fields may not have filled in much yet. If you are at a desktop computer, hover your mouse over the 2D space to control the location of the object and watch as each grid cell fires in response to your movement. See if you can find the firing fields yourself as you move the cursor across the space.
 </p>
 
+<p>
+    Use the checkboxes above to show only <a onclick="showOnly('red')">red</a> cell's firing fields, then compare it to the <a onclick="showOnly('blue')">blue</a> and <a onclick="showOnly('green')">green</a> cells. You can turn them back on by toggling the checkboxes above.
+</p>
+
+<h2>The View From One Grid Cell</h2>
+<blockquote>
+    Will contain viz of one grid cell's view of a space.
+</blockquote>
+
+<h2>The Grid Cell Module</h2>
+<blockquote>
+    How Many Grid Cells Work together to tile a space.
+</blockquote>
+
+<h2>Grid Cell Modules Working Together</h2>
+<blockquote>
+    How Many GCMs work together to create a unique representation of any space.
+</blockquote>
+
+<hr/>
+draft
 <hr/>
 
-<h3>Other Location Cells</h3>
+
+<h2>Other Location Cells</h2>
 <p>
     In addition to grid cells, neuroscientists have identified similar cells in the hippocampus called place cells. There are also things called border cells and head direction cells, but we're going to focus on the functionality of grid cells and their ability to uniquely map huge spaces with only a handful of neurons.
 </p>
