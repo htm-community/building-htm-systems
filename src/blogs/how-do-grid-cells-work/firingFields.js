@@ -181,10 +181,9 @@ function redraw($el, data, currentLocation) {
     $el.select('#current-location')
         .attr('cx', currentLocation.x)
         .attr('cy', currentLocation.y)
-        .attr('r', fuzzSize / 2)
-        .attr('stroke-dasharray', [5, 1])
-        .attr('stroke', 'grey')
-        .attr('stroke-width', '1px')
+        .attr('r', 6)
+        .attr('stroke', 'black')
+        .attr('stroke-width', '3px')
         .attr('fill', 'none')
 
 }
@@ -202,6 +201,8 @@ function prepSvg($svg, keys) {
 
     $gcGroups.append('g').attr('class', 'dots')
     $gcGroups.append('g').attr('class', 'fuzz').append('defs')
+    // Add the current location circle over top of everything else
+    $svg.append('circle').attr('id', 'current-location')
 }
 
 function goSvg(elId) {

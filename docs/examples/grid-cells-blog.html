@@ -6,7 +6,7 @@
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="../../../docs/bhtms-how-do-grid-cells-work-0.2.2.js"></script>
+    <script src="../bhtms-how-do-grid-cells-work-0.2.2.js"></script>
 
 </head>
 
@@ -23,21 +23,17 @@
     In the interactive visualization below, you can see an object moving through a 2-dimensional space, where the space wraps at the edges. This 2D space is being mapped by 3 grid cells, each one being represented with a different color. The color splotches are each grid cell's firing fields, or the locations in the space where the cell has fired in response to the object's location.
 </p>
 
-<div class="widget">
-
-    <div id="gridCellFiringFields"></div>
-
-    <script>
-        $(function() {
-            BHTMS.gridCellFiringFields("gridCellFiringFields")
-        });
-    </script>
-
-</div>
+<div id="gridCellFiringFields" class="widget"/>
 
 <p>
     In addition to grid cells, neuroscientists have identified similar cells in the hippocampus called place cells. There are also things called border cells and head direction cells, but we're going to focus on the functionality of grid cells and their ability to uniquely map huge spaces with only a handful of neurons.
 </p>
+
+<script type="text/javascript">
+    $(function() {
+        BHTMS.gridCellFiringFields("gridCellFiringFields")
+    });
+</script>
 
 
 </body>
