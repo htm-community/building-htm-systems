@@ -1,3 +1,11 @@
+/*
+ * Most of this code was taken from Mirko Klukas's repository at
+ * https://github.com/mirkoklukas/grid-cell-visualization.
+ *
+ * I ported it from Canvas to SVG using D3JS. I added some more
+ * visual stuff, but removed the beeping (sorry Mirko).
+ */
+
 let utils = require('../../widgets/utils')
 let html = require('./firingFields.tmpl.html')
 let JSDS = require('JSDS')
