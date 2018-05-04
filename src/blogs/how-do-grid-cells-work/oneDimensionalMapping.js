@@ -94,18 +94,6 @@ module.exports = (elId) => {
         let $wireGroup = $svg.append('g')
             .attr('class', 'wires')
 
-        let $range = $wireGroup.append('line')
-            .attr('class', 'range')
-            .attr('stroke', 'black')
-            .attr('stroke-dasharray', [3, 5])
-        let rangeCaps = {}
-        rangeCaps.left = $wireGroup.append('line')
-            .attr('class', 'range-cap left')
-            .attr('stroke', 'black')
-        rangeCaps.right = $wireGroup.append('line')
-            .attr('class', 'range-cap right')
-            .attr('stroke', 'black')
-
         let $sensitivityCurve = $wireGroup.append('path')
             .attr('class', 'sensitivity')
             .attr('stroke', 'black')
@@ -113,27 +101,60 @@ module.exports = (elId) => {
 
         let $marker = $svg.append('rect').attr('class', 'marker')
 
+        function treatRanges($ranges, rangeCaps, x, y, radius) {
+            let x1 = x - radius
+            let x2 = x + radius
+            let rangeCapRatio = 8
 
-        function updateRange(x, y, $range, rangeCaps) {
+            $ranges
+                .attr('class', 'range')
+                .attr('stroke', 'black')
+                .attr('stroke-width', '1px')
+                .attr('stroke-dasharray', [3, 1])
+                .attr('x1', x1)
+                .attr('y1', y)
+                .attr('x2', x2)
+                .attr('y2', y)
+            rangeCaps.left
+                .attr('class', 'left')
+                .attr('stroke', 'black')
+                .attr('x1', x1)
+                .attr('y1', y - barHeight / rangeCapRatio)
+                .attr('x2', x1)
+                .attr('y2', y + barHeight / rangeCapRatio)
+            rangeCaps.right
+                .attr('class', 'right')
+                .attr('stroke', 'black')
+                .attr('x1', x2)
+                .attr('y1', y - barHeight / rangeCapRatio)
+                .attr('x2', x2)
+                .attr('y2', y + barHeight / rangeCapRatio)
+        }
+
+        function updateRange($wires, x, y) {
             let centerX = (x + (anchor * width)) * scale
             let centerY = y + barHeight / 2
             let rangePix = width * range * scale
             let radius = rangePix / 2
-            let x1 = centerX - radius
-            let x2 = centerX + radius
-            let rangeCapRatio = 8
-            $range.attr('x1', x1)
-                .attr('y1', centerY)
-                .attr('x2', x2)
-                .attr('y2', centerY)
-            rangeCaps.left.attr('x1', x1)
-                .attr('y1', centerY - barHeight / rangeCapRatio)
-                .attr('x2', x1)
-                .attr('y2', centerY + barHeight / rangeCapRatio)
-            rangeCaps.right.attr('x1', x2)
-                .attr('y1', centerY - barHeight / rangeCapRatio)
-                .attr('x2', x2)
-                .attr('y2', centerY + barHeight / rangeCapRatio)
+
+            // Update
+            let $ranges = $wires.selectAll('line.range')
+            let rangeCaps = {}
+            rangeCaps.left = $wires.selectAll('line.left')
+            rangeCaps.right = $wires.selectAll('line.right')
+            treatRanges($ranges, rangeCaps, centerX, centerY, radius)
+
+            // Enter
+            let $newRanges = $ranges.data([null]).enter().append('line')
+            let newRangeCaps = {}
+            newRangeCaps.left = rangeCaps.left.data([null]).enter().append('line')
+            newRangeCaps.right = rangeCaps.right.data([null]).enter().append('line')
+            treatRanges($newRanges, newRangeCaps, centerX, centerY, radius)
+
+            // Exit
+            $ranges.exit().remove()
+            rangeCaps.left.exit().remove()
+            rangeCaps.right.exit().remove()
         }
 
         function updateSensitivityCurve(x, y, $sensitivityCurve) {
@@ -191,6 +212,7 @@ module.exports = (elId) => {
                     return 'translate(' + xTransform + ',0)'
                 })
             updateAnchors(wires, x, y)
+            updateRange(wires, x, y)
         }
 
         function updateDisplay() {
