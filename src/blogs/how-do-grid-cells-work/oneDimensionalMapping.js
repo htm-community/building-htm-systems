@@ -17,7 +17,7 @@ module.exports = (elId) => {
         let scale = .2
         let anchor = .5
         let range = 0.5
-        let independentVariables = 6
+        let independentVariables = 5
 
         let width = 450
         let height = 100
@@ -247,6 +247,21 @@ module.exports = (elId) => {
             $independentVarsSlider.val(independentVariables)
         }
 
+        // Called when new location data arrives
+        function processLocation(x) {
+            let fireProbability = getFireProbability(x)
+            if (Math.random() >= fireProbability) {
+                console.log('fire(%s)', x)
+            }
+        }
+        function getFireProbability(x) {
+            console.log(x)
+            let anchors = $wireGroup.selectAll('circle.anchor')
+            let fields = anchors.nodes().map(a => parseInt(a.getAttribute('cx')))
+            console.log(fields)
+            return 1.0
+        }
+
         // This is the input from the user. Values change and the display updates.
         $('#' + elId + ' input').on('input', () => {
             anchor = parseInt($anchorSlider.val()) / 100
@@ -254,6 +269,14 @@ module.exports = (elId) => {
             scale = parseInt($scaleSlider.val()) / 100
             independentVariables = parseInt($independentVarsSlider.val())
             data = createDistribution()
+            updateDisplay()
+        })
+
+        // On mouseover the bar, decide whether to fire.
+        $barGroup.on('mousemove', () => {
+            let mouse = d3.mouse($barGroup.node())
+            let mousex = mouse[0]
+            processLocation(mousex)
             updateDisplay()
         })
 
