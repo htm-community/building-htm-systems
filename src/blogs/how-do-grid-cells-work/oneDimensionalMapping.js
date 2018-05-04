@@ -160,46 +160,55 @@ module.exports = (elId) => {
             $sensitivityCurve.attr('d', lineFunction(data))
         }
 
+        function treatAnchors(anchors) {
+            anchors
+                .attr('class', 'anchor')
+                .attr('r', 3)
+                .attr('cx', d => d[0])
+                .attr('cy', d => d[1])
+                .attr('fill', 'black')
+        }
+
+        function updateAnchors(wires, x, y) {
+            let bx = (x + (anchor * width)) * scale
+            let by = y + barHeight / 2
+
+            let $anchors = wires.selectAll('circle.anchor')
+                .data([[bx, by]])
+            treatAnchors($anchors)
+
+            let $newAnchors = $anchors.enter().append('circle')
+            treatAnchors($newAnchors)
+
+            $anchors.exit().remove()
+        }
+
+        function treatWires(wires, x, y) {
+            wires.attr('class', 'wire')
+                .attr('id', d => 'wire-' + d)
+                .attr('transform', d => {
+                    let xTransform = width * scale * d
+                    return 'translate(' + xTransform + ',0)'
+                })
+            updateAnchors(wires, x, y)
+        }
+
         function updateDisplay() {
-            let repetitions = Math.ceil(1 / scale)
+            let repetitions = d3.range(0, Math.ceil(1 / scale))
             let x = 0
             let y = upperHeight
 
-            //function updateAnchor(x, y, $anchor) {
-            //    let bx = (x + (anchor * width)) * scale
-            //    let by = y + barHeight / 2
-            //    $anchor.attr('cx', bx)
-            //        .attr('cy', by)
-            //}
-
-            function treatWires(wires) {
-                wires.attr('class', 'wire')
-                    .attr('id', d => 'wire-' + d)
-                wires.selectAll('circle.anchor')
-                //let $anchor = wires.append('circle')
-                //    .attr('class', 'anchor')
-                //    .attr('r', 3)
-                //    .attr('fill', 'black')
-                //updateAnchor(x, y, $anchor)
-            }
-
             // Update
             let $wires = $wireGroup.selectAll('g.wire')
-                .data(d3.range(0,repetitions))
-            treatWires($wires)
+                .data(repetitions)
+            treatWires($wires, x, y)
 
             // Enter
             let $newWires = $wires.enter().append('g')
-            treatWires($newWires)
+            treatWires($newWires, x, y)
 
             // Exit
             $wires.exit().remove()
-
-            //for (let i = 0; i < scales; i++) {
-            //    updateAnchor(0, upperHeight)
-            //    updateRange(0, upperHeight)
-            //    updateSensitivityCurve(0, upperHeight)
-            //}
         }
 
         $('#' + elId + ' input').on('input', () => {
