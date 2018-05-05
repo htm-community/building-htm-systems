@@ -1,5 +1,6 @@
 let utils = require('../../widgets/utils')
 let html = require('./oneDimensionalMapping.tmpl.html')
+let JSDS = require('JSDS')
 
 let clrs = {
     barFill: 'lightgrey',
@@ -11,13 +12,16 @@ let clrs = {
     rangeStroke: 'black'
 }
 
-module.exports = (elId) => {
-    utils.loadHtml(html.default, elId, () => {
+let jsds = JSDS.create('1-d-mapping')
+let startingParams = {
+    anchor: 0.5,
+    range: 0.5,
+    scale: 0.2,
+    independentVars: 5,
+}
 
-        let scale = .2
-        let anchor = .5
-        let range = 0.5
-        let independentVariables = 5
+let moduleOut = (elId) => {
+    utils.loadHtml(html.default, elId, () => {
 
         let width = 450
         let height = 100
@@ -27,13 +31,9 @@ module.exports = (elId) => {
         let histTicks = 50
 
         let $anchorSlider = $('#anchorPerc')
-        $anchorSlider.val(parseInt(anchor * 100))
         let $rangeSlider = $('#rangePerc')
-        $rangeSlider.val(parseInt(range * 100))
         let $scaleSlider = $('#scalePerc')
-        $scaleSlider.val(parseInt(scale * 100))
         let $independentVarsSlider = $('#independentVars')
-        $independentVarsSlider.val(parseInt(independentVariables))
 
         let $svg = d3.select('#' + elId + ' svg')
                     .attr('width', width)
@@ -55,11 +55,11 @@ module.exports = (elId) => {
         // let $marker = $svg.append('rect').attr('class', 'marker')
 
         // Playing with data
-        let data = createDistribution()
+        let data = createDistribution(independentVars)
 
-        function createDistribution() {
+        function createDistribution(independentVars) {
             let out = d3.range(50000)
-                .map(d3.randomBates(independentVariables))
+                .map(d3.randomBates(independentVars))
                 .map((val, i) => {
                     return val - 0.5
                 })
@@ -73,6 +73,29 @@ module.exports = (elId) => {
         //
         // Treatments and updates
         //
+
+        // Anchors
+        function treatAnchors(anchors) {
+            anchors
+                .attr('class', 'anchor')
+                .attr('r', 3)
+                .attr('cx', d => d[0])
+                .attr('cy', d => d[1])
+                .attr('fill', clrs.anchorFill)
+                .attr('stroke', clrs.anchorStroke)
+        }
+
+        function updateAnchors(wires, bx, by) {
+
+            let $anchors = wires.selectAll('circle.anchor')
+                .data([[bx, by]])
+            treatAnchors($anchors)
+
+            let $newAnchors = $anchors.enter().append('circle')
+            treatAnchors($newAnchors)
+
+            $anchors.exit().remove()
+        }
 
         // Ranges
         function treatRanges($ranges, rangeCaps, x, y, radius) {
@@ -105,11 +128,7 @@ module.exports = (elId) => {
                 .attr('y2', y + barHeight / rangeCapRatio)
         }
 
-        function updateRange($wires, x, y) {
-            let centerX = (x + (anchor * width)) * scale
-            let centerY = y + barHeight / 2
-            let rangePix = width * range * scale
-            let radius = rangePix / 2
+        function updateRange($wires, radius, centerX, centerY) {
 
             // Update
             let $ranges = $wires.selectAll('line.range')
@@ -140,11 +159,7 @@ module.exports = (elId) => {
                 .attr('d', lineData)
         }
 
-        function updateSensitivityCurve(wires, x, y) {
-
-            let centerX = (x + (anchor * width)) * scale
-            let rangePix = width * range * scale
-            let radius = rangePix / 2
+        function updateSensitivityCurve(wires, centerX, radius) {
             let xLeft = centerX - radius
             let xRight = (centerX + radius)
 
@@ -183,68 +198,49 @@ module.exports = (elId) => {
             $sensitivityCurves.exit().remove()
         }
 
-        // Anchors
-        function treatAnchors(anchors) {
-            anchors
-                .attr('class', 'anchor')
-                .attr('r', 3)
-                .attr('cx', d => d[0])
-                .attr('cy', d => d[1])
-                .attr('fill', clrs.anchorFill)
-                .attr('stroke', clrs.anchorStroke)
-        }
-
-        function updateAnchors(wires, x, y) {
-            let bx = (x + (anchor * width)) * scale
-            let by = y + barHeight / 2
-
-            let $anchors = wires.selectAll('circle.anchor')
-                .data([[bx, by]])
-            treatAnchors($anchors)
-
-            let $newAnchors = $anchors.enter().append('circle')
-            treatAnchors($newAnchors)
-
-            $anchors.exit().remove()
-        }
-
         // Wires, which are groups of all the treatments above
-        function treatWires(wires, x, y) {
+        function treatWires(wires, params, x, y) {
+            let centerX = (x + (params.anchor * width)) * params.scale
+            let centerY = y + barHeight / 2
+
             wires.attr('class', 'wire')
                 .attr('id', d => 'wire-' + d)
                 .attr('transform', d => {
-                    let xTransform = width * scale * d
+                    let xTransform = width * params.scale * d
                     return 'translate(' + xTransform + ',0)'
                 })
-            updateAnchors(wires, x, y)
-            updateRange(wires, x, y)
-            updateSensitivityCurve(wires, x, y)
+            let rangePix = width * params.range * params.scale
+            let radius = rangePix / 2
+            updateAnchors(wires, centerX, centerY)
+            updateRange(wires, radius, centerX, centerY)
+            updateSensitivityCurve(wires, centerX, radius)
         }
 
         // Update the entire display, should be called on UI value change or on
         // animation frame update
         function updateDisplay() {
-            let repetitions = d3.range(-1, Math.ceil(1 / scale) + 1)
+            let params = jsds.get('params')
+            let repetitions = d3.range(-1, Math.ceil(1 / params.scale) + 1)
             let x = 0
             let y = upperHeight
 
             // Update
             let $wires = $wireGroup.selectAll('g.wire')
                 .data(repetitions)
-            treatWires($wires, x, y)
+            treatWires($wires, params, x, y)
 
             // Enter
             let $newWires = $wires.enter().append('g')
-            treatWires($newWires, x, y)
+            treatWires($newWires, params, x, y)
 
             // Exit
             $wires.exit().remove()
 
             // Update sliders
-            $anchorSlider.val(anchor * 100)
-            $rangeSlider.val(range * 100)
-            $scaleSlider.val(scale * 100)
-            $independentVarsSlider.val(independentVariables)
+            $anchorSlider.val(params.anchor * 100)
+            $rangeSlider.val(params.range * 100)
+            $scaleSlider.val(params.scale * 100)
+            $independentVarsSlider.val(params.independentVars)
         }
 
         // Called when new location data arrives
@@ -264,12 +260,12 @@ module.exports = (elId) => {
 
         // This is the input from the user. Values change and the display updates.
         $('#' + elId + ' input').on('input', () => {
-            anchor = parseInt($anchorSlider.val()) / 100
-            range = parseInt($rangeSlider.val()) / 100
-            scale = parseInt($scaleSlider.val()) / 100
-            independentVariables = parseInt($independentVarsSlider.val())
-            data = createDistribution()
-            updateDisplay()
+            let params = {}
+            params.anchor = parseInt($anchorSlider.val()) / 100
+            params.range = parseInt($rangeSlider.val()) / 100
+            params.scale = parseInt($scaleSlider.val()) / 100
+            params.independentVars = parseInt($independentVarsSlider.val())
+            jsds.set('params', params)
         })
 
         // On mouseover the bar, decide whether to fire.
@@ -280,7 +276,22 @@ module.exports = (elId) => {
             updateDisplay()
         })
 
-        updateDisplay()
+        // When params are changed (by user most likely), we rebuild the data
+        // and update the display
+        jsds.after('set', 'params', () => {
+            data = createDistribution(jsds.get('params').independentVars)
+            updateDisplay()
+        })
+
+        // This is what actually kicks off the program
+        jsds.set('params', startingParams)
 
     })
 }
+
+// A hack to shove in more functionality without opening up the API.
+moduleOut.setParams = (params) => {
+    jsds.set('params', params)
+}
+
+module.exports = moduleOut

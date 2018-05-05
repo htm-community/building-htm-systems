@@ -11,7 +11,7 @@ let html = require('./firingFields.tmpl.html')
 let JSDS = require('JSDS')
 let FiringPatch = require('./firingPatch')
 
-let w = 558
+let w = 443
 let h = 400
 
 let maxQueue = 200

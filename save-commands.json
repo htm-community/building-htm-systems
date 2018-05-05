@@ -2,6 +2,6 @@
     "commands": [
         "save-commands.json : npm start",
         "webpack.config.js : npm start",
-        "src/**/*.* : npm start"
+        "src/**/*.js : npm start"
     ]
 }

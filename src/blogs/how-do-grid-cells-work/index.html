@@ -20,26 +20,75 @@
 
 <body>
 
-<div class="widget">
+<!-- <div class="widget">
 
-    <!--<div id="gridCellFiringFields"></div>-->
+    <div id="gridCellFiringFields"></div>
 
-    <!--<script>-->
-        <!--$(function() {-->
-            <!--BHTMS.gridCellFiringFields("gridCellFiringFields")-->
-        <!--});-->
-    <!--</script>-->
+    <script>
+        $(function() {
+            BHTMS.gridCellFiringFields("gridCellFiringFields")
+        });
+    </script>
 
-</div>
+</div> -->
 
 
 <div class="widget">
 
     <div id="oneDimensionalMapping"></div>
 
+    <p>
+        <a id="clickme" onclick="doit()">click me</a>
+    </p>
+
     <script>
         $(function() {
-            BHTMS.oneDimensionalMapping("oneDimensionalMapping")
+            BHTMS.oneDimensionalMapping('oneDimensionalMapping')
+
+            var jsds = BHTMS.JSDS.get('1-d-mapping');
+
+            window.doit = () => {
+                let cuts = 20,
+                    speed = 50
+                    current = 0,
+                    targetParams = {
+                        anchor: 0,
+                        range: 0.75,
+                        scale: 0.1,
+                        independentVars: 6,
+                    }
+
+
+                function againForTheFirstTime(targetParams) {
+                    let params = jsds.get('params')
+                    let anchorScale = d3.scaleLinear()
+                        .domain([0, cuts])
+                        .range([params.anchor, targetParams.anchor])
+                    let rangeScale = d3.scaleLinear()
+                        .domain([0, cuts])
+                        .range([params.range, targetParams.range])
+                    let scaleScale = d3.scaleLinear()
+                        .domain([0, cuts])
+                        .range([params.scale, targetParams.scale])
+                    let independentVarsScale = d3.scaleLinear()
+                        .domain([0, cuts])
+                        .range([params.independentVars, targetParams.independentVars])
+        			setTimeout(function() {
+                        jsds.set('params', {
+                            anchor: anchorScale(current),
+                            range: rangeScale(current),
+                            scale: scaleScale(current),
+                            independentVars: independentVarsScale(current),
+                        })
+        				current++;
+        				if (current < cuts) {
+                            againForTheFirstTime(targetParams);
+                        }
+        			}, speed);
+        		}
+
+                againForTheFirstTime(targetParams)
+            }
         });
     </script>
 
