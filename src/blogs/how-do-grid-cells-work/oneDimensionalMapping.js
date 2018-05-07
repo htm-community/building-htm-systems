@@ -15,8 +15,8 @@ let clrs = {
 let jsds = JSDS.create('1-d-mapping')
 let startingParams = {
     anchor: 0.5,
-    range: 0.5,
-    scale: 0.2,
+    range: 1,
+    scale: 1,
     independentVars: 5,
 }
 
@@ -29,6 +29,10 @@ let moduleOut = (elId) => {
         let upperHeight = 40
         let barHeight = 30
         let histTicks = 50
+        let spikeHistory = 100 // number of spikes to show
+        let spikeMouseDelay = 50 // ms
+
+        let lastMouseEvent = new Date().getTime()
 
         let $anchorSlider = $('#anchorPerc')
         let $rangeSlider = $('#rangePerc')
@@ -67,7 +71,7 @@ let moduleOut = (elId) => {
                 .domain([Math.min(...out), Math.max(...out)])
                 .range([0, 1])
             out = out.map(d => equalizer(d))
-            return out
+            return out.sort()
         }
 
         //
@@ -216,10 +220,38 @@ let moduleOut = (elId) => {
             updateSensitivityCurve(wires, centerX, radius)
         }
 
+        function treatSpikes(spikes) {
+            spikes.attr('class', 'spike')
+                .attr('cx', d => d.x)
+                .attr('cy', d => d.y)
+                .attr('r', 3)
+                .attr('stroke', 'navy')
+                .attr('stroke-width', '1px')
+                .attr('fill', 'none')
+        }
+
+        // Mouseover spike points: points displayed on the 1D bar where grid cell
+        // has fired as user moused over the bar.
+        function updateSpikes() {
+            // Update
+            let $spikes = $svg.selectAll('circle.spike')
+                .data(jsds.get('spikes'))
+            treatSpikes($spikes)
+
+            // Enter
+            let $newSpikes = $spikes.enter().append('circle')
+            treatSpikes($newSpikes)
+
+            // Exit
+            $spikes.exit().remove()
+        }
+
         // Update the entire display, should be called on UI value change or on
         // animation frame update
         function updateDisplay() {
             let params = jsds.get('params')
+            // Bail out if params haven't been loaded.
+            if (! params) return;
             let repetitions = d3.range(-1, Math.ceil(1 / params.scale) + 1)
             let x = 0
             let y = upperHeight
@@ -236,6 +268,9 @@ let moduleOut = (elId) => {
             // Exit
             $wires.exit().remove()
 
+            // Update the spikes on the 1D bar
+            updateSpikes()
+
             // Update sliders
             $anchorSlider.val(params.anchor * 100)
             $rangeSlider.val(params.range * 100)
@@ -244,18 +279,66 @@ let moduleOut = (elId) => {
         }
 
         // Called when new location data arrives
-        function processLocation(x) {
-            let fireProbability = getFireProbability(x)
-            if (Math.random() >= fireProbability) {
-                console.log('fire(%s)', x)
+        function processLocation(x, y) {
+            let prob = getFireProbability(x)
+            if (Math.random() <= prob) {
+                let spikes = jsds.get('spikes')
+                spikes.push({
+                    x: x, y: upperHeight + barHeight / 2
+                })
+                if (spikes.length > spikeHistory) spikes.shift()
+                jsds.set('spikes', spikes)
             }
         }
+
+        /*
+         * FIXME:
+         * I know it is weird using the random bates data array as a way to
+         * compute probabilities. I'm sure there's a better way, but I'm not
+         * in a place to investigate right now.
+         */
+        function getProbability(left, right, x) {
+            let center = Math.floor((right - left) / 2)
+            let probScale
+            if (x < center) {
+                // scale left of center building up to 1.0
+                probScale = d3.scaleLinear()
+                    .domain([left, center]).range([0, data.length-1])
+            } else {
+                // scale right of center falling from 1.0
+                probScale = d3.scaleLinear()
+                    .domain([center, right]).range([data.length-1, 0])
+            }
+            let index = Math.floor(probScale(x))
+            let value = data[index]
+            return value
+        }
+
         function getFireProbability(x) {
-            console.log(x)
-            let anchors = $wireGroup.selectAll('circle.anchor')
-            let fields = anchors.nodes().map(a => parseInt(a.getAttribute('cx')))
-            console.log(fields)
-            return 1.0
+            // let anchors = $wireGroup.selectAll('circle.anchor')
+            // let fields = anchors.nodes().map(a => parseInt(a.getAttribute('cx'))
+            let transforms = $wireGroup.selectAll('g.wire').nodes()
+                                .map(a => a.getAttribute('transform'))
+            fields = transforms.map(str => {
+                let [l, r] = str.split(',')
+                let [trash, xstr] = l.split('(')
+                return parseInt(xstr)
+            })
+            let params = jsds.get('params')
+            let prob = 0.0
+            let rangePix = width * params.range * params.scale
+            let radius = rangePix / 2
+            let anchorPix = width * params.scale * params.anchor
+            // should only be in one field at a time in this example
+            fields.forEach(f => {
+                let left = f+anchorPix - radius
+                let right = f+anchorPix + radius
+                if (x > left && x < right) {
+                    prob = getProbability(left, right, x)
+                }
+            })
+            console.log(prob)
+            return prob
         }
 
         // This is the input from the user. Values change and the display updates.
@@ -266,14 +349,18 @@ let moduleOut = (elId) => {
             params.scale = parseInt($scaleSlider.val()) / 100
             params.independentVars = parseInt($independentVarsSlider.val())
             jsds.set('params', params)
+            jsds.set('spikes', [])
         })
 
         // On mouseover the bar, decide whether to fire.
         $barGroup.on('mousemove', () => {
-            let mouse = d3.mouse($barGroup.node())
-            let mousex = mouse[0]
-            processLocation(mousex)
-            updateDisplay()
+            // Only process mouse moves every so often. It looks better on screen.
+            if (new Date().getTime() > lastMouseEvent + spikeMouseDelay) {
+                let mouse = d3.mouse($barGroup.node())
+                processLocation(mouse[0], mouse[1])
+                updateDisplay()
+                lastMouseEvent = new Date().getTime()
+            }
         })
 
         // When params are changed (by user most likely), we rebuild the data
@@ -282,6 +369,10 @@ let moduleOut = (elId) => {
             data = createDistribution(jsds.get('params').independentVars)
             updateDisplay()
         })
+        jsds.after('set', 'spikes', updateDisplay)
+
+        // A place to store spikes as uses mouse over the 1D bar.
+        jsds.set('spikes', [])
 
         // This is what actually kicks off the program
         jsds.set('params', startingParams)
