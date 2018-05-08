@@ -30,6 +30,8 @@ let moduleOut = (elId) => {
         let width = 443
         let height = 250
 
+        let overlaySize = 140
+
         let $svg = d3.select('#' + elId + ' svg.main')
             .attr('width', width)
             .attr('height', height)
@@ -40,10 +42,20 @@ let moduleOut = (elId) => {
         let $orientationSlider = $el.find('input.orientation'),
             $scaleSlider = $el.find('input.scale')
 
-        let overlaySize = 140
-        let overlayPadding = 10,
-            overlayX = overlayPadding,
-            overlayY = height - overlayPadding - overlaySize
+        function setUpOverlay() {
+            let overlayPadding = 10,
+                overlayX = overlayPadding,
+                overlayY = height - overlayPadding - overlaySize
+
+            $overlay
+                .attr('x', overlayX).attr('y', overlayY)
+                .attr('width', overlaySize).attr('height', overlaySize)
+            $overlay.select('rect')
+                .attr('stroke', 'black')
+                .attr('stroke-width', '2px')
+                .attr('fill', 'white')
+                .attr('width', overlaySize).attr('height', overlaySize)
+        }
 
         function treatFields(fields, params) {
             fields.attr('class', 'field')
@@ -83,18 +95,6 @@ let moduleOut = (elId) => {
                 .attr('stroke', 'INDIANRED')
         }
 
-
-        function updateOverlay() {
-            $overlay
-                .attr('x', overlayX).attr('y', overlayY)
-                .attr('width', overlaySize).attr('height', overlaySize)
-            $overlay.select('rect')
-                .attr('stroke', 'black')
-                .attr('stroke-width', '2px')
-                .attr('fill', 'white')
-                .attr('width', overlaySize).attr('height', overlaySize)
-        }
-
         function updateDisplay() {
             let params = jsds.get('params')
             let location = jsds.get('location')
@@ -120,13 +120,15 @@ let moduleOut = (elId) => {
 
             updateFields($world, worldPoints, module, params)
             updateFields($overlay, overlayPoints, module, params)
-            updateOverlay()
             updateLocation($svg, location, params)
 
             // update display sliders
             $orientationSlider.val(params.orientation)
             $scaleSlider.val(params.scale)
         }
+
+        // Start here
+        setUpOverlay()
 
         // This is the input from the user. Values change and the display updates.
         $('#' + elId + ' input').on('input', () => {
@@ -136,6 +138,7 @@ let moduleOut = (elId) => {
             jsds.set('params', params)
         })
 
+        // On user mouse move over world.
         $svg.on('mousemove', () => {
             d3.event.preventDefault()
             let type = 'world'
@@ -150,9 +153,9 @@ let moduleOut = (elId) => {
                 type: type,
                 x: worldMouse[0], y: worldMouse[1]
             })
-
         })
 
+        // Update when values change.
         jsds.after('set', 'params', updateDisplay)
         jsds.after('set', 'location', updateDisplay)
 

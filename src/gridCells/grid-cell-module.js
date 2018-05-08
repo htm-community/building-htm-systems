@@ -86,7 +86,6 @@ class GridCellModule {
 
     /** ACTIVATES GRID CELLS **/
     intersectWorld(x, y, points) {
-        console.log('intersect world %s %s', x, y)
         // We want to take the mouse position on the world and do two things:
         // 1. mark the closest point(s) in each GCM world where the cursor is
         //    intersecting the world

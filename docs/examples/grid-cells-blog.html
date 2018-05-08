@@ -80,6 +80,8 @@ Each grid cell projects onto space, and the places it activates in response to a
 
 <h2>The Grid Cell Module</h2>
 
+<div id="oneGridCellModule"></div>
+
 <p>
     A grid cell module is simply a group of grid cells sharing the same projection parameters onto space. Using many grid cells, we can cover a patch of space and use it to tile over a larger space.
 </p>
@@ -92,8 +94,6 @@ Each grid cell projects onto space, and the places it activates in response to a
 
 <h2>Grid Cell Modules Working Together</h2>
 
-
-
 <script type="text/javascript">
     $(function() {
         BHTMS.gridCellFiringFields("gridCellFiringFields")
@@ -102,6 +102,7 @@ Each grid cell projects onto space, and the places it activates in response to a
         }
 
         BHTMS.oneGridCell("oneGridCell")
+        BHTMS.oneGridCellModule("oneGridCellModule")
 
 
         // BHTMS.oneDimensionalMapping('oneDimensionalMapping')
