@@ -9,6 +9,7 @@ class GridCell {
     }
 
     activate() {
+        console.log('activating %s', this.id)
         this.active = true
     }
 
@@ -83,7 +84,9 @@ class GridCellModule {
         return 'rgb(' + this.r + ', ' + this.g + ', ' + this.b + ')'
     }
 
+    /** ACTIVATES GRID CELLS **/
     intersectWorld(x, y, points) {
+        console.log('intersect world %s %s', x, y)
         // We want to take the mouse position on the world and do two things:
         // 1. mark the closest point(s) in each GCM world where the cursor is
         //    intersecting the world
@@ -96,7 +99,9 @@ class GridCellModule {
         })
     }
 
+    /** ACTIVATES GRID CELLS **/
     intersectOverlay(x, y, points) {
+        console.log('intersect overlay %s %s', x, y)
         // We want to take the mouse position over the GCM overlay and do
         // these things:
         // 1. turn off all grid cells across all modules

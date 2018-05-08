@@ -145,7 +145,7 @@ class HexagonGridCellModule extends GridCellModule {
     createOverlayPoints(origin) {
         let me = this
         let scale = this.scale
-        let padRows = 1
+        let padRows = 0
         let paddedCells = this._addPadding(this.gridCells, padRows)
 
         let out = paddedCells.map(function(gc, i) {
@@ -156,8 +156,8 @@ class HexagonGridCellModule extends GridCellModule {
                 xmod, ymod, origin.x, origin.y, me.orientation + 30
             );
             // adjust for better rotation on screen
-            let xMoved = rotatedPoint.x - scale;
-            let yMoved = rotatedPoint.y + 2*scale
+            let xMoved = rotatedPoint.x
+            let yMoved = rotatedPoint.y
             return {
                 id: i,
                 x: xMoved,

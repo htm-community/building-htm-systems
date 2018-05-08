@@ -1,9 +1,9 @@
 let utils = require('../../widgets/utils')
-let html = require('./oneGridCell.tmpl.html')
+let html = require('./oneGridCellModule.tmpl.html')
 let HexagonGridCellModule = require('HexagonGridCellModule')
 let JSDS = require('JSDS')
 
-let jsds = JSDS.create('oneGridCell')
+let jsds = JSDS.create('oneGridCellModule')
 
 let startingParams = {
     anchor: {x: 0, y: 0},
@@ -30,15 +30,22 @@ let moduleOut = (elId) => {
         let width = 443
         let height = 250
 
-        let $svg = d3.select('#' + elId + ' svg')
+        let $svg = d3.select('#' + elId + ' svg.main')
             .attr('width', width)
             .attr('height', height)
+        let $world = $svg.select('g.world')
+        let $overlay = $svg.select('svg.overlay')
 
         let $el = $('#' + elId)
         let $orientationSlider = $el.find('input.orientation'),
             $scaleSlider = $el.find('input.scale')
 
-        function treatFields(fields, color, params) {
+        let overlaySize = 140
+        let overlayPadding = 10,
+            overlayX = overlayPadding,
+            overlayY = height - overlayPadding - overlaySize
+
+        function treatFields(fields, params) {
             fields.attr('class', 'field')
                 .attr('cx', d => d.x)
                 .attr('cy', d => d.y)
@@ -46,22 +53,19 @@ let moduleOut = (elId) => {
                 .attr('stroke', colors.fields.stroke)
                 .attr('fill', d => {
                     let fill = colors.fields.fill
-                    if (d.gridCell.id === 0) {
-                        fill = colors.fields.dim.fill
-                        if (d.gridCell.active) fill = colors.fields.on.fill
-                    }
+                    if (d.gridCell.active) fill = colors.fields.on.fill
                     return fill
                 })
         }
 
-        function updateFields($world, points, module, params) {
+        function updateFields($group, points, module, params) {
             // Update
-            let $fields = $world.selectAll('circle.field').data(points)
-            treatFields($fields, module.getColorString(), params)
+            let $fields = $group.selectAll('circle.field').data(points)
+            treatFields($fields, params)
 
             // Enter
             let $newFields = $fields.enter().append('circle')
-            treatFields($newFields, module.getColorString(), params)
+            treatFields($newFields, params)
 
             // Exit
             $fields.exit().remove()
@@ -77,7 +81,18 @@ let moduleOut = (elId) => {
                 .attr('rx', w/4).attr('ry', w/4)
                 .attr('fill', 'LIGHTCORAL')
                 .attr('stroke', 'INDIANRED')
+        }
+
+
+        function updateOverlay() {
+            $overlay
+                .attr('x', overlayX).attr('y', overlayY)
+                .attr('width', overlaySize).attr('height', overlaySize)
+            $overlay.select('rect')
+                .attr('stroke', 'black')
                 .attr('stroke-width', '2px')
+                .attr('fill', 'white')
+                .attr('width', overlaySize).attr('height', overlaySize)
         }
 
         function updateDisplay() {
@@ -86,8 +101,6 @@ let moduleOut = (elId) => {
             // Bail out if params or location haven't been loaded yet.
             if (! params || ! location) return;
 
-            let $world = $svg.select('g.world')
-
             let module = new HexagonGridCellModule(
                 0, 4, 4, params.orientation, params.scale
             )
@@ -95,10 +108,19 @@ let moduleOut = (elId) => {
             module.activeCells = 1
 
             let origin = {x: 0, y: 0}
-            let points = module.createWorldPoints(origin, width, height)
-            module.intersectWorld(location.x, location.y, points)
 
-            updateFields($world, points, module, params)
+            let worldPoints = module.createWorldPoints(origin, width, height)
+            origin.y = 80
+            let overlayPoints = module.createOverlayPoints(origin)
+            if (location.type === 'world') {
+                module.intersectWorld(location.x, location.y, worldPoints)
+            } else if (location.type === 'overlay') {
+                module.intersectOverlay(location.x, location.y, overlayPoints)
+            } else throw new Error("Unknown location type")
+
+            updateFields($world, worldPoints, module, params)
+            updateFields($overlay, overlayPoints, module, params)
+            updateOverlay()
             updateLocation($svg, location, params)
 
             // update display sliders
@@ -114,10 +136,21 @@ let moduleOut = (elId) => {
             jsds.set('params', params)
         })
 
-        // On mouseover the bar, decide whether to fire.
         $svg.on('mousemove', () => {
-            let mouse = d3.mouse($svg.node())
-            jsds.set('location', {x: mouse[0], y: mouse[1]})
+            d3.event.preventDefault()
+            let type = 'world'
+            let worldMouse = d3.mouse($world.node()),
+                overlayMouse = d3.mouse($overlay.node())
+                ox = overlayMouse[0], oy = overlayMouse[1]
+            if (0 < ox && ox < overlaySize
+                    && 0 < oy && oy < height - overlaySize) {
+                type = 'overlay'
+            }
+            jsds.set('location', {
+                type: type,
+                x: worldMouse[0], y: worldMouse[1]
+            })
+
         })
 
         jsds.after('set', 'params', updateDisplay)
@@ -125,7 +158,7 @@ let moduleOut = (elId) => {
 
         // This is what actually kicks off the program
         jsds.set('params', startingParams)
-        jsds.set('location', {x: 100, y: 100})
+        jsds.set('location', {x: width/2, y: height/2, type: 'world'})
     })
 }
 
