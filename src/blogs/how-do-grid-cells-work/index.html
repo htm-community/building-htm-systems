@@ -20,7 +20,7 @@
 
 <body>
 
-<!-- <div class="widget">
+<div class="widget">
 
     <div id="gridCellFiringFields"></div>
 
@@ -30,17 +30,26 @@
         });
     </script>
 
-</div> -->
-
+</div>
 
 <div class="widget">
 
-    <div id="oneDimensionalMapping"></div>
+    <div id="oneGridCell"></div>
 
+    <script>
+        $(function() {
+            BHTMS.oneGridCell("oneGridCell")
+        });
+    </script>
+
+</div>
+
+<!--
+<div class="widget">
+    <div id="oneDimensionalMapping"></div>
     <p>
         <a id="clickme" onclick="doit()">click me</a>
     </p>
-
     <script>
         $(function() {
             BHTMS.oneDimensionalMapping('oneDimensionalMapping')
@@ -57,8 +66,6 @@
                         scale: 0.1,
                         independentVars: 6,
                     }
-
-
                 function againForTheFirstTime(targetParams) {
                     let params = jsds.get('params')
                     let anchorScale = d3.scaleLinear()
@@ -86,14 +93,12 @@
                         }
         			}, speed);
         		}
-
                 againForTheFirstTime(targetParams)
             }
         });
     </script>
-
 </div>
-
+-->
 
 </body>
 

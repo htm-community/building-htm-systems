@@ -58,23 +58,41 @@
     Use the checkboxes above to show only <a onclick="showOnly('red')">red</a> cell's firing fields, then compare it to the <a onclick="showOnly('blue')">blue</a> and <a onclick="showOnly('green')">green</a> cells. You can turn them back on by toggling the checkboxes above.
 </p>
 
-<h2>One Grid Cell / One Dimension</h2>
-
-<div id="oneDimensionalMapping"></div>
+<h2>One Grid Cell's Firing Fields</h2>
 
 <p>
-    I don't know what to say about this yet but try <a onclick="doit()">clicking here</a> to reset the sliders.
+Each grid cell projects onto space, and the places it activates in response to are called firing fields. In the figure above, you can see that each color cell has many firing fields. As an attended object gets closer to the center of the field, the probability of the grid cell firing becomes higher.
+</p>
+
+<p>
+    In the figure below, one grid cell's firing fields are displayed in response to mouse hover. As you mouse over the graphic, the grid cell's current firing fields for that location are being displayed. This represents all the locations the grid cell thinks the object is. It could be near any of these circles.
+</p>
+
+<div id="oneGridCell"></div>
+
+<p>
+    Each grid cell can project onto space in many ways. Above, you can change the orientation and scale of this grid cell's projection onto the 2D space. Try moving the sliders now.
+</p>
+
+<p>
+    One grid cell is not enough to represent a location in space. As you can easily see above, the representation is ambiguous, and could represent a number of places in the space. That's why grid cells work together in <em>modules</em>.
 </p>
 
 <h2>The Grid Cell Module</h2>
-<blockquote>
-    How Many Grid Cells Work together to tile a space.
-</blockquote>
+
+<p>
+    A grid cell module is simply a group of grid cells sharing the same projection parameters onto space. Using many grid cells, we can cover a patch of space and use it to tile over a larger space.
+</p>
+
+<em>vis here</em>
+
+<p>
+    Again, one grid cell module is not enough to uniquely map space. But when we use many grid cell modules together, we can map a virtually infinite amount of space.
+</p>
 
 <h2>Grid Cell Modules Working Together</h2>
-<blockquote>
-    How Many GCMs work together to create a unique representation of any space.
-</blockquote>
+
+
 
 <script type="text/javascript">
     $(function() {
@@ -83,52 +101,54 @@
             BHTMS.gridCellFiringFields.selectCellByColor(color)
         }
 
-
-        BHTMS.oneDimensionalMapping('oneDimensionalMapping')
-        var jsds = BHTMS.JSDS.get('1-d-mapping');
-
-        window.doit = () => {
-            let cuts = 20,
-                speed = 50
-                current = 0,
-                targetParams = {
-                    anchor: 0,
-                    range: 0.75,
-                    scale: 0.1,
-                    independentVars: 6,
-                }
+        BHTMS.oneGridCell("oneGridCell")
 
 
-            function againForTheFirstTime(targetParams) {
-                let params = jsds.get('params')
-                let anchorScale = d3.scaleLinear()
-                    .domain([0, cuts])
-                    .range([params.anchor, targetParams.anchor])
-                let rangeScale = d3.scaleLinear()
-                    .domain([0, cuts])
-                    .range([params.range, targetParams.range])
-                let scaleScale = d3.scaleLinear()
-                    .domain([0, cuts])
-                    .range([params.scale, targetParams.scale])
-                let independentVarsScale = d3.scaleLinear()
-                    .domain([0, cuts])
-                    .range([params.independentVars, targetParams.independentVars])
-                setTimeout(function() {
-                    jsds.set('params', {
-                        anchor: anchorScale(current),
-                        range: rangeScale(current),
-                        scale: scaleScale(current),
-                        independentVars: independentVarsScale(current),
-                    })
-                    current++;
-                    if (current < cuts) {
-                        againForTheFirstTime(targetParams);
-                    }
-                }, speed);
-            }
-
-            againForTheFirstTime(targetParams)
-        }
+        // BHTMS.oneDimensionalMapping('oneDimensionalMapping')
+        // let jsds = BHTMS.JSDS.get('1-d-mapping');
+        //
+        // window.doit = () => {
+        //     let cuts = 20,
+        //         speed = 50
+        //         current = 0,
+        //         targetParams = {
+        //             anchor: 0,
+        //             range: 0.75,
+        //             scale: 0.1,
+        //             independentVars: 6,
+        //         }
+        //
+        //
+        //     function againForTheFirstTime(targetParams) {
+        //         let params = jsds.get('params')
+        //         let anchorScale = d3.scaleLinear()
+        //             .domain([0, cuts])
+        //             .range([params.anchor, targetParams.anchor])
+        //         let rangeScale = d3.scaleLinear()
+        //             .domain([0, cuts])
+        //             .range([params.range, targetParams.range])
+        //         let scaleScale = d3.scaleLinear()
+        //             .domain([0, cuts])
+        //             .range([params.scale, targetParams.scale])
+        //         let independentVarsScale = d3.scaleLinear()
+        //             .domain([0, cuts])
+        //             .range([params.independentVars, targetParams.independentVars])
+        //         setTimeout(function() {
+        //             jsds.set('params', {
+        //                 anchor: anchorScale(current),
+        //                 range: rangeScale(current),
+        //                 scale: scaleScale(current),
+        //                 independentVars: independentVarsScale(current),
+        //             })
+        //             current++;
+        //             if (current < cuts) {
+        //                 againForTheFirstTime(targetParams);
+        //             }
+        //         }, speed);
+        //     }
+        //
+        //     againForTheFirstTime(targetParams)
+        // }
     });
 </script>
 

@@ -1,5 +1,5 @@
 window.BHTMS = {
     gridCellFiringFields: require('./firingFields'),
-    oneDimensionalMapping: require('./oneDimensionalMapping'),
+    oneGridCell: require('./oneGridCell'),
     JSDS: require('JSDS'),
 }

@@ -91,9 +91,7 @@ class GridCellModule {
         //    points
         let closestPoints = this.getClosestPointsByDistance(x, y, points, this.activeCells)
         this.clearActiveGridCells()
-        points.forEach(function(p) { p.hover = false })
         closestPoints.forEach(function(p) {
-            p.hover = true
             p.gridCell.activate()
         })
     }

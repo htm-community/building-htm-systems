@@ -83,28 +83,28 @@ modules.push({
 })
 
 // General Grid Cell viz code
-modules.push({
-    mode: mode,
-    entry: [
-        "./src/gridCells/index.js"
-    ],
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                loader: "babel-loader"
-            },
-            {
-                test: /tmpl\.html$/,
-                loader: "posthtml-loader"
-            }
-        ]
-    },
-    output: {
-        path: __dirname + "/docs",
-        filename: `bhtms-grid-cells-${version}.js`
-    }
-})
+// modules.push({
+//     mode: mode,
+//     entry: [
+//         "./src/gridCells/index.js"
+//     ],
+//     module: {
+//         rules: [
+//             {
+//                 test: /\.js$/,
+//                 loader: "babel-loader"
+//             },
+//             {
+//                 test: /tmpl\.html$/,
+//                 loader: "posthtml-loader"
+//             }
+//         ]
+//     },
+//     output: {
+//         path: __dirname + "/docs",
+//         filename: `bhtms-grid-cells-${version}.js`
+//     }
+// })
 
 // For Blogs
 
@@ -113,10 +113,6 @@ modules.push({
     mode: mode,
     entry: [
         "./src/blogs/how-do-grid-cells-work/index.js",
-        "./src/blogs/how-do-grid-cells-work/firingFields.js",
-        "./src/blogs/how-do-grid-cells-work/firingFields.tmpl.html",
-        "./src/blogs/how-do-grid-cells-work/oneDimensionalMapping.js",
-        "./src/blogs/how-do-grid-cells-work/oneDimensionalMapping.tmpl.html",
     ],
     module: {
         rules: [
@@ -133,10 +129,7 @@ modules.push({
     resolve: {
         alias: {
             JSDS: path.join(__dirname, "node_modules/javascript-data-store/src/jsds"),
-            SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
-            SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
-            OneDimensionalGridCellModule: path.join(__dirname, "src/gridCells/1d-gcm"),
-            GridCellModuleRenderer: path.join(__dirname, "src/gridCells/gcm-renderer"),
+            HexagonGridCellModule: path.join(__dirname, "src/gridCells/hex-gcm"),
         }
     },
     output: {
