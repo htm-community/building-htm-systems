@@ -11,8 +11,12 @@
 
     <style>
         body {
+            width: 100%;
+        }
+        .main-content {
             font-family: Helvetica;
             width: 450px;
+            margin-left: 20%;
         }
         a {
             text-decoration: underline;
@@ -22,77 +26,83 @@
 
 <body>
 
-<h1>Fun with Grid Cells</h1>
+<div class="main-content">
 
-<p>
-    We have learned a lot about the brain over the past few decades. One of the most exciting discoveries of modern neuroscience is how certain cells in the brain respond to and represent location in space. In 2014, the Nobel Prize for Physiology or Medicine was awarded to Drs May-Britt Moser, Edvard Moser, and and John O'Keefe for their work discovering cells that deal with location in the brain. This included cells called "grid cells", which are pyramidal neurons that seem to create cognitive maps of space.
-</p>
+    <h1>Fun with Grid Cells</h1>
 
-<h2>The Discovery of Grid Cells</h2>
+    <p>
+        We have learned a lot about the brain over the past few decades. One of the most exciting discoveries of modern neuroscience is how certain cells in the brain respond to and represent location in space. In 2014, the Nobel Prize for Physiology or Medicine was awarded to Drs May-Britt Moser, Edvard Moser, and and John O'Keefe for their work discovering cells that deal with location in the brain. This included cells called "grid cells", which are pyramidal neurons that seem to create cognitive maps of space.
+    </p>
 
-<p>
-    In this experiment, a mouse has an apparatus that is monitoring one particular neuron in its entorhinal cortex suspected to be involved with location. Every time the neuron fires an action potential, a dot is rendered to the screen in this video.
-</p>
+    <h2>The Discovery of Grid Cells</h2>
 
-<p>
-    At first, it looks like the neuron is just firing randomly, but as the mouse explores the room completely, you can clearly see a grid-like firing field appear across the 2d space. This shows that this one neuron, called a "grid cell", responds when the mouse is in particular places in the room, and those places are spaced out in a hexagonal lattice.
-</p>
+    <p>
+        In this experiment, a mouse has an apparatus that is monitoring one particular neuron in its entorhinal cortex suspected to be involved with location. Every time the neuron fires an action potential, a dot is rendered to the screen in this video.
+    </p>
 
-<h2>A simulation of Grid Cells in Action</h2>
+    <p>
+        At first, it looks like the neuron is just firing randomly, but as the mouse explores the room completely, you can clearly see a grid-like firing field appear across the 2d space. This shows that this one neuron, called a "grid cell", responds when the mouse is in particular places in the room, and those places are spaced out in a hexagonal lattice.
+    </p>
 
-<p>
-    In the interactive visualization below, you can see an object moving through a 2-dimensional space, where the space wraps at the edges. This 2D space is being mapped by 3 grid cells, each one being represented with a different color. The color splotches are each grid cell's firing fields, or the locations in the space where the cell has fired in response to the object's location.
-</p>
+    <h2>A simulation of Grid Cells in Action</h2>
 
-<p>
-    As the grid cells' firing fields fill in, notice that each one is a hexagonal lattice, and that they project slightly differently across the space.
-</p>
+    <p>
+        In the interactive visualization below, you can see an object moving through a 2-dimensional space, where the space wraps at the edges. This 2D space is being mapped by 3 grid cells, each one being represented with a different color. The color splotches are each grid cell's firing fields, or the locations in the space where the cell has fired in response to the object's location.
+    </p>
 
-<div id="gridCellFiringFields" class="widget"></div>
+    <p>
+        As the grid cells' firing fields fill in, notice that each one is a hexagonal lattice, and that they project slightly differently across the space.
+    </p>
 
-<p>
-    If you're a fast reader, the firing fields may not have filled in much yet. If you are at a desktop computer, hover your mouse over the 2D space to control the location of the object and watch as each grid cell fires in response to your movement. See if you can find the firing fields yourself as you move the cursor across the space.
-</p>
+    <div id="gridCellFiringFields" class="widget"></div>
 
-<p>
-    Use the checkboxes above to show only <a onclick="showOnly('red')">red</a> cell's firing fields, then compare it to the <a onclick="showOnly('blue')">blue</a> and <a onclick="showOnly('green')">green</a> cells. You can turn them back on by toggling the checkboxes above.
-</p>
+    <p>
+        If you're a fast reader, the firing fields may not have filled in much yet. If you are at a desktop computer, hover your mouse over the 2D space to control the location of the object and watch as each grid cell fires in response to your movement. See if you can find the firing fields yourself as you move the cursor across the space.
+    </p>
 
-<h2>One Grid Cell's Firing Fields</h2>
+    <p>
+        Use the checkboxes above to show only <a onclick="showOnly('red')">red</a> cell's firing fields, then compare it to the <a onclick="showOnly('blue')">blue</a> and <a onclick="showOnly('green')">green</a> cells. You can turn them back on by toggling the checkboxes above.
+    </p>
 
-<p>
-Each grid cell projects onto space, and the places it activates in response to are called firing fields. In the figure above, you can see that each color cell has many firing fields. As an attended object gets closer to the center of the field, the probability of the grid cell firing becomes higher.
-</p>
+    <h2>One Grid Cell's Firing Fields</h2>
 
-<p>
-    In the figure below, one grid cell's firing fields are displayed as filled circles in a hexagonal lattice. This represents all the locations the grid cell thinks the object is. It could be near any of these circles. As you mouse over the filled circles, they light up, indicating that the grid cell monitoring this space is firing.
-</p>
+    <p>
+        Each grid cell projects onto space, and the places it activates in response to are called firing fields. In the figure above, you can see that each color cell has many firing fields. As an attended object gets closer to the center of the field, the probability of the grid cell firing becomes higher.
+    </p>
 
-<div id="oneGridCell"></div>
+    <p>
+        In the figure below, one grid cell's firing fields are displayed as filled circles in a hexagonal lattice. This represents all the locations the grid cell thinks the object is. It could be near any of these circles. As you mouse over the filled circles, they light up, indicating that the grid cell monitoring this space is firing.
+    </p>
 
-<p>
-    Each grid cell can project onto space in many ways. Above, you can change the orientation and scale of this grid cell's projection onto the 2D space. Try moving the sliders now.
-</p>
+    <div id="oneGridCell"></div>
 
-<p>
-    One grid cell is not enough to represent a location in space. As you can easily see above, the representation is ambiguous, and could represent a number of places in the space. That's why grid cells work together in <em>modules</em>.
-</p>
+    <p>
+        Each grid cell can project onto space in many ways. Above, you can change the orientation and scale of this grid cell's projection onto the 2D space. Try moving the sliders now.
+    </p>
 
-<h2>The Grid Cell Module</h2>
+    <p>
+        One grid cell is not enough to represent a location in space. As you can easily see above, the representation is ambiguous, and could represent a number of places in the space. That's why grid cells work together in <em>modules</em>.
+    </p>
 
-<div id="oneGridCellModule"></div>
+    <h2>The Grid Cell Module</h2>
 
-<p>
-    A grid cell module is simply a group of grid cells sharing the same projection parameters onto space. Using many grid cells, we can cover a patch of space and use it to tile over a larger space.
-</p>
+    <div id="oneGridCellModule"></div>
 
-<em>vis here</em>
+    <p>
+        A grid cell module is simply a group of grid cells sharing the same projection parameters onto space. Using many grid cells, we can cover a patch of space and use it to tile over a larger space.
+    </p>
 
-<p>
-    Again, one grid cell module is not enough to uniquely map space. But when we use many grid cell modules together, we can map a virtually infinite amount of space.
-</p>
+    <em>vis here</em>
 
-<h2>Grid Cell Modules Working Together</h2>
+    <p>
+        Again, one grid cell module is not enough to uniquely map space. But when we use many grid cell modules together, we can map a virtually infinite amount of space.
+    </p>
+
+    <h2>Grid Cell Modules Working Together</h2>
+
+
+</div>
+
 
 <script type="text/javascript">
     $(function() {
