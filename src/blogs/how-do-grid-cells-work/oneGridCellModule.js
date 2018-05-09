@@ -14,8 +14,10 @@ let startingParams = {
 let walkDistance = 10000
 let walkSpeed = 2.0
 let walkFunction
-let frameRef
-let walks = false
+let wasWalking = false
+jsds.set('walks', wasWalking)
+let mouseover = false
+let frameRef = -1
 
 let colors = {
     fields: {
@@ -32,6 +34,8 @@ let colors = {
 
 let moduleOut = (elId) => {
     utils.loadHtml(html.default, elId, () => {
+
+        let $walksCheckbox = $('#' + elId + ' input.walks')
 
         let width = 443
         let height = 250
@@ -142,7 +146,9 @@ let moduleOut = (elId) => {
 
         // Random walk animation controls
         function start() {
-            frameRef = window.requestAnimationFrame(step)
+            if (! mouseover) {
+                frameRef = window.requestAnimationFrame(step)
+            }
         }
 
         function stop() {
@@ -150,6 +156,9 @@ let moduleOut = (elId) => {
         }
 
         function step() {
+            if (isNaN(t) || t === undefined) {
+                t = 0
+            }
             let x = X[t%walkDistance][0];
             let y = X[t%walkDistance][1];
             jsds.set('location', {
@@ -157,26 +166,25 @@ let moduleOut = (elId) => {
                 x: x, y: y
             })
             t++
-            if (walks) {
+            if (jsds.get('walks')) {
                 start()
             }
         }
 
+
         // Animation events
-        $('#' + elId + ' input.walks').change((evt) => {
-            walks = document.getElementById(evt.target.id).checked
-            if (walks) {
-                start()
-            } else {
-                stop()
-            }
+        $walksCheckbox.change((evt) => {
+            let walks = document.getElementById(evt.target.id).checked
+            jsds.set('walks', walks)
         })
 
         $svg.on('mouseenter', () => {
-            if (walks) stop()
+            mouseover = true
+            if (jsds.get('walks')) stop()
         })
         $svg.on('mouseleave', () => {
-            if (walks) start()
+            mouseover = false
+            if (jsds.get('walks')) start()
         })
 
         // Start here
@@ -208,6 +216,19 @@ let moduleOut = (elId) => {
                 location.y = overlayMouse[1]
             }
             jsds.set('location', location)
+        })
+
+        jsds.before('set', 'walks', () => {
+            // stash previous value
+            wasWalking = jsds.get('walks')
+        })
+        jsds.after('set', 'walks', (walks) => {
+            $walksCheckbox.prop('checked', walks)
+            if (walks && ! wasWalking) {
+                start()
+            } else if (! walks && wasWalking) {
+                stop()
+            }
         })
 
         // Update when values change.
