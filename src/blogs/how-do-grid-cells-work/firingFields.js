@@ -21,12 +21,12 @@ let fuzzSize = 60
 
 let jsds = JSDS.create('gridCellFiringFields')
 
-let frameRef = -1
 let walkDistance = 10000
 let walkSpeed = 15.0
 let wasWalking = false
 jsds.set('walks', wasWalking)
 let mouseover = false
+let frameRef = -1
 
 let $svg
 let newColors = ['red', 'blue', 'green']
@@ -282,7 +282,6 @@ let moduleOut = (elId) => {
 
         $walksCheckbox.change((evt) => {
             let walks = document.getElementById(evt.target.id).checked
-            if (walks && t === undefined) t = 0
             jsds.set('walks', walks)
         })
 
