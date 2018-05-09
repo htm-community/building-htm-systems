@@ -150,7 +150,6 @@ let moduleOut = (elId) => {
             }
         })
 
-        let $world = $svg.select('g.world')
         $svg.on('mouseenter', () => {
             if (walks) stop()
         })
