@@ -277,7 +277,7 @@ let moduleOut = (elId) => {
             setVisible(gcid, isOn)
         })
 
-        $('input#walks').change((evt) => {
+        $('#' + elId + ' input.walks').change((evt) => {
             walks = document.getElementById(evt.target.id).checked
             if (walks) {
                 start()

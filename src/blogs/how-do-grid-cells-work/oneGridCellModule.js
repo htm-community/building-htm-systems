@@ -163,7 +163,7 @@ let moduleOut = (elId) => {
         }
 
         // Animation events
-        $('input#walks').change((evt) => {
+        $('#' + elId + ' input.walks').change((evt) => {
             walks = document.getElementById(evt.target.id).checked
             if (walks) {
                 start()
