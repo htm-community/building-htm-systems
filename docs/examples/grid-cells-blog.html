@@ -47,7 +47,7 @@
     <h2>A simulation of Grid Cells in Action</h2>
 
     <p>
-        <a onclick="startSim()">Click here</a> to start the interactive visualization below, where you can see an object moving through a 2-dimensional space, where the space wraps at the edges. This 2D space is being mapped by 3 grid cells, each one being represented with a different color. The color splotches are each grid cell's firing fields, or the locations in the space where the cell has fired in response to the object's location.
+        <a onclick="toggleSim(true)">Click here</a> to start the interactive visualization below, where you can see an object moving through a 2-dimensional space, where the space wraps at the edges. This 2D space is being mapped by 3 grid cells, each one being represented with a different color. The color splotches are each grid cell's firing fields, or the locations in the space where the cell has fired in response to the object's location.
     </p>
 
     <p>
@@ -61,7 +61,7 @@
     </p>
 
     <p>
-        Use the checkboxes above to show only <a onclick="showOnly('red')">red</a> cell's firing fields, then compare it to the <a onclick="showOnly('blue')">blue</a> and <a onclick="showOnly('green')">green</a> cells. You can turn them back on by toggling the checkboxes above. To stop the simulation, uncheck the "Random Walk" checkbox or just <a onclick="stopSim()">click here</a>.
+        Use the checkboxes above to show only <a onclick="showOnly('red')">red</a> cell's firing fields, then compare it to the <a onclick="showOnly('blue')">blue</a> and <a onclick="showOnly('green')">green</a> cells. You can turn them back on by toggling the checkboxes above. To stop the simulation, uncheck the "Random Walk" checkbox or just <a onclick="toggleSim(false)">click here</a>.
     </p>
 
     <h2>One Grid Cell's Firing Fields</h2>
@@ -71,7 +71,7 @@
     </p>
 
     <p>
-        In the figure below, one grid cell's firing fields are displayed as filled circles in a hexagonal lattice. This represents all the locations the grid cell thinks the object is. It could be near any of these circles. As you mouse over the filled circles, they light up, indicating that the grid cell monitoring this space is firing.
+        In the <a onclick="toggleOneGridCell(true)">figure below</a>, one grid cell's firing fields are displayed as filled circles in a hexagonal lattice. This represents all the locations the grid cell thinks the object is. It could be near any of these circles. As you mouse over the filled circles, they light up, indicating that the grid cell monitoring this space is firing.
     </p>
 
     <div id="oneGridCell"></div>
@@ -81,18 +81,24 @@
     </p>
 
     <p>
-        One grid cell is not enough to represent a location in space. As you can easily see above, the representation is ambiguous, and could represent a number of places in the space. That's why grid cells work together in <em>modules</em>.
+        One grid cell is not enough to represent a location in space. As you can easily <a onclick="toggleOneGridCell(false)">see above</a>, the representation is ambiguous, and could represent a number of places in the space. That's why grid cells work together in <em>modules</em>.
     </p>
 
     <h2>The Grid Cell Module</h2>
 
+    <p>
+        A <a onclick="toggleOneGridCellModule(true)">grid cell module</a> is simply a group of grid cells sharing the same projection properties onto space. Using many grid cells, we can cover a patch of space and use it to tile over a larger space.
+    </p>
+
     <div id="oneGridCellModule"></div>
 
     <p>
-        A grid cell module is simply a group of grid cells sharing the same projection parameters onto space. Using many grid cells, we can cover a patch of space and use it to tile over a larger space.
+        The overlay on the bottom left shows all 16 grid cells within the module, and which one is currently active in response to an objects location in space. Hover your mouse over the parallelogram shape in the overlay to see each individual grid cell's firing fields.
     </p>
 
-    <em>vis here</em>
+    <p>
+        One grid cell module can tell us a lot more about an object's location in space than a lone grid cell. As you mouse-over the space above, notice how the grid cell module knows your mouse cursor must be within one of many locations moving across the space. But it cannot decipher an <a onclick="toggleOneGridCellModule(false)">exact location</a>.
+    </p>
 
     <p>
         Again, one grid cell module is not enough to uniquely map space. But when we use many grid cell modules together, we can map a virtually infinite amount of space.
@@ -106,7 +112,9 @@
 
 <script type="text/javascript">
     $(function() {
-        let jsds = BHTMS.JSDS.get('gridCellFiringFields')
+        let jsdsFiringFields = BHTMS.JSDS.get('gridCellFiringFields')
+        let jsdsOneGridCell = BHTMS.JSDS.get('oneGridCell')
+        let jsdsOneGridCellModule = BHTMS.JSDS.get('oneGridCellModule')
         BHTMS.gridCellFiringFields("gridCellFiringFields")
         window.showOnly = (color) => {
             BHTMS.gridCellFiringFields.selectCellByColor(color)
@@ -116,11 +124,14 @@
 
         BHTMS.oneGridCellModule("oneGridCellModule")
 
-        window.startSim = function() {
-            jsds.set('walks', true)
+        window.toggleSim = function(on) {
+            jsdsFiringFields.set('walks', on)
         }
-        window.stopSim = function() {
-            jsds.set('walks', false)
+        window.toggleOneGridCell = function(on) {
+            jsdsOneGridCell.set('walks', on)
+        }
+        window.toggleOneGridCellModule = function(on) {
+            jsdsOneGridCellModule.set('walks', on)
         }
 
     });
