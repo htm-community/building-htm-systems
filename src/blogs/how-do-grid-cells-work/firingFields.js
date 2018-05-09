@@ -129,7 +129,7 @@ let moduleOut = (elId) => {
 
         let $walksCheckbox = $('#' + elId + ' input.walks')
 
-        let t;
+        let t = undefined
         let grid_cells = []
         let mx
         let my
@@ -176,11 +176,6 @@ let moduleOut = (elId) => {
         jsds.set('gridCells', grid_cells)
 
         function updateLocation(x, y) {
-            if (t === undefined) {
-                t = 0
-                mx = X[t][0];
-                my = X[t][1];
-            }
             let loc = {x: x, y: y}
             for (let gcId =0; gcId < grid_cells.length; gcId++) {
                 let gc_id = gcId.toString()
@@ -256,15 +251,19 @@ let moduleOut = (elId) => {
         }
 
         function start() {
-            frameRef = window.requestAnimationFrame(step)
+            if (! mouseover) frameRef = window.requestAnimationFrame(step)
         }
 
         function stop() {
             window.cancelAnimationFrame(frameRef)
-            frameRef = -1
         }
 
         function step() {
+            if (t === undefined) {
+                t = 0
+                mx = X[t][0];
+                my = X[t][1];
+            }
             mx = X[t%walkDistance][0];
             my = X[t%walkDistance][1];
             updateLocation(mx, my)
