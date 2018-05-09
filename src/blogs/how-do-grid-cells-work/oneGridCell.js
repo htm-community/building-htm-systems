@@ -11,6 +11,12 @@ let startingParams = {
     orientation: 15.0,
 }
 
+let walkDistance = 10000
+let walkSpeed = 4.0
+let walkFunction
+let frameRef
+let walks = true
+
 let colors = {
     fields: {
         on: {
@@ -29,6 +35,12 @@ let moduleOut = (elId) => {
 
         let width = 443
         let height = 250
+
+        let t = 0
+        let [X,V] = utils.randomTorusWalk(
+            walkDistance, width, height, walkSpeed
+        )
+        walkFunction = X
 
         let $svg = d3.select('#' + elId + ' svg')
             .attr('width', width)
@@ -106,6 +118,46 @@ let moduleOut = (elId) => {
             $scaleSlider.val(params.scale)
         }
 
+        // Random walk animation controls
+        function start() {
+            frameRef = window.requestAnimationFrame(step)
+        }
+
+        function stop() {
+            window.cancelAnimationFrame(frameRef)
+        }
+
+        function step() {
+            let x = X[t%walkDistance][0];
+            let y = X[t%walkDistance][1];
+            jsds.set('location', {
+                type: 'world',
+                x: x, y: y
+            })
+            t++
+            if (walks) {
+                start()
+            }
+        }
+
+        // Animation events
+        $('input#walks').change((evt) => {
+            walks = document.getElementById(evt.target.id).checked
+            if (walks) {
+                start()
+            } else {
+                stop()
+            }
+        })
+
+        let $world = $svg.select('g.world')
+        $svg.on('mouseenter', () => {
+            if (walks) stop()
+        })
+        $svg.on('mouseleave', () => {
+            if (walks) start()
+        })
+
         // This is the input from the user. Values change and the display updates.
         $('#' + elId + ' input').on('input', () => {
             let params = jsds.get('params')
@@ -123,9 +175,9 @@ let moduleOut = (elId) => {
         jsds.after('set', 'params', updateDisplay)
         jsds.after('set', 'location', updateDisplay)
 
-        // This is what actually kicks off the program
         jsds.set('params', startingParams)
-        jsds.set('location', {x: 100, y: 100})
+
+        start()
     })
 }
 

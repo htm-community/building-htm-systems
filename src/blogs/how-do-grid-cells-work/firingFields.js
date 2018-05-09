@@ -31,11 +31,7 @@ let newColors = ['red', 'blue', 'green']
 let jsds = JSDS.create('grid-cell-firing-fields')
 
 /************** UTILS **********************/
-let mod = function (a, b) {
-    return ((a % b) + b) % b;
-}
-
-let create_firing_field = function(B, v, num_fields, r) {
+let createFiringField = function(B, v, num_fields, r) {
     let [w,h] = num_fields
     let firing_field = []
 
@@ -43,9 +39,9 @@ let create_firing_field = function(B, v, num_fields, r) {
     h = parseInt(h/2)
     for (let x=-w; x<w; x++) {
         for (let y=-h; y<h; y++) {
-            cx = x*B[0][0] + y*B[0][1] + v[0]
-            cy = x*B[1][0] + y*B[1][1] + v[1]
-            patch = new FiringPatch({
+            let cx = x*B[0][0] + y*B[0][1] + v[0]
+            let cy = x*B[1][0] + y*B[1][1] + v[1]
+            let patch = new FiringPatch({
                 "id"    : [ x, y],
                 "center": [cx,cy],
                 "radius": r})
@@ -54,40 +50,6 @@ let create_firing_field = function(B, v, num_fields, r) {
     }
     return firing_field
 };
-
-// Standard Normal variate using Box-Muller transform.
-let randn_bm = function() {
-    let u = 0, v = 0;
-    while(u === 0) u = Math.random(); //Converting [0,1) to (0,1)
-    while(v === 0) v = Math.random();
-    return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
-}
-
-let random_torus_walk = function(d, w, h, speed) {
-    let X = []
-    let V = []
-
-    let x = [0.5*w, 0.5*h]
-
-    X.push(x.slice())
-    let v = [0.0,0.0]
-    let theta = 0.0
-
-    for (let t=0; t<d; t++) {
-        theta += randn_bm()/4
-        v[0] = speed*Math.cos(theta)
-        v[1] = speed*Math.sin(theta)
-        x[0] += v[0]
-        x[1] += v[1]
-        x[0] = mod(x[0],w)
-        x[1] = mod(x[1],h)
-        X.push(x.slice())
-        V.push(v.slice())
-    }
-
-
-    return [X,V]
-}
 
 /***** graphic treatments *******/
 
@@ -226,15 +188,14 @@ let moduleOut = (elId) => {
         let t=0;
         let grid_cells = []
 
-        let [X,V] = random_torus_walk(walkDistance, w, h, walkSpeed)
+        let [X,V] = utils.randomTorusWalk(walkDistance, w, h, walkSpeed)
 
         let mx = X[t][0];
         let my = X[t][1];
 
-
         let theta = 1.43
         let c = 180
-        grid_cells.push(create_firing_field(
+        grid_cells.push(createFiringField(
             [
                 [c*Math.cos(theta), c*Math.cos(theta + Math.PI/3.0)],
                 [c*Math.sin(theta), c*Math.sin(theta + Math.PI/3.0)]
@@ -246,7 +207,7 @@ let moduleOut = (elId) => {
 
         theta = 1.1
         c = 190
-        grid_cells.push(create_firing_field(
+        grid_cells.push(createFiringField(
             [
                 [c*Math.cos(theta), c*Math.cos(theta + Math.PI/3.0)],
                 [c*Math.sin(theta), c*Math.sin(theta + Math.PI/3.0)]
@@ -258,7 +219,7 @@ let moduleOut = (elId) => {
 
         theta = 2.0
         c = 200
-        grid_cells.push(create_firing_field(
+        grid_cells.push(createFiringField(
             [
                 [c*Math.cos(theta), c*Math.cos(theta + Math.PI/3.0)],
                 [c*Math.sin(theta), c*Math.sin(theta + Math.PI/3.0)]
@@ -333,7 +294,6 @@ let moduleOut = (elId) => {
         $svg.on('mousemove', () => {
             let mouse = d3.mouse($svg.node())
             updateLocation(mouse[0], mouse[1])
-            //start()
         })
         $svg.on('mouseleave', () => {
             if (walks) start()
