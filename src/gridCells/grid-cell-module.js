@@ -9,7 +9,6 @@ class GridCell {
     }
 
     activate() {
-        console.log('activating %s', this.id)
         this.active = true
     }
 
@@ -100,7 +99,6 @@ class GridCellModule {
 
     /** ACTIVATES GRID CELLS **/
     intersectOverlay(x, y, points) {
-        console.log('intersect overlay %s %s', x, y)
         // We want to take the mouse position over the GCM overlay and do
         // these things:
         // 1. turn off all grid cells across all modules

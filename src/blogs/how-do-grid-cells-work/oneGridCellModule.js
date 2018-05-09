@@ -120,7 +120,8 @@ let moduleOut = (elId) => {
 
             updateFields($world, worldPoints, module, params)
             updateFields($overlay, overlayPoints, module, params)
-            updateLocation($svg, location, params)
+            if (location.type === 'world')
+                updateLocation($svg, location, params)
 
             // update display sliders
             $orientationSlider.val(params.orientation)
@@ -141,18 +142,21 @@ let moduleOut = (elId) => {
         // On user mouse move over world.
         $svg.on('mousemove', () => {
             d3.event.preventDefault()
-            let type = 'world'
             let worldMouse = d3.mouse($world.node()),
                 overlayMouse = d3.mouse($overlay.node())
                 ox = overlayMouse[0], oy = overlayMouse[1]
-            if (0 < ox && ox < overlaySize
-                    && 0 < oy && oy < height - overlaySize) {
-                type = 'overlay'
+            let location = {
+                type: 'world',
+                x: worldMouse[0],
+                y: worldMouse[1],
             }
-            jsds.set('location', {
-                type: type,
-                x: worldMouse[0], y: worldMouse[1]
-            })
+            if (0 < ox && ox < overlaySize
+                    && 0 < oy && oy < overlaySize) {
+                location.type = 'overlay'
+                location.x = overlayMouse[0]
+                location.y = overlayMouse[1]
+            }
+            jsds.set('location', location)
         })
 
         // Update when values change.
