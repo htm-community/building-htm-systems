@@ -24,7 +24,8 @@ let jsds = JSDS.create('gridCellFiringFields')
 let frameRef = -1
 let walkDistance = 10000
 let walkSpeed = 15.0
-jsds.set('walks', false)
+let wasWalking = false
+jsds.set('walks', wasWalking)
 let mouseover = false
 
 let $svg
@@ -246,12 +247,12 @@ let moduleOut = (elId) => {
                 .attr('stroke', 'black')
                 .attr('stroke-width', '3px')
                 .attr('fill', 'none')
-
-            $walksCheckbox.attr('checked', jsds.get('walks'))
         }
 
         function start() {
-            if (! mouseover) frameRef = window.requestAnimationFrame(step)
+            if (! mouseover) {
+                frameRef = window.requestAnimationFrame(step)
+            }
         }
 
         function stop() {
@@ -259,7 +260,7 @@ let moduleOut = (elId) => {
         }
 
         function step() {
-            if (t === undefined) {
+            if (isNaN(t) || t === undefined) {
                 t = 0
                 mx = X[t][0];
                 my = X[t][1];
@@ -303,11 +304,17 @@ let moduleOut = (elId) => {
         prepSvg($svg)
 
         jsds.after('set', 'spikes', updateDisplay)
+        jsds.before('set', 'walks', () => {
+            // stash previous value
+            wasWalking = jsds.get('walks')
+        })
         jsds.after('set', 'walks', (walks) => {
-            if (mouseover) throw new Error('Event should never toggle during mouseover')
-            updateDisplay()
-            if (walks) start()
-            else stop()
+            $walksCheckbox.prop('checked', walks)
+            if (walks && ! wasWalking) {
+                start()
+            } else if (! walks && wasWalking) {
+                stop()
+            }
         })
     })
 
