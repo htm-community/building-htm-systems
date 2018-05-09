@@ -15,7 +15,7 @@ let walkDistance = 10000
 let walkSpeed = 2.0
 let walkFunction
 let frameRef
-let walks = true
+let walks = false
 
 let colors = {
     fields: {
@@ -174,9 +174,9 @@ let moduleOut = (elId) => {
         jsds.after('set', 'params', updateDisplay)
         jsds.after('set', 'location', updateDisplay)
 
+        // The listeners will render.
         jsds.set('params', startingParams)
-
-        start()
+        jsds.set('location', {x: width/2, y: height/2, type:'world'})
     })
 }
 

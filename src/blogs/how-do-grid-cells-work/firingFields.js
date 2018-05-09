@@ -14,21 +14,21 @@ let FiringPatch = require('./firingPatch')
 let w = 443
 let h = 400
 
+
 let maxQueue = 200
 let dotSize = 1
 let fuzzSize = 60
-let walks = true
 
-let frameRef
+let jsds = JSDS.create('gridCellFiringFields')
 
+let frameRef = -1
 let walkDistance = 10000
 let walkSpeed = 15.0
+jsds.set('walks', false)
+let mouseover = false
 
 let $svg
-
 let newColors = ['red', 'blue', 'green']
-
-let jsds = JSDS.create('grid-cell-firing-fields')
 
 /************** UTILS **********************/
 let createFiringField = function(B, v, num_fields, r) {
@@ -52,7 +52,6 @@ let createFiringField = function(B, v, num_fields, r) {
 };
 
 /***** graphic treatments *******/
-
 function treatStops(points, key) {
     points
         .attr('offset', d => d[0] + '%')
@@ -96,60 +95,6 @@ function treatCircles(points, key, radius, useGradient=false) {
     }
 }
 
-
-function redraw($el, data, currentLocation) {
-
-    let keys = Object.keys(data)
-
-    for (let key of keys) {
-        let $dotGroup = $el.select('g#group-' + key + ' g.dots')
-        let $fuzzGroup = $el.select('g#group-' + key + ' g.fuzz')
-
-        // First let's deal with the gradients
-        let numPoints = data[key].length
-
-        // Update
-        let $gradients = $fuzzGroup.select('defs').selectAll('radialGradient')
-            .data(data[key])
-        treatGradients($gradients, key, numPoints)
-
-        // Enter
-        let $newGradients = $gradients.enter().append('radialGradient')
-        treatGradients($newGradients, key, numPoints)
-
-        // Exit
-        $gradients.exit().remove()
-
-        // Now deal with circles, using radial gradients for fuzzy circles
-
-        // Update
-        let $dots = $dotGroup.selectAll('circle')
-            .data(data[key])
-        treatCircles($dots, key, dotSize)
-        let $fuzz = $fuzzGroup.selectAll('circle')
-            .data(data[key])
-        treatCircles($fuzz, key, fuzzSize, true)
-
-        // Enter
-        let $newDots = $dots.enter().append('circle')
-        treatCircles($newDots, key, 1)
-        let $newFuzz = $fuzz.enter().append('circle')
-        treatCircles($newFuzz, key, 10)
-        // Exit
-        $dots.exit().remove()
-        $fuzz.exit().remove()
-    }
-
-    $el.select('#current-location')
-        .attr('cx', currentLocation.x)
-        .attr('cy', currentLocation.y)
-        .attr('r', 6)
-        .attr('stroke', 'black')
-        .attr('stroke-width', '3px')
-        .attr('fill', 'none')
-
-}
-
 function prepSvg($svg) {
     let keys = ["0", "1", "2"]
 
@@ -168,9 +113,6 @@ function prepSvg($svg) {
     // Add the current location circle over top of everything else
     $svg.append('circle').attr('id', 'current-location')
 
-    jsds.after('set', 'spikes', () => {
-        redraw($svg, jsds.get('spikes'), jsds.get('currentLocation'))
-    })
 }
 
 function setVisible(gcId, visible) {
@@ -185,13 +127,15 @@ let moduleOut = (elId) => {
 
     utils.loadHtml(html.default, elId, () => {
 
-        let t=0;
+        let $walksCheckbox = $('#' + elId + ' input.walks')
+
+        let t;
         let grid_cells = []
+        let mx
+        let my
+
 
         let [X,V] = utils.randomTorusWalk(walkDistance, w, h, walkSpeed)
-
-        let mx = X[t][0];
-        let my = X[t][1];
 
         let theta = 1.43
         let c = 180
@@ -232,10 +176,13 @@ let moduleOut = (elId) => {
         jsds.set('gridCells', grid_cells)
 
         function updateLocation(x, y) {
+            if (t === undefined) {
+                t = 0
+                mx = X[t][0];
+                my = X[t][1];
+            }
             let loc = {x: x, y: y}
-            jsds.set('currentLocation', loc)
-
-            for (var gcId =0; gcId < grid_cells.length; gcId++) {
+            for (let gcId =0; gcId < grid_cells.length; gcId++) {
                 let gc_id = gcId.toString()
                 let gcStore = jsds.get('spikes.' + gc_id) || []
                 for (let f of grid_cells[gcId]) {
@@ -249,8 +196,63 @@ let moduleOut = (elId) => {
                     jsds.set(key, gcStore)
                 }
             }
-
             t+= 1
+            jsds.set('currentLocation', loc)
+        }
+
+        function updateDisplay() {
+            let $el = $svg,
+                data = jsds.get('spikes') || [],
+                currentLocation = jsds.get('currentLocation') || {x:0, y:0, type:'world'}
+            let keys = Object.keys(data)
+            for (let key of keys) {
+                let $dotGroup = $el.select('g#group-' + key + ' g.dots')
+                let $fuzzGroup = $el.select('g#group-' + key + ' g.fuzz')
+
+                // First let's deal with the gradients
+                let numPoints = data[key].length
+
+                // Update
+                let $gradients = $fuzzGroup.select('defs').selectAll('radialGradient')
+                    .data(data[key])
+                treatGradients($gradients, key, numPoints)
+
+                // Enter
+                let $newGradients = $gradients.enter().append('radialGradient')
+                treatGradients($newGradients, key, numPoints)
+
+                // Exit
+                $gradients.exit().remove()
+
+                // Now deal with circles, using radial gradients for fuzzy circles
+
+                // Update
+                let $dots = $dotGroup.selectAll('circle')
+                    .data(data[key])
+                treatCircles($dots, key, dotSize)
+                let $fuzz = $fuzzGroup.selectAll('circle')
+                    .data(data[key])
+                treatCircles($fuzz, key, fuzzSize, true)
+
+                // Enter
+                let $newDots = $dots.enter().append('circle')
+                treatCircles($newDots, key, 1)
+                let $newFuzz = $fuzz.enter().append('circle')
+                treatCircles($newFuzz, key, 10)
+                // Exit
+                $dots.exit().remove()
+                $fuzz.exit().remove()
+            }
+
+            $el.select('#current-location')
+                .attr('cx', currentLocation.x)
+                .attr('cy', currentLocation.y)
+                .attr('r', 6)
+                .attr('stroke', 'black')
+                .attr('stroke-width', '3px')
+                .attr('fill', 'none')
+
+            $walksCheckbox.attr('checked', jsds.get('walks'))
         }
 
         function start() {
@@ -259,13 +261,14 @@ let moduleOut = (elId) => {
 
         function stop() {
             window.cancelAnimationFrame(frameRef)
+            frameRef = -1
         }
 
         function step() {
             mx = X[t%walkDistance][0];
             my = X[t%walkDistance][1];
             updateLocation(mx, my)
-            if (walks) {
+            if (jsds.get('walks')) {
                 start()
             }
         }
@@ -277,30 +280,36 @@ let moduleOut = (elId) => {
             setVisible(gcid, isOn)
         })
 
-        $('#' + elId + ' input.walks').change((evt) => {
-            walks = document.getElementById(evt.target.id).checked
-            if (walks) {
-                start()
-            } else {
-                stop()
-            }
+        $walksCheckbox.change((evt) => {
+            let walks = document.getElementById(evt.target.id).checked
+            if (walks && t === undefined) t = 0
+            jsds.set('walks', walks)
         })
 
         $svg = d3.select('#' + elId + ' svg')
 
         $svg.on('mouseenter', () => {
-            if (walks) stop()
+            mouseover = true
+            if (jsds.get('walks')) stop()
         })
         $svg.on('mousemove', () => {
             let mouse = d3.mouse($svg.node())
             updateLocation(mouse[0], mouse[1])
         })
         $svg.on('mouseleave', () => {
-            if (walks) start()
+            mouseover = false
+            if (jsds.get('walks')) start()
         })
 
         prepSvg($svg)
-        start()
+
+        jsds.after('set', 'spikes', updateDisplay)
+        jsds.after('set', 'walks', (walks) => {
+            if (mouseover) throw new Error('Event should never toggle during mouseover')
+            updateDisplay()
+            if (walks) start()
+            else stop()
+        })
     })
 
 }

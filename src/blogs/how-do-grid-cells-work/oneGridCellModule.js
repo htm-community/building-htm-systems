@@ -15,7 +15,7 @@ let walkDistance = 10000
 let walkSpeed = 2.0
 let walkFunction
 let frameRef
-let walks = true
+let walks = false
 
 let colors = {
     fields: {
