@@ -117,7 +117,7 @@
     <div id="manyGridCellModules"></div>
 
     <p>
-        Let's try something. First, <a onclick="manyGcmSelect(4)">select only 4 grid cell modules</a>. <a onclick="toggleManyGcm(true)">Turn on</a> the random walk, then <a onclick="hideGcmLocationMarker(true)">hide the location marker</a>. With only a few grid cell modules mapping this space, it is hard to tell where the object is without turning the marker <a onclick="manyGcmSetMarker(true)">on</a> and <a onclick="manyGcmSetMarker(false)">off</a>. But if you <a onclick="manyGcmSelect(17)">increase the number of grid cell modules</a>, you can easily tell where the object is by observing the grid cell firing fields. Use your mouse to hover over the space and explore. Use the checkbox above or <a onclick="toggleManyGcm(false)">click here</a> to turn off the animation. <a onclick="hideGcmLocationMarker(false)">Click here</a> to show the location marker again.
+        Let's try something. First, <a onclick="manyGcmSelect(4)">select only 4 grid cell modules</a>. <a onclick="toggleManyGcm(true)">Turn on</a> the random walk, then <a onclick="hideGcmLocationMarker(true)">hide the location marker</a>. With only a few grid cell modules mapping this space, it is hard to tell where the object is without turning the marker <a onclick="manyGcmSetMarker(true)">on</a> and <a onclick="manyGcmSetMarker(false)">off</a>. But if you <a onclick="manyGcmSelect(16)">increase the number of grid cell modules</a>, you can easily tell where the object is by observing the grid cell firing fields. Use your mouse to hover over the space and explore. Use the checkbox above or <a onclick="toggleManyGcm(false)">click here</a> to turn off the animation. <a onclick="hideGcmLocationMarker(false)">Click here</a> to show the location marker again.
     </p>
 
     <h2>Grid Cells in the Neocortex</h2>
@@ -195,10 +195,9 @@
             jsdsManyGridCellModules.set('hide-marker', hide)
         }
         window.manyGcmSelect = function(num) {
-            current = 0
-            animateParamChange(jsdsManyGridCellModules, {
-                gcmCount: num
-            })
+            let params = jsdsManyGridCellModules.get('params')
+            params.gcmCount = num
+            jsdsManyGridCellModules.set('params', params)
         }
         window.manyGcmSetMarker = function(on) {
             jsdsManyGridCellModules.set('hide-marker', ! on)
