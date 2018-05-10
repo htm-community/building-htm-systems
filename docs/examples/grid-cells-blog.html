@@ -106,34 +106,51 @@
 
     <h2>Grid Cell Modules Working Together</h2>
 
+    <p>
+        When grid cell modules work together, they can uniquely map space by combining their representations. Each cell in a grid cell module is like a bit in an SDR. As you can see <a onclick="toggleManyGcm(true)">below</a>, this space can be easily mapped with 16 grid cell modules each with 16 cells (256 grid cells).
+    </p>
+
+    <div id="manyGridCellModules"></div>
+
+    <p>
+        Even if you <a onclick="hideGcmLocationMarker(true)">hide the location marker</a>, you can easily tell where the object is just by looking at the grid cells' corresponding firing fields. Use your mouse to hover over the space and explore. Use the checkbox above or <a onclick="toggleManyGcm(false)">click here</a> to turn off the animation. <a onclick="hideGcmLocationMarker(false)">Click here</a> to show the location marker again.
+    </p>
 
 </div>
 
 
 <script type="text/javascript">
     $(function() {
+
         let jsdsFiringFields = BHTMS.JSDS.get('gridCellFiringFields')
-        let jsdsOneGridCell = BHTMS.JSDS.get('oneGridCell')
-        let jsdsOneGridCellModule = BHTMS.JSDS.get('oneGridCellModule')
         BHTMS.gridCellFiringFields("gridCellFiringFields")
         window.showOnly = (color) => {
             BHTMS.gridCellFiringFields.selectCellByColor(color)
         }
-
-        BHTMS.oneGridCell("oneGridCell")
-
-        BHTMS.oneGridCellModule("oneGridCellModule")
-
         window.toggleSim = function(on) {
             jsdsFiringFields.set('walks', on)
         }
+
+        BHTMS.oneGridCell("oneGridCell")
+        let jsdsOneGridCell = BHTMS.JSDS.get('oneGridCell')
         window.toggleOneGridCell = function(on) {
             jsdsOneGridCell.set('walks', on)
         }
+
+        BHTMS.oneGridCellModule("oneGridCellModule")
+        let jsdsOneGridCellModule = BHTMS.JSDS.get('oneGridCellModule')
         window.toggleOneGridCellModule = function(on) {
             jsdsOneGridCellModule.set('walks', on)
         }
 
+        BHTMS.manyGridCellModules("manyGridCellModules", 16)
+        let jsdsManyGridCellModules = BHTMS.JSDS.get('manyGridCellModules')
+        window.toggleManyGcm = function(on) {
+            jsdsManyGridCellModules.set('walks', on)
+        }
+        window.hideGcmLocationMarker = function(hide) {
+            jsdsManyGridCellModules.set('hide-marker', hide)
+        }
     });
 </script>
 
