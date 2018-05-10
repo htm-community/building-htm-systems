@@ -104,14 +104,18 @@ module.exports = (elementId) => {
             let formatCount = d3.format(",.0f");
             let data = rawData.filter(d => d !== null)
 
-            $('svg#receptiveFieldHistogram').html('')
             let svg = d3.select("svg#receptiveFieldHistogram")
+
             svg.attr('transform', 'translate(0, -40)')
 
             let margin = {top: 10, right: 30, bottom: 30, left: 30},
                 width = +svg.attr("width") - margin.left - margin.right,
-                height = +svg.attr("height") - margin.top - margin.bottom,
-                g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                height = +svg.attr("height") - margin.top - margin.bottom
+
+            let g = svg.selectAll('g.hist')
+                .data([null]).enter()
+                .append('g').attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                .attr('class', 'hist')
 
             let x = d3.scaleLinear()
                 .rangeRound([0, width]);
