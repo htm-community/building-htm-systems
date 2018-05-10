@@ -242,19 +242,11 @@ let moduleOut = (elId, numModules = 16) => {
         // On user mouse move over world.
         $svg.on('mousemove', () => {
             d3.event.preventDefault()
-            let worldMouse = d3.mouse($world.node()),
-                overlayMouse = d3.mouse($overlay.node())
-                ox = overlayMouse[0], oy = overlayMouse[1]
+            let worldMouse = d3.mouse($world.node())
             let location = {
                 type: 'world',
                 x: worldMouse[0],
                 y: worldMouse[1],
-            }
-            if (0 < ox && ox < overlaySize
-                    && 0 < oy && oy < overlaySize) {
-                location.type = 'overlay'
-                location.x = overlayMouse[0]
-                location.y = overlayMouse[1]
             }
             jsds.set('location', location)
         })
