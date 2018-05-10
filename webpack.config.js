@@ -15,10 +15,6 @@ modules.push({
     mode: mode,
     entry: [
         "./src/widgets/encoding-numbers/index.js",
-        "./src/widgets/encoding-numbers/simpleNumberEncoder.js",
-        "./src/widgets/encoding-numbers/simpleNumberEncoder.tmpl.html",
-        "./src/widgets/encoding-numbers/scalarWindow.js",
-        "./src/widgets/encoding-numbers/scalarWindow.tmpl.html",
     ],
     module: {
         rules: [

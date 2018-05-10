@@ -14,7 +14,7 @@ module.exports = (elementId, bounded=false) => {
             $jqEl = $('#' + elementId)
 
         let width = 560,
-            height = 200,
+            height = 180,
             minValue = 0,
             maxValue = 55,
             bits = 100,
@@ -190,13 +190,13 @@ module.exports = (elementId, bounded=false) => {
             let xOffset = valueScaleSideMargins,
                 yOffset = valueScaleTopMargin,
                 markerWidth = 1,
-                markerHeight = 30
+                markerHeight = 40
 
             let x = valueToX(value) - (markerWidth / 2)
-            let y = - (markerHeight / 2)
+            let y = 0 - (markerHeight / 2) - 6
 
             $svg.select('g.value text')
-                .attr('x', x)
+                .attr('x', x - 6)
                 .attr('y', y)
                 .attr('font-family', 'sans-serif')
                 .attr('font-size', '10pt')
