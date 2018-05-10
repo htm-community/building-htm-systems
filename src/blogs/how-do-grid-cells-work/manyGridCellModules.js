@@ -6,7 +6,7 @@ let JSDS = require('JSDS')
 let jsds = JSDS.create('manyGridCellModules')
 
 let startingParams = {
-    anchor: {x: 0, y: 0}
+    anchor: {x: 0, y: 0},
 }
 
 let walkDistance = 10000
@@ -31,14 +31,15 @@ let colors = {
 }
 
 let gridCellModules
+let gridRows = 4, gridCols = 4
 
-function buildGridCellModules(numModules) {
+function buildGridCellModules(gcmCount) {
     let out = []
-    while (out.length < numModules) {
+    while (out.length < gcmCount) {
         let orientation = parseInt(utils.getRandomArbitrary(0, 60))
         let scale = parseInt(utils.getRandomArbitrary(10, 50))
         let module = new HexagonGridCellModule(
-            0, 4, 4, orientation, scale
+            0, gridRows, gridCols, orientation, scale
         )
         module.setColor(
             utils.getRandomArbitrary(100, 255),
@@ -51,7 +52,7 @@ function buildGridCellModules(numModules) {
     return out
 }
 
-let moduleOut = (elId, numModules = 16) => {
+let moduleOut = (elId, gcmCount = 16) => {
     utils.loadHtml(html.default, elId, () => {
 
         let $walksCheckbox = $('#' + elId + ' input.walks')
@@ -64,35 +65,25 @@ let moduleOut = (elId, numModules = 16) => {
         )
         walkFunction = X
 
-        let overlaySize = 140
-        gridCellModules = buildGridCellModules(numModules)
+        // I'm just stashing there here because it is convenient, not because it
+        // is the right thing to do.
+        startingParams.gcmCount = gcmCount
+
+        gridCellModules = buildGridCellModules(gcmCount)
 
         let $svg = d3.select('#' + elId + ' svg.main')
             .attr('width', width)
             .attr('height', height)
         let $world = $svg.select('g.world')
-        let $overlay = $svg.select('svg.overlay')
 
         let $el = $('#' + elId)
         let $orientationSlider = $el.find('input.orientation'),
-            $scaleSlider = $el.find('input.scale')
+            $scaleSlider = $el.find('input.scale'),
+            $gcmCountSlider = $el.find('input.gcmCount'),
+            $gcmCountDisplay = $('span.gcmCount'),
+            $cellCountDisplay = $('span.cellCount')
 
-        function setUpOverlay() {
-            let overlayPadding = 10,
-                overlayX = overlayPadding,
-                overlayY = height - overlayPadding - overlaySize
-
-            $overlay
-                .attr('x', overlayX).attr('y', overlayY)
-                .attr('width', overlaySize).attr('height', overlaySize)
-            $overlay.select('rect')
-                .attr('stroke', 'black')
-                .attr('stroke-width', '2px')
-                .attr('fill', 'white')
-                .attr('width', overlaySize).attr('height', overlaySize)
-        }
-
-        function treatFields(fields, params) {
+        function treatFields(fields, gcmIndex, params) {
             fields.attr('class', 'field')
                 .attr('cx', d => d.x)
                 .attr('cy', d => d.y)
@@ -102,19 +93,19 @@ let moduleOut = (elId, numModules = 16) => {
                     let fill = colors.fields.fill
                     let gridCellIndex = d.gridCell.id
                     if (d.gridCell.active)
-                        fill = gridCellModules[gridCellIndex].getColorString()
+                        fill = gridCellModules[gcmIndex].getColorString()
                     return fill
                 })
         }
 
-        function updateFields($group, points, module, params) {
+        function updateFields($group, points, gcmIndex, params) {
             // Update
             let $fields = $group.selectAll('circle.field').data(points)
-            treatFields($fields, params)
+            treatFields($fields, gcmIndex, params)
 
             // Enter
             let $newFields = $fields.enter().append('circle')
-            treatFields($newFields, params)
+            treatFields($newFields, gcmIndex, params)
 
             // Exit
             $fields.exit().remove()
@@ -134,7 +125,7 @@ let moduleOut = (elId, numModules = 16) => {
         }
 
         function updateWorld($world, location, params) {
-            let data = d3.range(0, numModules)
+            let data = d3.range(0, params.gcmCount)
 
             function treatGroups(groups) {
                 groups
@@ -164,7 +155,7 @@ let moduleOut = (elId, numModules = 16) => {
                 let myParams = Object.assign({
                     scale: module.scale,
                 }, params)
-                updateFields($group, worldPoints, module, myParams)
+                updateFields($group, worldPoints, index, myParams)
             })
         }
 
@@ -186,10 +177,13 @@ let moduleOut = (elId, numModules = 16) => {
             // update display sliders
             $orientationSlider.val(params.orientation)
             $scaleSlider.val(params.scale)
+            $gcmCountSlider.val(params.gcmCount)
+            $gcmCountDisplay.html(params.gcmCount)
+            $cellCountDisplay.html(params.gcmCount * gridRows * gridCols)
         }
 
         function updateParams() {
-            gridCellModules = buildGridCellModules(numModules)
+            gridCellModules = buildGridCellModules(jsds.get('params').gcmCount)
             updateDisplay()
         }
 
@@ -220,7 +214,6 @@ let moduleOut = (elId, numModules = 16) => {
             }
         }
 
-
         // Animation events
         $walksCheckbox.change((evt) => {
             let walks = document.getElementById(evt.target.id).checked
@@ -249,6 +242,13 @@ let moduleOut = (elId, numModules = 16) => {
                 y: worldMouse[1],
             }
             jsds.set('location', location)
+        })
+
+        // User slider events
+        $gcmCountSlider.on('input', () => {
+            let params = jsds.get('params')
+            params.gcmCount = parseInt($gcmCountSlider.val())
+            jsds.set('params', params)
         })
 
         jsds.before('set', 'walks', () => {

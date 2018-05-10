@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Grid Cells and Intelligence</title>
+    <title>How Grid Cells Map Space</title>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
@@ -21,6 +21,10 @@
         a {
             text-decoration: underline;
         }
+        blockquote {
+            font-style: italic;
+            font-size: smaller;
+        }
     </style>
 </head>
 
@@ -28,30 +32,30 @@
 
 <div class="main-content">
 
-    <h1>Grid Cells and Intelligence</h1>
+    <h1>How Grid Cells Map Space</h1>
+
+    <blockquote>
+        This blog post contains interactive visualizations that may not work on older web browsers.
+    </blockquote>
 
     <p>
-        We have learned a lot about the brain over the past few decades. One of the most exciting discoveries of modern neuroscience is how certain cells in the brain respond to and represent location in space. In 2014, the Nobel Prize for Physiology or Medicine was awarded to Drs May-Britt Moser, Edvard Moser, and and John O'Keefe for their work discovering cells that deal with location in the brain. This included cells called "grid cells", which are pyramidal neurons that seem to create cognitive maps of space.
+        We have learned a lot about the brain over the past few decades. One of the most exciting reccent discoveries is <strong>how the brain represents locations in space</strong>. In 2014, the Nobel Prize for Physiology or Medicine was awarded to Drs May-Britt Moser, Edvard Moser, and and John O'Keefe for their work discovering cells that deal with location in the brain. This included cells called <em><strong><a href="https://www.youtube.com/watch?v=mP7neeymcUY">grid cells</a></strong></em>, which are pyramidal neurons that  create cognitive maps of space.
     </p>
 
-    <h2>The Discovery of Grid Cells</h2>
+    <p>Recent evidence suggests that grid cell-like mechanisms may be <em>present in the neocortex</em>. We propose that <a href="https://www.youtube.com/watch?v=zVGQeFFjhEk">cortical grid cells exist in every cortical column</a> and play an essential role in all cortical function. Based on this premise, we're working on a theoretical framework for understanding what cortical columns do.</p>
 
     <p>
-        In this experiment, a mouse has an apparatus that is monitoring one particular neuron in its entorhinal cortex suspected to be involved with location. Every time the neuron fires an action potential, a dot is rendered to the screen in this video.
+        In order to understand how grid cells can represent objects in space, it's easier to understand first how grid calls can represent one unique location in space. The series of interactive visualizations below will guide you through these concepts.
+    </p>
+
+    <h2>A Simulation of Grid Cells in Action</h2>
+
+    <p>
+        <a onclick="toggleSim(true)">Click here</a> to start the interactive visualization below, where you can see an object moving through a 2-dimensional space, where the space wraps at the edges. This 2D space is being mapped by 3 grid cells (red, blue, and green). The color splotches are each grid cell's firing fields, or the locations in the space where the cell has fired recently in response to the object's location. These spikes fade away as they are replaced with new firings as the object moves through the space.
     </p>
 
     <p>
-        At first, it looks like the neuron is just firing randomly, but as the mouse explores the room completely, you can clearly see a grid-like firing field appear across the 2d space. This shows that this one neuron, called a "grid cell", responds when the mouse is in particular places in the room, and those places are spaced out in a hexagonal lattice.
-    </p>
-
-    <h2>A simulation of Grid Cells in Action</h2>
-
-    <p>
-        <a onclick="toggleSim(true)">Click here</a> to start the interactive visualization below, where you can see an object moving through a 2-dimensional space, where the space wraps at the edges. This 2D space is being mapped by 3 grid cells, each one being represented with a different color. The color splotches are each grid cell's firing fields, or the locations in the space where the cell has fired in response to the object's location.
-    </p>
-
-    <p>
-        As the grid cells' firing fields fill in, notice that each one is a hexagonal lattice, and that they project slightly differently across the space.
+        As the grid cells' firing fields fill in, notice that each one is a hexagonal lattice, and that they project slightly differently across the space. Each one has a different orientation and scale.
     </p>
 
     <div id="gridCellFiringFields" class="widget"></div>
@@ -67,21 +71,21 @@
     <h2>One Grid Cell's Firing Fields</h2>
 
     <p>
-        Each grid cell projects onto space, and the places it activates in response to are called firing fields. In the figure above, you can see that each color cell has many firing fields. As an attended object gets closer to the center of the field, the probability of the grid cell firing becomes higher.
+        Each grid cell projects onto space, and the locations it activates in response to are called firing fields. In the figure above, you can see that each color cell has many firing fields. As an attended object gets closer to the center of the field, the probability of the grid cell firing becomes higher.
     </p>
 
     <p>
-        In the <a onclick="toggleOneGridCell(true)">figure below</a>, one grid cell's firing fields are displayed as filled circles in a hexagonal lattice. This represents all the locations the grid cell thinks the object is. It could be near any of these circles. As you mouse over the filled circles, they light up, indicating that the grid cell monitoring this space is firing.
+        In the <a onclick="toggleOneGridCell(true)">figure below</a>, one grid cell's firing fields are displayed as filled circles in a hexagonal lattice. This represents all the locations the grid cell is receptive to. As you mouse over the filled circles, they change color, indicating that the grid cell monitoring this space is firing. The grid cell has noticed something within its receptive field.
     </p>
 
     <div id="oneGridCell"></div>
 
     <p>
-        Each grid cell can project onto space in many ways. Above, you can change the orientation and scale of this grid cell's projection onto the 2D space. Try moving the sliders now.
+        Each grid cell can project onto space in many ways. Above, you can <a onclick="resetOneGridCell()">change</a> the orientation and scale of this grid cell's projection onto the 2D space. Try moving the sliders now.
     </p>
 
     <p>
-        One grid cell is not enough to represent a location in space. As you can easily <a onclick="toggleOneGridCell(false)">see above</a>, the representation is ambiguous, and could represent a number of places in the space. That's why grid cells work together in <em>modules</em>.
+        One grid cell is not enough to represent a location in space. As you can easily see above, the representation is ambiguous, and could represent a number of places in the space. That's why grid cells work together in <em>modules</em>.
     </p>
 
     <h2>The Grid Cell Module</h2>
@@ -97,7 +101,7 @@
     </p>
 
     <p>
-        One grid cell module can tell us a lot more about an object's location in space than a lone grid cell. As you mouse-over the space above, notice how the grid cell module knows your mouse cursor must be within one of many locations moving across the space. But it cannot decipher an <a onclick="toggleOneGridCellModule(false)">exact location</a>.
+        One grid cell module can tell us a lot more about an object's location in space than a lone grid cell. As you mouse-over the space above, notice how the grid cell module knows your mouse cursor must be within one of many locations moving across the space. But it cannot decipher an exact location.
     </p>
 
     <p>
@@ -107,13 +111,19 @@
     <h2>Grid Cell Modules Working Together</h2>
 
     <p>
-        When grid cell modules work together, they can uniquely map space by combining their representations. Each cell in a grid cell module is like a bit in an SDR. As you can see <a onclick="toggleManyGcm(true)">below</a>, this space can be easily mapped with 16 grid cell modules each with 16 cells (256 grid cells).
+        When grid cell modules work together, they can uniquely map space by combining their representations. Each cell in a grid cell module is like a bit in an SDR. As you can see <a onclick="toggleManyGcm(true)">below</a>, this space is being mapped with <span class="gcmCount">?</span> grid cell modules each with 16 cells (<span class="cellCount">?</span> grid cells).
     </p>
 
     <div id="manyGridCellModules"></div>
 
     <p>
-        Even if you <a onclick="hideGcmLocationMarker(true)">hide the location marker</a>, you can easily tell where the object is just by looking at the grid cells' corresponding firing fields. Use your mouse to hover over the space and explore. Use the checkbox above or <a onclick="toggleManyGcm(false)">click here</a> to turn off the animation. <a onclick="hideGcmLocationMarker(false)">Click here</a> to show the location marker again.
+        Let's try something. First, <a onclick="manyGcmSelect(4)">select only 4 grid cell modules</a>. <a onclick="toggleManyGcm(true)">Turn on</a> the random walk, then <a onclick="hideGcmLocationMarker(true)">hide the location marker</a>. With only a few grid cell modules mapping this space, it is hard to tell where the object is without turning the marker <a onclick="manyGcmSetMarker(true)">on</a> and <a onclick="manyGcmSetMarker(false)">off</a>. But if you <a onclick="manyGcmSelect(17)">increase the number of grid cell modules</a>, you can easily tell where the object is by observing the grid cell firing fields. Use your mouse to hover over the space and explore. Use the checkbox above or <a onclick="toggleManyGcm(false)">click here</a> to turn off the animation. <a onclick="hideGcmLocationMarker(false)">Click here</a> to show the location marker again.
+    </p>
+
+    <h2>Grid Cells in the Neocortex</h2>
+
+    <p>
+        Grid cells, located in the medial entorhinal cortex, represent the location of an animal in various environments. We propose that the lower layers of the neocortex have cells that work on principles similar to those used by grid cells. Whereas grid cells represent the location of one thing, the body, the neocortex simultaneously represents the location of hundreds of things. Cortical columns that receive input from different parts of the body track the location of each body part relative to external reference frames.
     </p>
 
 </div>
@@ -121,6 +131,31 @@
 
 <script type="text/javascript">
     $(function() {
+
+        let cuts = 20,
+            current = 0,
+            speed = 50
+
+        function animateParamChange(jsds, target) {
+            let params = jsds.get('params')
+            let keys = Object.keys(target)
+            let scales = {}
+            keys.forEach(function(key) {
+                scales[key] = d3.scaleLinear()
+                    .domain([0, cuts])
+                    .range([params[key], target[key]])
+            })
+            setTimeout(function() {
+                keys.forEach(function(k) {
+                    params[k] = parseInt(scales[k](current))
+                })
+                jsds.set('params', params)
+                current++;
+                if (current < cuts) {
+                    animateParamChange(jsds, target);
+                }
+            }, speed)
+        }
 
         let jsdsFiringFields = BHTMS.JSDS.get('gridCellFiringFields')
         BHTMS.gridCellFiringFields("gridCellFiringFields")
@@ -136,6 +171,14 @@
         window.toggleOneGridCell = function(on) {
             jsdsOneGridCell.set('walks', on)
         }
+        window.resetOneGridCell = function() {
+            let targetParams = {
+                orientation: 15,
+                scale: 30
+            }
+            current = 0
+            animateParamChange(jsdsOneGridCell, targetParams)
+        }
 
         BHTMS.oneGridCellModule("oneGridCellModule")
         let jsdsOneGridCellModule = BHTMS.JSDS.get('oneGridCellModule')
@@ -150,6 +193,15 @@
         }
         window.hideGcmLocationMarker = function(hide) {
             jsdsManyGridCellModules.set('hide-marker', hide)
+        }
+        window.manyGcmSelect = function(num) {
+            current = 0
+            animateParamChange(jsdsManyGridCellModules, {
+                gcmCount: num
+            })
+        }
+        window.manyGcmSetMarker = function(on) {
+            jsdsManyGridCellModules.set('hide-marker', ! on)
         }
     });
 </script>
