@@ -1,9 +1,9 @@
 let utils = require('../../widgets/utils')
-let html = require('./manyGridCellModules.tmpl.html')
+let html = require('./header.tmpl.html')
 let HexagonGridCellModule = require('HexagonGridCellModule')
 let JSDS = require('JSDS')
 
-let jsds = JSDS.create('manyGridCellModules')
+let jsds = JSDS.create('header')
 
 let startingParams = {
     anchor: {x: 0, y: 0},
@@ -12,23 +12,9 @@ let startingParams = {
 let walkDistance = 10000
 let walkSpeed = 2.0
 let walkFunction
-let wasWalking = false
+let wasWalking = true
 jsds.set('walks', wasWalking)
-let mouseover = false
 let frameRef = -1
-
-let colors = {
-    fields: {
-        on: {
-            fill: 'CORNFLOWERBLUE',
-        },
-        dim: {
-            fill: '#CBF1F1',
-        },
-        stroke: 'none',
-        fill: 'none',
-    }
-}
 
 let gridCellModules
 let gridRows = 4, gridCols = 4
@@ -58,7 +44,7 @@ let moduleOut = (elId, gcmCount = 16) => {
         let $walksCheckbox = $('#' + elId + ' input.walks')
 
         let width = 443
-        let height = 250
+        let height = 60
         let t = 0
         let [X,V] = utils.randomTorusWalk(
             walkDistance, width, height, walkSpeed
@@ -76,21 +62,14 @@ let moduleOut = (elId, gcmCount = 16) => {
             .attr('height', height)
         let $world = $svg.select('g.world')
 
-        let $el = $('#' + elId)
-        let $orientationSlider = $el.find('input.orientation'),
-            $scaleSlider = $el.find('input.scale'),
-            $gcmCountSlider = $el.find('input.gcmCount'),
-            $gcmCountDisplay = $('span.gcmCount'),
-            $cellCountDisplay = $('span.cellCount')
-
         function treatFields(fields, gcmIndex, params) {
             fields.attr('class', 'field')
                 .attr('cx', d => d.x)
                 .attr('cy', d => d.y)
                 .attr('r', params.scale / 4)
-                .attr('stroke', colors.fields.stroke)
+                .attr('stroke', 'none')
                 .attr('fill', (d) => {
-                    let fill = colors.fields.fill
+                    let fill = 'none'
                     let gridCellIndex = d.gridCell.id
                     if (d.gridCell.active)
                         fill = gridCellModules[gcmIndex].getColorString()
@@ -109,19 +88,6 @@ let moduleOut = (elId, gcmCount = 16) => {
 
             // Exit
             $fields.exit().remove()
-        }
-
-        function updateLocation($group, location) {
-            let w = 12
-            $group.select('rect.location')
-                .attr('x', location.x - w/2)
-                .attr('y', location.y - w/2)
-                .attr('width', w)
-                .attr('height', w)
-                .attr('rx', w/4).attr('ry', w/4)
-                .attr('fill', 'white')
-                .attr('stroke', 'black')
-                .attr('stroke-width', '3px')
         }
 
         function updateWorld($world, location, params) {
@@ -172,65 +138,12 @@ let moduleOut = (elId, gcmCount = 16) => {
 
             updateWorld($world, location, params)
             // updateOverlay($overlay, location, params)
-
-            updateLocation($svg, location)
-            // update display sliders
-            $orientationSlider.val(params.orientation)
-            $scaleSlider.val(params.scale)
-            $gcmCountSlider.val(params.gcmCount)
-            $gcmCountDisplay.html(params.gcmCount)
-            $cellCountDisplay.html(params.gcmCount * gridRows * gridCols)
         }
 
         function updateParams() {
             gridCellModules = buildGridCellModules(jsds.get('params').gcmCount)
             updateDisplay()
         }
-
-        // Random walk animation controls
-        function start() {
-            if (! mouseover) {
-                frameRef = window.requestAnimationFrame(step)
-            }
-        }
-
-        function stop() {
-            window.cancelAnimationFrame(frameRef)
-        }
-
-        function step() {
-            if (isNaN(t) || t === undefined) {
-                t = 0
-            }
-            let x = X[t%walkDistance][0];
-            let y = X[t%walkDistance][1];
-            jsds.set('location', {
-                type: 'world',
-                x: x, y: y
-            })
-            t++
-            if (jsds.get('walks')) {
-                start()
-            }
-        }
-
-        // Animation events
-        $walksCheckbox.change((evt) => {
-            let walks = document.getElementById(evt.target.id).checked
-            jsds.set('walks', walks)
-        })
-
-        $svg.on('mouseenter', () => {
-            mouseover = true
-            if (jsds.get('walks')) stop()
-        })
-        $svg.on('mouseleave', () => {
-            mouseover = false
-            if (jsds.get('walks')) start()
-        })
-
-        // Start here
-        // setUpOverlay()
 
         // On user mouse move over world.
         $svg.on('mousemove', () => {
@@ -242,13 +155,6 @@ let moduleOut = (elId, gcmCount = 16) => {
                 y: worldMouse[1],
             }
             jsds.set('location', location)
-        })
-
-        // User slider events
-        $gcmCountSlider.on('input', () => {
-            let params = jsds.get('params')
-            params.gcmCount = parseInt($gcmCountSlider.val())
-            jsds.set('params', params)
         })
 
         jsds.before('set', 'walks', () => {
@@ -275,7 +181,19 @@ let moduleOut = (elId, gcmCount = 16) => {
 
         jsds.set('params', startingParams)
 
-        start()
+        function setRandomLocation() {
+            jsds.set('location', {
+                x: utils.getRandomArbitrary(0, 300),
+                y: 30,
+                type: 'world'
+            })
+        }
+
+        setRandomLocation()
+        let initialLoop = setInterval(setRandomLocation, 1000)
+        setTimeout(() => {
+            clearInterval(initialLoop)
+        }, 10000)
     })
 }
 
