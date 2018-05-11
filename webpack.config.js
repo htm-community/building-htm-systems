@@ -125,6 +125,7 @@ modules.push({
     resolve: {
         alias: {
             JSDS: path.join(__dirname, "node_modules/javascript-data-store/src/jsds"),
+            SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
             HexagonGridCellModule: path.join(__dirname, "src/gridCells/hex-gcm"),
         }
     },

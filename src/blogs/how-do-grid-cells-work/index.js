@@ -4,5 +4,6 @@ window.BHTMS = {
     oneGridCell: require('./oneGridCell'),
     oneGridCellModule: require('./oneGridCellModule'),
     manyGridCellModules: require('./manyGridCellModules'),
+    gcmAsSdr: require('./gcmAsSdr'),
     JSDS: require('JSDS'),
 }
