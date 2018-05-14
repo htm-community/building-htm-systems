@@ -321,9 +321,15 @@ let moduleOut = (elId) => {
 
 // A hack to shove in more functionality without opening up the API.
 moduleOut.selectCellByColor = (clr) => {
-    newColors.forEach((color, gcId) => {
-        setVisible(gcId, color === clr)
-    })
+    if (clr) {
+        newColors.forEach((color, gcId) => {
+            setVisible(gcId, color === clr)
+        })
+    } else {
+        newColors.forEach((color, gcId) => {
+            setVisible(gcId, true)
+        })
+    }
 }
 
 module.exports = moduleOut
