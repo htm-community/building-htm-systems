@@ -1,3 +1,6 @@
+let embed = require('./embed')
+
+
 window.BHTMS = {
     header: require('./header'),
     gridCellFiringFields: require('./firingFields'),
@@ -9,6 +12,6 @@ window.BHTMS = {
 }
 
 // Kicks things off.
-document.addEventListener("DOMContentLoaded", () => {
-    require('./embed')()
-})
+window.onload = () => {
+    embed()
+}
