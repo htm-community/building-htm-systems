@@ -66,13 +66,13 @@
     </p>
 
     <p>
-        Use the checkboxes above to show only <a onclick="showOnly('red')">red</a> cell's firing fields, then compare it to the <a onclick="showOnly('blue')">blue</a> and <a onclick="showOnly('green')">green</a> cells. You can turn them <a onclick="showOnly()">back on</a> by toggling the checkboxes above. To stop the simulation, uncheck the "Random Walk" checkbox or just <a onclick="toggleSim(false)">click here</a>.
+        To stop the simulation, uncheck the "Random Walk" checkbox or just <a onclick="toggleSim(false)">click here</a>.
     </p>
 
     <h2>One Grid Cell's Firing Fields</h2>
 
     <p>
-        Each grid cell observes the space below and only reacts to certain places. The locations it activates in response to are called <strong>firing fields</strong>. In the figure above, you can see that each color cell has many firing fields. As an attended object gets closer to the center of the field, the probability of the grid cell firing becomes higher.
+        One grid cell observes the space below and only reacts to certain places. The locations it activates in response to are called <strong>firing fields</strong>. In the figure above, you can see that each color cell has many firing fields. As an attended object gets closer to the center of the field, the probability of the grid cell firing becomes higher.
     </p>
 
     <p>
@@ -118,7 +118,7 @@
     <div id="manyGridCellModules"></div>
 
     <p>
-        Let's try something. First, <a onclick="manyGcmSelect(4)">select only 4 grid cell modules</a>. <a onclick="toggleManyGcm(true)">Turn on</a> the random walk, then <a onclick="hideGcmLocationMarker(true)">hide the location marker</a>. With only a few grid cell modules mapping this space, it is hard to tell where the object is without turning the marker <a onclick="manyGcmSetMarker(true)">on</a> and <a onclick="manyGcmSetMarker(false)">off</a>. But if you <a onclick="manyGcmSelect(16)">increase the number of grid cell modules</a>, you can easily tell where the object is by looking for the space with the <a onclick="manyGcmSetMarker(true)">most overlap</a>. Use your mouse to hover over the space and explore. Use the checkbox above or <a onclick="toggleManyGcm(false)">click here</a> to turn off the animation. 
+        Let's try something. First, <a onclick="manyGcmSelect(4)">select only 4 grid cell modules</a>. <a onclick="toggleManyGcm(true)">Turn on</a> the random walk, then <a onclick="hideGcmLocationMarker(true)">hide the location marker</a>. With only a few grid cell modules mapping this space, it is hard to tell where the object is without turning the marker <a onclick="manyGcmSetMarker(true)">on</a> and <a onclick="manyGcmSetMarker(false)">off</a>. But if you <a onclick="manyGcmSelect(16)">increase the number of grid cell modules</a>, you can easily tell where the object is by looking for the space with the <a onclick="manyGcmSetMarker(true)">most overlap</a>. Use your mouse to hover over the space and explore. Use the checkbox above or <a onclick="toggleManyGcm(false)">click here</a> to turn off the animation.
     </p>
 
     <h2>Grid Cell Modules are Sparse Distributed Representations</h2>
