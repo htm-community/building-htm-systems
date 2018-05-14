@@ -7,3 +7,8 @@ window.BHTMS = {
     gcmAsSdr: require('./gcmAsSdr'),
     JSDS: require('JSDS'),
 }
+
+// Kicks things off.
+document.addEventListener("DOMContentLoaded", () => {
+    require('./embed')()
+})

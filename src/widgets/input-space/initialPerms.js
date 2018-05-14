@@ -112,9 +112,11 @@ module.exports = (elementId) => {
                 width = +svg.attr("width") - margin.left - margin.right,
                 height = +svg.attr("height") - margin.top - margin.bottom
 
-            let g = svg.selectAll('g.hist')
-                .data([null]).enter()
-                .append('g').attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            let histGroup = svg.selectAll('g.hist')
+                .data([null])
+
+            histGroup.enter().append('g')
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
                 .attr('class', 'hist')
 
             let x = d3.scaleLinear()
@@ -129,26 +131,41 @@ module.exports = (elementId) => {
                 .domain([0, d3.max(bins, function(d) { return d.length; })])
                 .range([height, 0]);
 
-            let bar = g.selectAll(".bar")
+            function treatBarGroups(barGroups) {
+                barGroups
+                    .attr("class", "bar")
+                    .attr("transform", function(d) {
+                        return "translate(" + x(d.x0) + "," + y(d.length) + ")"
+                    })
+
+                barGroups.selectAll('rect').data([null]).enter().append('rect')
+                    .attr("x", 1)
+                    .attr("width", x(bins[0].x1) - x(bins[0].x0) - 1)
+                    .attr("height", function(d) { return height - y(d.length); });
+
+                barGroups.selectAll('text').data([null]).enter().append('text')
+                    .attr("dy", ".75em")
+                    .attr("y", 6)
+                    .attr("x", (x(bins[0].x1) - x(bins[0].x0)) / 2)
+                    .attr("text-anchor", "middle")
+                    .text(function(d) { return formatCount(d.length); });
+            }
+
+            // Update bars
+            let barGroups = histGroup.selectAll(".bar")
                 .data(bins)
-                .enter().append("g")
-                .attr("class", "bar")
-                .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
+            treatBarGroups(barGroups)
 
-            bar.append("rect")
-                .attr("x", 1)
-                .attr("width", x(bins[0].x1) - x(bins[0].x0) - 1)
-                .attr("height", function(d) { return height - y(d.length); });
+            // Enter bars
+            let newBarGroups = barGroups.enter().append('g')
+            treatBarGroups(newBarGroups)
 
-            bar.append("text")
-                .attr("dy", ".75em")
-                .attr("y", 6)
-                .attr("x", (x(bins[0].x1) - x(bins[0].x0)) / 2)
-                .attr("text-anchor", "middle")
-                .text(function(d) { return formatCount(d.length); });
+            // Exit bars
+            barGroups.exit().remove()
 
             let connectionThreshold = parseInt($connectionThresholdSlider.val()) / 100
-            g.append('line')
+
+            histGroup.append('line')
                 .attr('id', 'connectionThreshold')
                 .attr('x1', x(connectionThreshold))
                 .attr('x2', x(connectionThreshold))
@@ -157,7 +174,7 @@ module.exports = (elementId) => {
                 .attr('stroke', 'red')
                 .attr('stroke-width', 4)
 
-            g.append("g")
+            histGroup.append("g")
                 .attr("class", "axis axis--x")
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(x));
