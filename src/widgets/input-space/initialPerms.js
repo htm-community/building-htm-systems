@@ -131,37 +131,45 @@ module.exports = (elementId) => {
                 .domain([0, d3.max(bins, function(d) { return d.length; })])
                 .range([height, 0]);
 
-            function treatBarGroups(barGroups) {
-                barGroups
-                    .attr("class", "bar")
-                    .attr("transform", function(d) {
-                        return "translate(" + x(d.x0) + "," + y(d.length) + ")"
+            // function treatBarGroups(barGroups) {
+            //     barGroups
+            //         .attr("class", "bar")
+            //         .attr("transform", function(d) {
+            //             return "translate(" + x(d.x0) + "," + y(d.length) + ")"
+            //         })
+            //
+            //     // let barRange = d3.range(0, bins.length)
+            //     // barGroups.select('rect').data(barRange).enter().append('rect')
+            //     //     .attr("x", 1)
+            //     //     .attr("width", x(bins[0].x1) - x(bins[0].x0) - 1)
+            //     //     .attr("height", function(d) { return height - y(d.length); });
+            //     //
+            //     // barGroups.selectAll('text').data(bins).enter().append('text')
+            //     //     .attr("dy", ".75em")
+            //     //     .attr("y", 6)
+            //     //     .attr("x", (x(bins[0].x1) - x(bins[0].x0)) / 2)
+            //     //     .attr("text-anchor", "middle")
+            //     //     .text(function(d) { return formatCount(d.length); });
+            // }
+
+            function treatRects(rects) {
+                let rectWidth = x(bins[0].x1) - x(bins[0].x0) - 1
+                rects.enter().append('rect')
+                    .attr('class', 'bar')
+                    .attr('x', (d, i) => {
+                        return bins[i].length * rectWidth
                     })
-
-                barGroups.selectAll('rect').data([null]).enter().append('rect')
-                    .attr("x", 1)
-                    .attr("width", x(bins[0].x1) - x(bins[0].x0) - 1)
-                    .attr("height", function(d) { return height - y(d.length); });
-
-                barGroups.selectAll('text').data([null]).enter().append('text')
-                    .attr("dy", ".75em")
-                    .attr("y", 6)
-                    .attr("x", (x(bins[0].x1) - x(bins[0].x0)) / 2)
-                    .attr("text-anchor", "middle")
-                    .text(function(d) { return formatCount(d.length); });
+                    .attr('width', rectWidth)
+                    .attr('height', function(d) { return height - y(d.length); });
             }
 
-            // Update bars
-            let barGroups = histGroup.selectAll(".bar")
-                .data(bins)
-            treatBarGroups(barGroups)
+            let rects = histGroup.selectAll('rect.bar').data(bins)
+            treatRects(rects)
 
-            // Enter bars
-            let newBarGroups = barGroups.enter().append('g')
-            treatBarGroups(newBarGroups)
+            let newRects = rects.enter().append('rect')
+            treatRects(newRects)
 
-            // Exit bars
-            barGroups.exit().remove()
+            rects.exit().remove()
 
             let connectionThreshold = parseInt($connectionThresholdSlider.val()) / 100
 
