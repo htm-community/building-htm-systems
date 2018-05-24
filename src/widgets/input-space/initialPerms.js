@@ -7,7 +7,6 @@ let html = require('./initialPerms.tmpl.html')
 module.exports = (elementId) => {
 
     let jsds = JSDS.get('spatial-pooling')
-    let permsUpdating = false
 
     utils.loadHtml(html.default, elementId, () => {
         console.log("Running %s JS", elementId)
@@ -55,7 +54,7 @@ module.exports = (elementId) => {
                     } else {
                         return null
                     }
-                })
+                }).filter(v => v !== null)
             return permanences
         }
 
@@ -104,7 +103,6 @@ module.exports = (elementId) => {
         function drawHistogram() {
             let data = jsds.get('permanences')
             let svg = d3.select("svg#receptiveFieldHistogram")
-            svg.attr('transform', 'translate(0, -40)')
 
             let margin = {top: 10, right: 30, bottom: 30, left: 30},
                 width = +svg.attr("width") - margin.left - margin.right,
@@ -121,7 +119,7 @@ module.exports = (elementId) => {
 
             let bins = d3.histogram()
                 .domain(x.domain())
-                .thresholds(x.ticks(40))
+                .thresholds(x.ticks(50))
                 (data);
 
             let maxBins = d3.max(bins, function(d) { return d.length; })
