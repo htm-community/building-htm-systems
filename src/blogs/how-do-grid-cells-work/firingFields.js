@@ -11,9 +11,12 @@ let html = require('./firingFields.tmpl.html')
 let JSDS = require('JSDS')
 let FiringPatch = require('./firingPatch')
 
-let w = 800
+let w = 445
 let h = 400
 
+if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+    w = 800
+}
 
 let maxQueue = 200
 let dotSize = 1
