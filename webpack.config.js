@@ -105,7 +105,7 @@ modules.push({
 
 // For Blogs
 
-// How Do Grid Cells Work?
+// How Grid Cells Map Space
 modules.push({
     mode: mode,
     entry: [
@@ -132,7 +132,7 @@ modules.push({
     },
     output: {
         path: __dirname + "/docs",
-        filename: `bhtms-how-do-grid-cells-work-${version}.js`
+        filename: `bhtms-how-grid-cells-map-space-${version}.js`
     }
 })
 

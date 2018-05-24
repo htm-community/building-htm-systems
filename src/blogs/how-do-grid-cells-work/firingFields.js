@@ -11,7 +11,7 @@ let html = require('./firingFields.tmpl.html')
 let JSDS = require('JSDS')
 let FiringPatch = require('./firingPatch')
 
-let w = 443
+let w = 800
 let h = 400
 
 
@@ -287,18 +287,28 @@ let moduleOut = (elId) => {
 
         $svg = d3.select('#' + elId + ' svg')
 
-        $svg.on('mouseenter', () => {
+        let interactEnter = () => {
+            d3.event.preventDefault()
             mouseover = true
             if (jsds.get('walks')) stop()
-        })
-        $svg.on('mousemove', () => {
+        }
+        let interactMove = () => {
+            d3.event.preventDefault()
             let mouse = d3.mouse($svg.node())
             updateLocation(mouse[0], mouse[1])
-        })
-        $svg.on('mouseleave', () => {
+        }
+        let interactLeave = () => {
+            d3.event.preventDefault()
             mouseover = false
             if (jsds.get('walks')) start()
-        })
+        }
+
+        $svg.on('mouseenter', interactEnter)
+        $svg.on('mousemove', interactMove)
+        $svg.on('mouseleave', interactLeave)
+        $svg.on('touchstart', interactEnter)
+        $svg.on('touchmove', interactMove)
+        $svg.on('touchend', interactLeave)
 
         prepSvg($svg)
 
