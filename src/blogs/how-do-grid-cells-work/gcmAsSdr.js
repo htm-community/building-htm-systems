@@ -43,9 +43,9 @@ function buildGridCellModules(gcmCount) {
             0, gridRows, gridCols, orientation, scale
         )
         module.setColor(
-            utils.getRandomArbitrary(100, 255),
-            utils.getRandomArbitrary(100, 255),
-            utils.getRandomArbitrary(100, 255)
+            Math.round(utils.getRandomArbitrary(100, 255)),
+            Math.round(utils.getRandomArbitrary(100, 255)),
+            Math.round(utils.getRandomArbitrary(100, 255))
         )
         module.activeCells = utils.getRandomArbitrary(1, 2)
         out.push(module)
