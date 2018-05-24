@@ -42,9 +42,9 @@ function buildGridCellModules(gcmCount) {
             0, gridRows, gridCols, orientation, scale
         )
         module.setColor(
-            utils.getRandomArbitrary(100, 255),
-            utils.getRandomArbitrary(100, 255),
-            utils.getRandomArbitrary(100, 255)
+            Math.round(utils.getRandomArbitrary(100, 255)),
+            Math.round(utils.getRandomArbitrary(100, 255)),
+            Math.round(utils.getRandomArbitrary(100, 255))
         )
         module.activeCells = 1
         out.push(module)
@@ -220,20 +220,12 @@ let moduleOut = (elId, gcmCount = 16) => {
             jsds.set('walks', walks)
         })
 
-        $svg.on('mouseenter', () => {
+        let interactEnter = () => {
+            d3.event.preventDefault()
             mouseover = true
             if (jsds.get('walks')) stop()
-        })
-        $svg.on('mouseleave', () => {
-            mouseover = false
-            if (jsds.get('walks')) start()
-        })
-
-        // Start here
-        // setUpOverlay()
-
-        // On user mouse move over world.
-        $svg.on('mousemove', () => {
+        }
+        let interactMove = () => {
             d3.event.preventDefault()
             let worldMouse = d3.mouse($world.node())
             let location = {
@@ -242,7 +234,21 @@ let moduleOut = (elId, gcmCount = 16) => {
                 y: worldMouse[1],
             }
             jsds.set('location', location)
-        })
+        }
+        let interactLeave = () => {
+            d3.event.preventDefault()
+            mouseover = false
+            if (jsds.get('walks')) start()
+        }
+
+        $svg.on('mouseenter', interactEnter)
+        $svg.on('mousemove', interactMove)
+        $svg.on('mouseleave', interactLeave)
+        $svg.on('touchstart', interactEnter)
+        $svg.on('touchmove', interactMove)
+        $svg.on('touchend', interactLeave)
+
+        // Start here
 
         // User slider events
         $gcmCountSlider.on('input', () => {

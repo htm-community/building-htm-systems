@@ -37,7 +37,7 @@ let moduleOut = (elId) => {
 
         let $walksCheckbox = $('#' + elId + ' input.walks')
 
-        let width = 443
+        let width = 450
         let height = 250
 
         let t = 0
@@ -155,19 +155,28 @@ let moduleOut = (elId) => {
             jsds.set('walks', walks)
         })
 
-        $svg.on('mouseenter', () => {
+        let interactEnter = () => {
+            d3.event.preventDefault()
             mouseover = true
             if (jsds.get('walks')) stop()
-        })
-        // On mouseover the bar, update location
-        $svg.on('mousemove', () => {
+        }
+        let interactMove = () => {
+            d3.event.preventDefault()
             let mouse = d3.mouse($svg.node())
             jsds.set('location', {x: mouse[0], y: mouse[1]})
-        })
-        $svg.on('mouseleave', () => {
+        }
+        let interactLeave = () => {
+            d3.event.preventDefault()
             mouseover = false
             if (jsds.get('walks')) start()
-        })
+        }
+
+        $svg.on('mouseenter', interactEnter)
+        $svg.on('mousemove', interactMove)
+        $svg.on('mouseleave', interactLeave)
+        $svg.on('touchstart', interactEnter)
+        $svg.on('touchmove', interactMove)
+        $svg.on('touchend', interactLeave)
 
         jsds.before('set', 'walks', () => {
             // stash previous value
