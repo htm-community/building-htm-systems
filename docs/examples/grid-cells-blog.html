@@ -44,7 +44,7 @@
     <h1>How Grid Cells Map Space</h1>
 
     <blockquote>
-        This blog post contains interactive visualizations that may not work on older web browsers.
+        This blog post contains interactive visualizations that may not work well on older web browsers and mobile devices.
     </blockquote>
 
     <p>
@@ -62,7 +62,7 @@
     <h2>A Simulation of Grid Cells in Action</h2>
 
     <p>
-        <a onclick="toggleSim(true)">Click here</a> to start the interactive visualization below, where you can see an object moving through a 2-dimensional space, which wraps at the edges. This 2D space is being mapped by 3 grid cells (<a onclick="showOnly('red')">red</a>, <a onclick="showOnly('blue')">blue</a>, and <a onclick="showOnly('green')">green</a>). The color splotches are each grid cell's firing fields, or the locations in the space where the cell has fired recently in response to the object's location. These spikes fade away as they are replaced with new firings as the object moves through the space.
+        <a onclick="toggleSim(true)">Click or touch here</a> to start the interactive visualization below, where you can see an object moving through a 2-dimensional space, which wraps at the edges. This 2D space is being mapped by 3 grid cells (<a onclick="showOnly('red')">red</a>, <a onclick="showOnly('blue')">blue</a>, and <a onclick="showOnly('green')">green</a>). The color splotches are each grid cell's firing fields, or the locations in the space where the cell has fired recently in response to the object's location. These spikes fade away as they are replaced with new firings as the object moves through the space.
     </p>
 
     <p>
@@ -72,7 +72,7 @@
     <div id="gridCellFiringFields" class="widget"></div>
 
     <p>
-        If you're a fast reader, the firing fields may not have filled in much yet. If you are at a  computer, hover your mouse over the 2D space to control the location of the object and watch as each grid cell fires in response to your movement. See if you can find the firing fields yourself as you move the cursor across the space.
+        If you're a fast reader, the firing fields may not have filled in much yet. Hover your mouse or drag your finger over the 2D space to control the location of the object and watch as each grid cell fires in response to your movement. See if you can find the firing fields yourself as you move the cursor across the space.
     </p>
 
     <p>
@@ -108,11 +108,11 @@
     <div id="oneGridCellModule" class="widget"></div>
 
     <p>
-        The overlay on the bottom left shows all 16 grid cells within the module, and which one is currently active in response to an object's location in space. Hover your mouse over the parallelogram shape in the overlay to see each individual grid cell's firing fields.
+        The overlay on the bottom left shows all 16 grid cells within the module, and which one is currently active in response to an object's location in space. Hover your mouse over the parallelogram shape in the overlay to see each individual grid cell's firing fields. Note that this parallelogram shape is <strong><em>not how these neurons are arranged in the brain</em></strong>! This is just how they project onto space. (There is no hexagonal arrangement of neurons in your cortex.)
     </p>
 
     <p>
-        One grid cell module can tell us a lot more about an object's location in space than a lone grid cell. As you mouse-over the space above, notice how the grid cell module knows your mouse cursor must be within one of many locations moving across the space. But it cannot decipher an exact location.
+        One grid cell module can tell us a lot more about an object's location in space than a lone grid cell. As you hover or swipe the space above, notice how the grid cell module knows you must be within one of many locations moving across the space. But it cannot decipher an exact location.
     </p>
 
     <p>

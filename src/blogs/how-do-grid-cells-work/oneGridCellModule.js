@@ -178,14 +178,41 @@ let moduleOut = (elId) => {
             jsds.set('walks', walks)
         })
 
-        $svg.on('mouseenter', () => {
+        let interactEnter = () => {
+            d3.event.preventDefault()
             mouseover = true
             if (jsds.get('walks')) stop()
-        })
-        $svg.on('mouseleave', () => {
+        }
+        let interactMove = () => {
+            d3.event.preventDefault()
+            let worldMouse = d3.mouse($world.node()),
+                overlayMouse = d3.mouse($overlay.node())
+            ox = overlayMouse[0], oy = overlayMouse[1]
+            let location = {
+                type: 'world',
+                x: worldMouse[0],
+                y: worldMouse[1],
+            }
+            if (0 < ox && ox < overlaySize
+                && 0 < oy && oy < overlaySize) {
+                location.type = 'overlay'
+                location.x = overlayMouse[0]
+                location.y = overlayMouse[1]
+            }
+            jsds.set('location', location)
+        }
+        let interactLeave = () => {
+            d3.event.preventDefault()
             mouseover = false
             if (jsds.get('walks')) start()
-        })
+        }
+
+        $svg.on('mouseenter', interactEnter)
+        $svg.on('mousemove', interactMove)
+        $svg.on('mouseleave', interactLeave)
+        $svg.on('touchstart', interactEnter)
+        $svg.on('touchmove', interactMove)
+        $svg.on('touchend', interactLeave)
 
         // Start here
         setUpOverlay()
@@ -196,26 +223,6 @@ let moduleOut = (elId) => {
             params.orientation = parseInt($orientationSlider.val())
             params.scale = parseInt($scaleSlider.val())
             jsds.set('params', params)
-        })
-
-        // On user mouse move over world.
-        $svg.on('mousemove', () => {
-            d3.event.preventDefault()
-            let worldMouse = d3.mouse($world.node()),
-                overlayMouse = d3.mouse($overlay.node())
-                ox = overlayMouse[0], oy = overlayMouse[1]
-            let location = {
-                type: 'world',
-                x: worldMouse[0],
-                y: worldMouse[1],
-            }
-            if (0 < ox && ox < overlaySize
-                    && 0 < oy && oy < overlaySize) {
-                location.type = 'overlay'
-                location.x = overlayMouse[0]
-                location.y = overlayMouse[1]
-            }
-            jsds.set('location', location)
         })
 
         jsds.before('set', 'walks', () => {
