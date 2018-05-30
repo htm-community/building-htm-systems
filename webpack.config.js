@@ -43,15 +43,40 @@ modules.push({
     }
 })
 
+// encoding-categories
+modules.push({
+    mode: mode,
+    entry: [
+        "./src/widgets/encoding-categories/index.js",
+    ],
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                loader: "babel-loader"
+            },
+            {
+                test: /tmpl\.html$/,
+                loader: "posthtml-loader"
+            }
+        ]
+    },
+    resolve: {
+        alias: {
+            JSDS: path.join(__dirname, "node_modules/javascript-data-store/src/jsds"),
+        }
+    },
+    output: {
+        path: __dirname + "/docs",
+        filename: `bhtms-encoding-categories-${version}.js`
+    }
+})
+
 // /input-space/
 modules.push({
     mode: mode,
     entry: [
         "./src/widgets/input-space/index.js",
-        "./src/widgets/input-space/potentialPools.tmpl.html",
-        "./src/widgets/input-space/potentialPools.js",
-        "./src/widgets/input-space/initialPerms.tmpl.html",
-        "./src/widgets/input-space/initialPerms.js",
     ],
     module: {
         rules: [
