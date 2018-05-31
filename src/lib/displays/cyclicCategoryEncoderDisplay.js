@@ -28,9 +28,18 @@ class CyclicCategoryEncoderDisplay {
         this.$rangeDisplay = $el.find('.range-display')
         this.$nameLabel = $el.find('.name-label')
         this.$minLabel = $el.find('.min-label')
-        this.$valueLabel = $el.find('.value-label')
         this.$maxLabel = $el.find('.max-label')
         this.$rangeLabel = $el.find('.range-label')
+
+        // Some aesthetic stuff
+        this.smallFont = 20
+        this.medFont = 26
+        this.bigFont = 60
+        if (this.size < 200) {
+            this.smallFont = 11
+            this.medFont = 13
+            this.bigFont = 28
+        }
     }
 
     render() {
@@ -49,41 +58,42 @@ class CyclicCategoryEncoderDisplay {
             .attr('fill', 'none')
             .attr('stroke', colors.track)
 
-        this.$nameLabel
-            .attr('x', half)
-            .attr('y', size * 1/3)
-        this.$minLabel
-            .attr('x', size * 1/3)
-            .attr('y', half + 20)
-        this.$valueLabel
-            .attr('x', half)
-            .attr('y', half + 20)
-        this.$maxLabel
-            .attr('x', size * 2/3)
-            .attr('y', half + 20)
-        this.$rangeLabel
-            .attr('x', half)
-            .attr('y', size * 2/3 + 20)
+        let third = size * 3/10
+        let twoThirds = size * 21/30
+        let fourth = size / 4
+        let threeFourths = size * 3/4
 
-        this.$valueDisplay
-            .attr('x', half)
-            .attr('y', half)
-        this.$valueLabel
-            .attr('x', half)
-            .attr('y', half)
-        this.$minDisplay
-            .attr('x', half / 2)
-            .attr('y', half)
+        this.$valueDisplay.attr('font-size', this.bigFont)
             .html(this.min)
-        this.$maxDisplay
-            .attr('x', size * 3/4)
-            .attr('y', half)
+            .attr('x', half - (this.$valueDisplay.get(0).getBBox().width / 2))
+            .attr('y', half + (this.$valueDisplay.get(0).getBBox().height / 4))
+        this.$minDisplay.attr('font-size', this.smallFont)
+            .html(this.min)
+            .attr('x', fourth - (this.$minDisplay.get(0).getBBox().width / 2))
+            .attr('y', half + (this.$minDisplay.get(0).getBBox().height / 4))
+        this.$maxDisplay.attr('font-size', this.smallFont)
             .html(this.max)
-
-        this.$rangeDisplay
-            .attr('x', half)
-            .attr('y', size * 2/3)
+            .attr('x', threeFourths - (this.$maxDisplay.get(0).getBBox().width / 2))
+            .attr('y', half + (this.$maxDisplay.get(0).getBBox().height / 4))
+        this.$rangeDisplay.attr('font-size', this.medFont)
             .html(this.range + '/' + this.bits)
+            .attr('x', half - (this.$rangeDisplay.get(0).getBBox().width / 2))
+            .attr('y', twoThirds)
+
+        this.$nameLabel.attr('font-size', this.medFont)
+            .attr('x', half - (this.$nameLabel.find('tspan').get(0).getBBox().width / 2))
+            .attr('y', third)
+        this.$minLabel.attr('font-size', this.smallFont)
+            .attr('x', fourth - (this.$minLabel.get(0).getBBox().width / 2))
+            .attr('y', half + (this.$minLabel.get(0).getBBox().height + 2))
+        this.$maxLabel.attr('font-size', this.smallFont)
+            .attr('x', threeFourths - (this.$maxLabel.get(0).getBBox().width / 2))
+            .attr('y', half + (this.$maxLabel.get(0).getBBox().height + 2))
+        this.$rangeLabel.attr('font-size', this.smallFont)
+            .attr('x', half - (this.$rangeLabel.get(0).getBBox().width / 2))
+            .attr('y', twoThirds + (this.$rangeLabel.get(0).getBBox().height - 2))
+
+
 
         this.jsds = JSDS.create('cyclic-category-encoder-' + this.id)
         this.jsds.after('set', 'value', () => {
@@ -93,7 +103,6 @@ class CyclicCategoryEncoderDisplay {
 
     updateDisplay() {
         let value = this.jsds.get('value')
-        console.log(value)
         let encoding = this.encoder.encode(value)
         this.$valueDisplay.html(value)
         this._updateCircles(encoding)

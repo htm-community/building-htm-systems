@@ -18,7 +18,7 @@ module.exports = (elementId) => {
 
         let encoder = new CyclicCategoryEncoder(min, max, range, bits)
 
-        let encoderDisplay = new CyclicCategoryEncoderDisplay('1', $svg, encoder, {
+        let encoderDisplay = new CyclicCategoryEncoderDisplay('lone', $svg, encoder, {
             size: size,
             min: min,
             max: max,
