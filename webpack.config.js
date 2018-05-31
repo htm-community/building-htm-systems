@@ -43,6 +43,39 @@ modules.push({
     }
 })
 
+// encoding-numbers/
+modules.push({
+    mode: mode,
+    entry: [
+        "./src/widgets/encoding-categories/index.js",
+    ],
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                loader: "babel-loader"
+            },
+            {
+                test: /tmpl\.html$/,
+                loader: "posthtml-loader"
+            }
+        ]
+    },
+    resolve: {
+        alias: {
+            JSDS: path.join(__dirname, "node_modules/javascript-data-store/src/jsds"),
+            SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
+            SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
+            ScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/scalar"),
+            RelativeScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/relativeScalar"),
+        }
+    },
+    output: {
+        path: __dirname + "/docs",
+        filename: `bhtms-encoding-categories-${version}.js`
+    }
+})
+
 // /input-space/
 modules.push({
     mode: mode,
