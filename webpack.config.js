@@ -138,7 +138,7 @@ modules.push({
 modules.push({
     mode: mode,
     entry: [
-        "./src/blogs/how-do-grid-cells-work/index.js",
+        "./src/blogs/how-grid-cells-map-space/index.js",
     ],
     module: {
         rules: [
