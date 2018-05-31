@@ -67,6 +67,8 @@ modules.push({
             SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
             ScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/scalar"),
             RelativeScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/relativeScalar"),
+            CyclicCategoryEncoderDisplay: path.join(__dirname, "src/lib/displays/cyclicCategoryEncoderDisplay"),
+            CyclicCategoryEncoder: path.join(__dirname, "src/lib/htm/cyclicCategoryEncoder"),
         }
     },
     output: {
