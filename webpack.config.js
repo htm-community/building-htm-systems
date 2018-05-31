@@ -64,6 +64,10 @@ modules.push({
     resolve: {
         alias: {
             JSDS: path.join(__dirname, "node_modules/javascript-data-store/src/jsds"),
+            SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
+            SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
+            ScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/scalar"),
+            RelativeScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/relativeScalar"),
         }
     },
     output: {
