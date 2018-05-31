@@ -1,6 +1,6 @@
 let RelativeScalarEncoder = require('RelativeScalarEncoder')
 let JSDS = require('JSDS')
-let utils = require('../utils')
+let utils = require('../../../lib/utils')
 let html = require('./scalarWindow.tmpl.html')
 
 const onColor = 'skyblue'

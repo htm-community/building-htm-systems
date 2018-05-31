@@ -1,4 +1,4 @@
-let utils = require('../../widgets/utils')
+let utils = require('../../../lib/utils')
 let html = require('./oneGridCellModule.tmpl.html')
 let HexagonGridCellModule = require('HexagonGridCellModule')
 let JSDS = require('JSDS')

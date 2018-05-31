@@ -14,7 +14,7 @@ let modules = []
 modules.push({
     mode: mode,
     entry: [
-        "./src/widgets/encoding-numbers/index.js",
+        "./src/viz/bhtms/encoding-numbers/index.js",
     ],
     module: {
         rules: [
@@ -42,12 +42,11 @@ modules.push({
         filename: `bhtms-encoding-numbers-${version}.js`
     }
 })
-
 // encoding-categories
 modules.push({
     mode: mode,
     entry: [
-        "./src/widgets/encoding-categories/index.js",
+        "./src/viz/bhtms/encoding-categories/index.js",
     ],
     module: {
         rules: [
@@ -80,7 +79,7 @@ modules.push({
 modules.push({
     mode: mode,
     entry: [
-        "./src/widgets/input-space/index.js",
+        "./src/viz/bhtms/input-space/index.js",
     ],
     module: {
         rules: [
@@ -108,37 +107,13 @@ modules.push({
     }
 })
 
-// General Grid Cell viz code
-// modules.push({
-//     mode: mode,
-//     entry: [
-//         "./src/gridCells/index.js"
-//     ],
-//     module: {
-//         rules: [
-//             {
-//                 test: /\.js$/,
-//                 loader: "babel-loader"
-//             },
-//             {
-//                 test: /tmpl\.html$/,
-//                 loader: "posthtml-loader"
-//             }
-//         ]
-//     },
-//     output: {
-//         path: __dirname + "/docs",
-//         filename: `bhtms-grid-cells-${version}.js`
-//     }
-// })
-
 // For Blogs
 
 // How Grid Cells Map Space
 modules.push({
     mode: mode,
     entry: [
-        "./src/blogs/how-grid-cells-map-space/index.js",
+        "./src/viz/blogs/how-grid-cells-map-space/index.js",
     ],
     module: {
         rules: [
@@ -156,7 +131,7 @@ modules.push({
         alias: {
             JSDS: path.join(__dirname, "node_modules/javascript-data-store/src/jsds"),
             SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
-            HexagonGridCellModule: path.join(__dirname, "src/gridCells/hex-gcm"),
+            HexagonGridCellModule: path.join(__dirname, "src/lib/gridCells/hex-gcm"),
         }
     },
     output: {

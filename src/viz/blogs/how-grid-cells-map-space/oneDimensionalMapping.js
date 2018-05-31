@@ -1,4 +1,4 @@
-let utils = require('../../widgets/utils')
+let utils = require('../../../lib/utils')
 let html = require('./oneDimensionalMapping.tmpl.html')
 let JSDS = require('JSDS')
 

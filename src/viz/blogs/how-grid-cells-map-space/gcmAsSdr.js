@@ -1,9 +1,10 @@
-let utils = require('../../widgets/utils')
-let html = require('./header.tmpl.html')
+let utils = require('../../../lib/utils')
+let SdrDrawing = require('SdrDrawing')
+let html = require('./gcmAsSdr.tmpl.html')
 let HexagonGridCellModule = require('HexagonGridCellModule')
 let JSDS = require('JSDS')
 
-let jsds = JSDS.create('header')
+let jsds = JSDS.create('gcmAsSdr')
 
 let startingParams = {
     anchor: {x: 0, y: 0},
@@ -12,9 +13,23 @@ let startingParams = {
 let walkDistance = 10000
 let walkSpeed = 2.0
 let walkFunction
-let wasWalking = true
+let wasWalking = false
 jsds.set('walks', wasWalking)
+let mouseover = false
 let frameRef = -1
+
+let colors = {
+    fields: {
+        on: {
+            fill: 'CORNFLOWERBLUE',
+        },
+        dim: {
+            fill: '#CBF1F1',
+        },
+        stroke: 'none',
+        fill: 'none',
+    }
+}
 
 let gridCellModules
 let gridRows = 4, gridCols = 4
@@ -28,11 +43,11 @@ function buildGridCellModules(gcmCount) {
             0, gridRows, gridCols, orientation, scale
         )
         module.setColor(
-            utils.getRandomArbitrary(100, 255),
-            utils.getRandomArbitrary(100, 255),
-            utils.getRandomArbitrary(100, 255)
+            Math.round(utils.getRandomArbitrary(100, 255)),
+            Math.round(utils.getRandomArbitrary(100, 255)),
+            Math.round(utils.getRandomArbitrary(100, 255))
         )
-        module.activeCells = 1
+        module.activeCells = utils.getRandomArbitrary(1, 2)
         out.push(module)
     }
     return out
@@ -43,8 +58,8 @@ let moduleOut = (elId, gcmCount = 16) => {
 
         let $walksCheckbox = $('#' + elId + ' input.walks')
 
-        let width = 443
-        let height = 60
+        let width = 218
+        let height = 218
         let t = 0
         let [X,V] = utils.randomTorusWalk(
             walkDistance, width, height, walkSpeed
@@ -57,19 +72,27 @@ let moduleOut = (elId, gcmCount = 16) => {
 
         gridCellModules = buildGridCellModules(gcmCount)
 
-        let $svg = d3.select('#' + elId + ' svg.main')
+        let $spaceSvg = d3.select('#' + elId + ' svg.space')
             .attr('width', width)
             .attr('height', height)
-        let $world = $svg.select('g.world')
+        let $world = $spaceSvg.select('g.world')
+        let $sdrSvg = d3.select('#' + elId + ' svg.sdr')
+            .attr('width', width)
+            .attr('height', height)
+
+        let $el = $('#' + elId)
+        let $gcmCountSlider = $el.find('input.gcmCount'),
+            $gcmCountDisplay = $('span.gcmCount'),
+            $cellCountDisplay = $('span.cellCount')
 
         function treatFields(fields, gcmIndex, params) {
             fields.attr('class', 'field')
                 .attr('cx', d => d.x)
                 .attr('cy', d => d.y)
                 .attr('r', params.scale / 4)
-                .attr('stroke', 'none')
+                .attr('stroke', colors.fields.stroke)
                 .attr('fill', (d) => {
-                    let fill = 'none'
+                    let fill = colors.fields.fill
                     let gridCellIndex = d.gridCell.id
                     if (d.gridCell.active)
                         fill = gridCellModules[gcmIndex].getColorString()
@@ -88,6 +111,19 @@ let moduleOut = (elId, gcmCount = 16) => {
 
             // Exit
             $fields.exit().remove()
+        }
+
+        function updateLocation($group, location) {
+            let w = 12
+            $group.select('rect.location')
+                .attr('x', location.x - w/2)
+                .attr('y', location.y - w/2)
+                .attr('width', w)
+                .attr('height', w)
+                .attr('rx', w/4).attr('ry', w/4)
+                .attr('fill', 'white')
+                .attr('stroke', 'black')
+                .attr('stroke-width', '3px')
         }
 
         function updateWorld($world, location, params) {
@@ -112,7 +148,7 @@ let moduleOut = (elId, gcmCount = 16) => {
             $gcmWorldGroups.exit().remove()
 
             $gcmWorldGroups.each((value, index) => {
-                let $group = $svg.select('.gcm-' + index)
+                let $group = $spaceSvg.select('.gcm-' + index)
                 let module = gridCellModules[index]
                 let origin = {x: 0, y: 0}
                 let worldPoints = module.createWorldPoints(origin, width, height)
@@ -125,19 +161,38 @@ let moduleOut = (elId, gcmCount = 16) => {
             })
         }
 
+        function updateSdr($sdr, gridCellModules) {
+            let sdr = []
+            gridCellModules.forEach(m => {
+                m.gridCells.forEach(c => {
+                    if (c.active) sdr.push(1)
+                    sdr.push(0)
+                })
+            })
+            let drawing = new SdrDrawing(sdr, 'gcm-sdr')
+            drawing.draw({
+                width: width,
+                height: height,
+            })
+        }
+
         function updateDisplay() {
             let params = jsds.get('params')
             let location = jsds.get('location')
             // Bail out if params or location haven't been loaded yet.
             if (! params || ! location) return;
 
-            let $world = $svg.selectAll('g.world').data([null])
-            let $overlay = $svg.selectAll('g.overlay').data([null])
+            let $world = $spaceSvg.selectAll('g.world').data([null])
             $world.enter().append('g').attr('class', 'world')
-            $overlay.enter().append('g').attr('class', 'overlay')
 
             updateWorld($world, location, params)
-            // updateOverlay($overlay, location, params)
+            updateSdr($sdrSvg, gridCellModules)
+
+            updateLocation($spaceSvg, location)
+            // update display sliders
+            $gcmCountSlider.val(params.gcmCount)
+            $gcmCountDisplay.html(params.gcmCount)
+            $cellCountDisplay.html(params.gcmCount * gridRows * gridCols)
         }
 
         function updateParams() {
@@ -145,8 +200,45 @@ let moduleOut = (elId, gcmCount = 16) => {
             updateDisplay()
         }
 
-        // On user mouse move over world.
-        $svg.on('mousemove', () => {
+        // Random walk animation controls
+        function start() {
+            if (! mouseover) {
+                frameRef = window.requestAnimationFrame(step)
+            }
+        }
+
+        function stop() {
+            window.cancelAnimationFrame(frameRef)
+        }
+
+        function step() {
+            if (isNaN(t) || t === undefined) {
+                t = 0
+            }
+            let x = X[t%walkDistance][0];
+            let y = X[t%walkDistance][1];
+            jsds.set('location', {
+                type: 'world',
+                x: x, y: y
+            })
+            t++
+            if (jsds.get('walks')) {
+                start()
+            }
+        }
+
+        // Animation events
+        $walksCheckbox.change((evt) => {
+            let walks = document.getElementById(evt.target.id).checked
+            jsds.set('walks', walks)
+        })
+
+        let interactEnter = () => {
+            d3.event.preventDefault()
+            mouseover = true
+            if (jsds.get('walks')) stop()
+        }
+        let interactMove = () => {
             d3.event.preventDefault()
             let worldMouse = d3.mouse($world.node())
             let location = {
@@ -155,6 +247,27 @@ let moduleOut = (elId, gcmCount = 16) => {
                 y: worldMouse[1],
             }
             jsds.set('location', location)
+        }
+        let interactLeave = () => {
+            d3.event.preventDefault()
+            mouseover = false
+            if (jsds.get('walks')) start()
+        }
+
+        $spaceSvg.on('mouseenter', interactEnter)
+        $spaceSvg.on('mousemove', interactMove)
+        $spaceSvg.on('mouseleave', interactLeave)
+        $spaceSvg.on('touchstart', interactEnter)
+        $spaceSvg.on('touchmove', interactMove)
+        $spaceSvg.on('touchend', interactLeave)
+
+        // Start here
+
+        // User slider events
+        $gcmCountSlider.on('input', () => {
+            let params = jsds.get('params')
+            params.gcmCount = parseInt($gcmCountSlider.val())
+            jsds.set('params', params)
         })
 
         jsds.before('set', 'walks', () => {
@@ -172,7 +285,7 @@ let moduleOut = (elId, gcmCount = 16) => {
         jsds.after('set', 'hide-marker', (hide) => {
             let visible = 'visible'
             if (hide) visible = 'hidden'
-            $svg.select('rect.location').attr('visibility', visible)
+            $spaceSvg.select('rect.location').attr('visibility', visible)
         })
 
         // Update when values change.
@@ -181,19 +294,7 @@ let moduleOut = (elId, gcmCount = 16) => {
 
         jsds.set('params', startingParams)
 
-        function setRandomLocation() {
-            jsds.set('location', {
-                x: utils.getRandomArbitrary(0, 300),
-                y: 30,
-                type: 'world'
-            })
-        }
-
-        setRandomLocation()
-        let initialLoop = setInterval(setRandomLocation, 1000)
-        setTimeout(() => {
-            clearInterval(initialLoop)
-        }, 10000)
+        start()
     })
 }
 

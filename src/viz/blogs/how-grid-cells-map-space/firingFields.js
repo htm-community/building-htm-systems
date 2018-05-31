@@ -6,7 +6,7 @@
  * visual stuff, but removed the beeping (sorry Mirko).
  */
 
-let utils = require('../../widgets/utils')
+let utils = require('../../../lib/utils')
 let html = require('./firingFields.tmpl.html')
 let JSDS = require('JSDS')
 let FiringPatch = require('./firingPatch')

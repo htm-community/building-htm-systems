@@ -1,5 +1,5 @@
 let SdrDrawing = require('SdrDrawing')
-let utils = require('../utils')
+let utils = require('../../../lib/utils')
 let html = require('./potentialPools.tmpl.html')
 let JSDS = require('JSDS')
 

@@ -1,5 +1,5 @@
 let JSDS = require('JSDS')
-let utils = require('../utils')
+let utils = require('../../../lib/utils')
 let html = require('./cyclicCategoryEncoder.tmpl.html')
 
 let colors = {

@@ -1,7 +1,7 @@
 let SdrUtils = require('SdrUtils')
 let SdrDrawing = require('SdrDrawing')
 let JSDS = require('JSDS')
-let utils = require('../utils')
+let utils = require('../../../lib/utils')
 let html = require('./initialPerms.tmpl.html')
 
 module.exports = (elementId) => {

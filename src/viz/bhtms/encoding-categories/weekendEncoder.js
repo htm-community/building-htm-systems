@@ -1,9 +1,8 @@
-let RelativeScalarEncoder = require('RelativeScalarEncoder')
 let JSDS = require('JSDS')
-let utils = require('../utils')
+let utils = require('../../../lib/utils')
 let html = require('./weekendEncoder.tmpl.html')
 
-module.exports = (elementId, bounded=false) => {
+module.exports = (elementId) => {
 
     let valueScaleTopMargin = 40,
         valueScaleSideMargins = 10
