@@ -6,37 +6,59 @@ let CyclicCategoryEncoder = require('CyclicCategoryEncoder')
 module.exports = (elementId) => {
 
     utils.loadHtml(html.default, elementId, () => {
-        let $d3El = d3.select('#' + elementId),
-            $svgs = $d3El.selectAll('svg')
-
         let size = 135
 
-        let min = 0,
-            max = 6,
-            bits = 12,
-            range = 3
+        let params = [{
+            // day of week
+            buckets: 7,
+            range: 9,
+            bits: 21,
+            color: 'red',
+        }, {
+            // day of month
+            buckets: 31,
+            range: 9,
+            bits: 21,
+            color: 'green',
+        }, {
+            // weekend
+            buckets: 2,
+            range: 11,
+            bits: 21,
+            color: 'yellow',
+        }, {
+            // time of day
+            buckets: 23,
+            range: 9,
+            bits: 21,
+            color: 'blue',
+        }]
 
-        let displays = $svgs.nodes().map((svg, i) => {
-            let $svg = d3.select(svg)
+        let names = [
+            'season',
+            'day-of-month',
+            'weekend',
+            'time-of-day'
+        ]
 
-            let encoder = new CyclicCategoryEncoder(min, max, range, bits)
-            let encoderDisplay = new CyclicCategoryEncoderDisplay(i, $svg, encoder, {
-                size: size,
-                min: min,
-                max: max,
-                bits: bits,
-                range: range,
-            })
+        let displays = names.map((name, i) => {
+            let prms = params[i]
+            let encoder = new CyclicCategoryEncoder(prms)
+            prms.size = size
+            let encoderDisplay = new CyclicCategoryEncoderDisplay(name, encoder, prms)
             encoderDisplay.render()
             return encoderDisplay
         })
 
-        setInterval(() => {
-            displays.forEach(cced => {
-                let value = Math.round(utils.getRandomArbitrary(cced.min, cced.max))
-                cced.jsds.set('value', value)
-            })
-        }, 300)
+        displays[0].jsds.set('value', 0)
+        displays[1].jsds.set('value', 0)
+        displays[2].jsds.set('value', 0)
+        displays[3].jsds.set('value', 0)
+
+        displays[0].loop()
+        displays[1].loop()
+        displays[2].loop()
+        displays[3].loop()
 
     })
 

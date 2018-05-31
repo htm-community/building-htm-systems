@@ -3,24 +3,24 @@ let JSDS = require('JSDS')
 let colors = {
     track: '#CCC',
     bitOff: 'white',
-    bitOn: 'orange',
     bitStroke: 'black'
 }
 
 class CyclicCategoryEncoderDisplay {
 
-    constructor(id, $svg, encoder, opts) {
+    constructor(id, encoder, opts) {
         this.id = id
-        this.$svg = $svg
+        this.$svg = d3.select('#' + id)
         this.encoder = encoder
 
-        this.size = opts.size
-        this.min = opts.min
-        this.max = opts.max
+        this.buckets = opts.buckets
         this.bits = opts.bits
         this.range = opts.range
 
-        let $el = $($svg.node())
+        this.size = opts.size
+        this.color = opts.color
+
+        let $el = $(this.$svg.node())
 
         this.$minDisplay = $el.find('.min-display')
         this.$valueDisplay = $el.find('.value-display')
@@ -31,15 +31,25 @@ class CyclicCategoryEncoderDisplay {
         this.$maxLabel = $el.find('.max-label')
         this.$rangeLabel = $el.find('.range-label')
 
-        // Some aesthetic stuff
+        // Some aesthetic stuff. The order is important below because of the radius
+        this.largeCircleRatio = 3/4
+        this.smallCircleRatio = this.radius / 7
         this.smallFont = 20
         this.medFont = 26
         this.bigFont = 60
+        this.circleStrokeWidth = 3
         if (this.size < 200) {
+            this.largeCircleRatio = 8/9
+            this.smallCircleRatio = this.radius / 8
             this.smallFont = 11
             this.medFont = 13
             this.bigFont = 28
+            this.circleStrokeWidth = 1
         }
+    }
+
+    get radius() {
+        return (this.size / 2) * this.largeCircleRatio
     }
 
     render() {
@@ -64,15 +74,15 @@ class CyclicCategoryEncoderDisplay {
         let threeFourths = size * 3/4
 
         this.$valueDisplay.attr('font-size', this.bigFont)
-            .html(this.min)
+            .html(0)
             .attr('x', half - (this.$valueDisplay.get(0).getBBox().width / 2))
             .attr('y', half + (this.$valueDisplay.get(0).getBBox().height / 4))
         this.$minDisplay.attr('font-size', this.smallFont)
-            .html(this.min)
+            .html(0)
             .attr('x', fourth - (this.$minDisplay.get(0).getBBox().width / 2))
             .attr('y', half + (this.$minDisplay.get(0).getBBox().height / 4))
         this.$maxDisplay.attr('font-size', this.smallFont)
-            .html(this.max)
+            .html(this.buckets - 1)
             .attr('x', threeFourths - (this.$maxDisplay.get(0).getBBox().width / 2))
             .attr('y', half + (this.$maxDisplay.get(0).getBBox().height / 4))
         this.$rangeDisplay.attr('font-size', this.medFont)
@@ -105,20 +115,22 @@ class CyclicCategoryEncoderDisplay {
         let value = this.jsds.get('value')
         let encoding = this.encoder.encode(value)
         this.$valueDisplay.html(value)
+        // console.log(encoding)
         this._updateCircles(encoding)
     }
 
     _treatCircleBits(circles) {
+        let color = this.color
         circles
             .attr('cx', d => d.cx)
             .attr('cy', d => d.cy)
-            .attr('r', this.radius / 8)
+            .attr('r', this.smallCircleRatio)
             .attr('fill', d => {
-                if (d.bit) return colors.bitOn
+                if (d.bit) return color
                 else return colors.bitOff
             })
             .attr('stroke', colors.bitStroke)
-            .attr('stroke-width', 3)
+            .attr('stroke-width', this.circleStrokeWidth)
     }
 
     _updateCircles(encoding) {
@@ -138,6 +150,7 @@ class CyclicCategoryEncoderDisplay {
         })
         let $group = $svg.selectAll('g.bits')
         let circles = $group.selectAll('circle').data(data)
+        // console.log(data)
         this._treatCircleBits(circles)
 
         let newCircles = circles.enter().append('circle')
@@ -146,8 +159,18 @@ class CyclicCategoryEncoderDisplay {
         circles.exit().remove()
     }
 
-    get radius() {
-        return (this.size / 2) * 3/4
+    step(increment) {
+        let v = this.jsds.get('value')
+        v += increment
+        if (v > this.buckets - 1) v = 0
+        this.jsds.set('value', v)
+    }
+
+    loop() {
+        let me = this
+        setInterval(() => {
+            me.step(1)
+        }, 300)
     }
 
 }

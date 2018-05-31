@@ -6,33 +6,20 @@ let CyclicCategoryEncoder = require('CyclicCategoryEncoder')
 module.exports = (elementId) => {
 
     utils.loadHtml(html.default, elementId, () => {
-        let $d3El = d3.select('#' + elementId),
-            $svg = $d3El.select('svg')
 
-        let size = 300
+        let params = {
+            buckets: 7,
+            range: 9,
+            bits: 21,
+            size: 300,
+            color: 'black',
+        }
 
-        let min = 0,
-            max = 6,
-            bits = 12,
-            range = 3
-
-        let encoder = new CyclicCategoryEncoder(min, max, range, bits)
-
-        let encoderDisplay = new CyclicCategoryEncoderDisplay('lone', $svg, encoder, {
-            size: size,
-            min: min,
-            max: max,
-            bits: bits,
-            range: range,
-        })
+        let encoder = new CyclicCategoryEncoder(params)
+        let encoderDisplay = new CyclicCategoryEncoderDisplay('lone', encoder, params)
         encoderDisplay.render()
-
-        let counter = min
-
-        setInterval(() => {
-            encoderDisplay.jsds.set('value', counter++)
-            if (counter >= max) counter = 0
-        }, 300)
+        encoderDisplay.jsds.set('value', 0)
+        encoderDisplay.loop()
 
     })
 
