@@ -16,8 +16,11 @@ module.exports = (elementId) => {
 
     let jsdsHandles = []
 
+    let timeStep = 15 * 60000 // minutes
     let dataStep = 0.25
     let counter = 0
+    let timeMarker = new Date(2000)
+
     function nextSemiRandomSineWaveDataPoint() {
         let x = counter
         counter += dataStep
@@ -25,7 +28,11 @@ module.exports = (elementId) => {
         let jitter = utils.getRandomArbitrary(0.0, 0.25)
         if (Math.random() > 0.5) value += jitter
         else value -= jitter
-        return value
+        timeMarker = new Date(timeMarker.getTime() + timeStep)
+        return {
+            value: value,
+            time: timeMarker,
+        }
     }
 
     function fillWindowWithData(window, size) {
@@ -195,7 +202,7 @@ module.exports = (elementId) => {
 
         jsds.after('set', 'data', (data) => {
             $svg.select('path#plot')
-                .attr('d', lineFunction(data))
+                .attr('d', lineFunction(data.map(d => d.value)))
                 .attr('stroke', 'black')
                 .attr('fill', 'none')
             $svg.select('rect#index')
@@ -207,7 +214,7 @@ module.exports = (elementId) => {
                 .attr('stroke-width', 1)
                 .attr('fill', 'none')
                 .attr('opacity', 0.25)
-            jsds.set('value', data[index])
+            jsds.set('value', data[index].value)
         })
 
         jsds.set('data', fillWindowWithData([], windowSize))
