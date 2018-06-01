@@ -4,7 +4,7 @@ let JSDS = require('JSDS')
 let colors = {
     track: '#CCC',
     bitOff: 'white',
-    bitStroke: 'black'
+    bitStroke: 'black',
 }
 
 class CyclicCategoryEncoderDisplay {
@@ -71,12 +71,6 @@ class CyclicCategoryEncoderDisplay {
 
         $svg.attr('width', size)
             .attr('height', size)
-        $svg.select('circle.track')
-            .attr('cx', half)
-            .attr('cy', half)
-            .attr('r', radius)
-            .attr('fill', 'none')
-            .attr('stroke', colors.track)
 
         let third = size * 3/10
         let twoThirds = size * 21/30
@@ -122,6 +116,11 @@ class CyclicCategoryEncoderDisplay {
             let jsds = this.jsds
             this._handles = []
             function reRender() {
+                // If the value is out of range, we gotta push it back into range.
+                let value = me.jsds.get('value')
+                let buckets = me.jsds.get('buckets')
+                if (value < 0) value = 0
+                if (value >= buckets) value = buckets - 1
                 me.render()
                 me.updateDisplay()
             }
@@ -195,9 +194,16 @@ class CyclicCategoryEncoderDisplay {
 
     loop() {
         let me = this
-        setInterval(() => {
+        this._loopHandle = setInterval(() => {
             me.step(1)
         }, 300)
+    }
+
+    stop() {
+        if (this._loopHandle) {
+            window.clearInterval(this._loopHandle)
+            delete this._loopHandle
+        }
     }
 
 }

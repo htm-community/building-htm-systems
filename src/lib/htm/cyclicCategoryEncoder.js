@@ -12,6 +12,9 @@ class CyclicCategoryEncoder {
     encode(value) {
         let bits = this.bits
         let out = []
+        if (value >= this.buckets) {
+            throw new Error('Cannot encode value outside bucket range: ' + value)
+        }
         d3.range(0, this.bits).forEach(() => { out.push(0) })
         let index = Math.round(this.scale(value))
         out[index] = 1
@@ -36,7 +39,11 @@ class CyclicCategoryEncoder {
             return bit === 0 || bit === 1
         }
         if (! out.every(isValid) || validated !== out.length) {
-            throw new Error("CyclicCategoryEncoder creating non-continuous output!")
+            // console.error('encoding value: %s', value)
+            // console.error(out)
+            // console.error('%s buckets, %s bits, %s range', this.buckets, this.bits, this.range)
+            // console.error('starting index: %s', index)
+            throw new Error('CyclicCategoryEncoder created non-continuous output!!')
         }
         return out
     }

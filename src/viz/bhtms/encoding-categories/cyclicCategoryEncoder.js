@@ -11,7 +11,7 @@ module.exports = (elementId) => {
             range: 9,
             bits: 21,
             size: 300,
-            color: 'black',
+            color: '#333',
         }
 
         let encoderDisplay = new CyclicCategoryEncoderDisplay('lone', params)
@@ -19,12 +19,15 @@ module.exports = (elementId) => {
         encoderDisplay.jsds.set('value', 0)
         encoderDisplay.loop()
 
-        let $bucketsSlider = $('#bucketsSlider')
-        let $bucketsDisplay = $('.bucketsDisplay')
-        let $bitsSlider = $('#bitsSlider')
-        let $bitsDisplay = $('.bitsDisplay')
-        let $rangeSlider = $('#rangeSlider')
-        let $rangeDisplay = $('.rangeDisplay')
+        let $el = $('#' + elementId)
+        let $bucketsSlider = $el.find('#bucketsSlider')
+        let $bucketsDisplay = $el.find('.bucketsDisplay')
+        let $bitsSlider = $el.find('#bitsSlider')
+        let $bitsDisplay = $el.find('.bitsDisplay')
+        let $rangeSlider = $el.find('#rangeSlider')
+        let $rangeDisplay = $el.find('.rangeDisplay')
+        let $discreteButton = $el.find('button.discrete')
+        let $continuousButton = $el.find('button.continuous')
 
         function update() {
             let buckets = parseInt($bucketsSlider.val())
@@ -38,11 +41,44 @@ module.exports = (elementId) => {
             $rangeDisplay.html(range)
         }
 
+        function slideParams(params) {
+            let keys = Object.keys(params)
+            keys.forEach(function(key) {
+                encoderDisplay.jsds.set(key, params[key])
+            })
+            $bucketsSlider.val(params.buckets)
+            $bucketsDisplay.html(params.buckets)
+            $bitsSlider.val(params.bits)
+            $bitsDisplay.html(params.bits)
+            $rangeSlider.val(params.range)
+            $rangeDisplay.html(params.range)
+        }
+
         update()
 
         $bucketsSlider.on('input', update)
         $bitsSlider.on('input', update)
         $rangeSlider.on('input', update)
+
+        $discreteButton.on('click', () => {
+            slideParams({
+                value: 0,
+                buckets: 7,
+                bits: 21,
+                range: 3,
+            })
+        })
+
+        $continuousButton.on('click', () => {
+            slideParams({
+                value: 0,
+                buckets: 29,
+                bits: 47,
+                range: 18,
+            })
+        })
+
+
     })
 
 }
