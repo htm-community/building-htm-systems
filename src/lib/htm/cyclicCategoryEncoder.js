@@ -17,7 +17,7 @@ class CyclicCategoryEncoder {
         out[index] = 1
         let flip = false
         let step = 0
-        for (let i = 0; i < this.range; i++) {
+        for (let i = 1; i < this.range; i++) {
             let move = step + 1
             if (flip) {
                 move = -move

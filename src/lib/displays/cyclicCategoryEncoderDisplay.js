@@ -1,3 +1,4 @@
+let CyclicCategoryEncoder = require('CyclicCategoryEncoder')
 let JSDS = require('JSDS')
 
 let colors = {
@@ -8,14 +9,9 @@ let colors = {
 
 class CyclicCategoryEncoderDisplay {
 
-    constructor(id, encoder, opts) {
+    constructor(id, opts) {
         this.id = id
         this.$svg = d3.select('#' + id)
-        this.encoder = encoder
-
-        this.buckets = opts.buckets
-        this.bits = opts.bits
-        this.range = opts.range
 
         this.size = opts.size
         this.color = opts.color
@@ -31,21 +27,10 @@ class CyclicCategoryEncoderDisplay {
         this.$maxLabel = $el.find('.max-label')
         this.$rangeLabel = $el.find('.range-label')
 
-        // Some aesthetic stuff. The order is important below because of the radius
-        this.largeCircleRatio = 3/4
-        this.smallCircleRatio = this.radius / 7
-        this.smallFont = 20
-        this.medFont = 26
-        this.bigFont = 60
-        this.circleStrokeWidth = 3
-        if (this.size < 200) {
-            this.largeCircleRatio = 8/9
-            this.smallCircleRatio = this.radius / 8
-            this.smallFont = 11
-            this.medFont = 13
-            this.bigFont = 28
-            this.circleStrokeWidth = 1
-        }
+        this.jsds = JSDS.create('cyclic-category-encoder-' + this.id)
+        this.jsds.set('buckets', opts.buckets)
+        this.jsds.set('bits', opts.bits)
+        this.jsds.set('range', opts.range)
     }
 
     get radius() {
@@ -53,11 +38,36 @@ class CyclicCategoryEncoderDisplay {
     }
 
     render() {
-        let me = this
+        let jsds = this.jsds
+        let bits = jsds.get('bits'),
+            buckets = jsds.get('buckets'),
+            range = jsds.get('range')
+        this.encoder = new CyclicCategoryEncoder({
+            bits: bits,
+            buckets: buckets,
+            range: range,
+        })
         let $svg = this.$svg
         let size = this.size
         let half = size / 2
+
+        // Some aesthetic stuff. The order is important below because of the radius
+        this.largeCircleRatio = 3/4
         let radius = this.radius
+        let circumference = 2 * Math.PI * radius
+        this.smallCircleRadius = circumference / bits / 2
+        this.smallFont = 20
+        this.medFont = 26
+        this.bigFont = 60
+        this.circleStrokeWidth = 2
+        if (this.size < 200) {
+            this.largeCircleRatio = 8/9
+            this.smallFont = 11
+            this.medFont = 13
+            this.bigFont = 28
+            this.circleStrokeWidth = 1
+        }
+
 
         $svg.attr('width', size)
             .attr('height', size)
@@ -82,11 +92,11 @@ class CyclicCategoryEncoderDisplay {
             .attr('x', fourth - (this.$minDisplay.get(0).getBBox().width / 2))
             .attr('y', half + (this.$minDisplay.get(0).getBBox().height / 4))
         this.$maxDisplay.attr('font-size', this.smallFont)
-            .html(this.buckets - 1)
+            .html(buckets - 1)
             .attr('x', threeFourths - (this.$maxDisplay.get(0).getBBox().width / 2))
             .attr('y', half + (this.$maxDisplay.get(0).getBBox().height / 4))
         this.$rangeDisplay.attr('font-size', this.medFont)
-            .html(this.range + '/' + this.bits)
+            .html(range + '/' + bits)
             .attr('x', half - (this.$rangeDisplay.get(0).getBBox().width / 2))
             .attr('y', twoThirds)
 
@@ -103,18 +113,35 @@ class CyclicCategoryEncoderDisplay {
             .attr('x', half - (this.$rangeLabel.get(0).getBBox().width / 2))
             .attr('y', twoThirds + (this.$rangeLabel.get(0).getBBox().height - 2))
 
+        this._selfListen()
+    }
 
-
-        this.jsds = JSDS.create('cyclic-category-encoder-' + this.id)
-        this.jsds.after('set', 'value', () => {
-            me.updateDisplay.call(me)
-        })
+    _selfListen() {
+        let me = this
+        if (! this._handles) {
+            let jsds = this.jsds
+            this._handles = []
+            function reRender() {
+                me.render()
+                me.updateDisplay()
+            }
+            jsds.after('set', 'value', () => {
+                me.updateDisplay()
+            })
+            this._handles.push(jsds.after('set', 'buckets', reRender))
+            this._handles.push(jsds.after('set', 'range', reRender))
+            this._handles.push(jsds.after('set', 'bits', reRender))
+        }
     }
 
     updateDisplay() {
         let value = this.jsds.get('value')
         let encoding = this.encoder.encode(value)
         this.$valueDisplay.html(value)
+        let half = this.size / 2
+        this.$valueDisplay
+            .attr('x', half - (this.$valueDisplay.get(0).getBBox().width / 2))
+            .attr('y', half + (this.$valueDisplay.get(0).getBBox().height / 4))
         // console.log(encoding)
         this._updateCircles(encoding)
     }
@@ -124,7 +151,7 @@ class CyclicCategoryEncoderDisplay {
         circles
             .attr('cx', d => d.cx)
             .attr('cy', d => d.cy)
-            .attr('r', this.smallCircleRatio)
+            .attr('r', this.smallCircleRadius)
             .attr('fill', d => {
                 if (d.bit) return color
                 else return colors.bitOff
@@ -134,7 +161,7 @@ class CyclicCategoryEncoderDisplay {
     }
 
     _updateCircles(encoding) {
-        let bits = this.bits,
+        let bits = this.jsds.get('bits'),
             size = this.size,
             radius = this.radius,
             $svg = this.$svg
@@ -162,7 +189,7 @@ class CyclicCategoryEncoderDisplay {
     step(increment) {
         let v = this.jsds.get('value')
         v += increment
-        if (v > this.buckets - 1) v = 0
+        if (v > this.jsds.get('buckets') - 1) v = 0
         this.jsds.set('value', v)
     }
 

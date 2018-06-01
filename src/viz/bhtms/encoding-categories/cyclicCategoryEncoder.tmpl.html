@@ -6,8 +6,7 @@
     <text class="range-display"></text>
 
     <text class="name-label">
-        <tspan>day of</tspan>
-        <tspan dx="-3em" dy="1em">week</tspan>
+        <tspan>encoding</tspan>
     </text>
     <text class="min-label">min</text>
     <text class="max-label">max</text>
@@ -18,3 +17,20 @@
     <g class="bits"></g>
 
 </svg>
+
+<div>
+    <!--<div style="float:right">-->
+        <!--<input type="range" min="1" max="100" value="10" id="independentVariablesSlider" />-->
+        <!--distr. spread: <span class="independentVariablesDisplay"></span>-->
+    <!--</div>-->
+    <div>
+        <input type="range" min="1" max="100" value="7" id="bucketsSlider" />
+        buckets: <span class="bucketsDisplay"></span>
+        <br/>
+        <input type="range" min="11" max="101" step="2" value="21" id="bitsSlider" />
+        bits: <span class="bitsDisplay"></span>
+        <br/>
+        <input type="range" min="1" max="11" step="1" value="9" id="rangeSlider" />
+        range: <span class="rangeDisplay"></span>
+    </div>
+</div>

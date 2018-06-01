@@ -43,22 +43,16 @@ module.exports = (elementId) => {
 
         let displays = names.map((name, i) => {
             let prms = params[i]
-            let encoder = new CyclicCategoryEncoder(prms)
             prms.size = size
-            let encoderDisplay = new CyclicCategoryEncoderDisplay(name, encoder, prms)
+            let encoderDisplay = new CyclicCategoryEncoderDisplay(name, prms)
             encoderDisplay.render()
             return encoderDisplay
         })
 
-        displays[0].jsds.set('value', 0)
-        displays[1].jsds.set('value', 0)
-        displays[2].jsds.set('value', 0)
-        displays[3].jsds.set('value', 0)
-
-        displays[0].loop()
-        displays[1].loop()
-        displays[2].loop()
-        displays[3].loop()
+        displays.forEach((d, i) => {
+            d.jsds.set('value', 0)
+            d.loop()
+        })
 
     })
 
