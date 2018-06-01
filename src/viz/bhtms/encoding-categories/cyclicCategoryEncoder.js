@@ -23,20 +23,26 @@ module.exports = (elementId) => {
         let $bucketsDisplay = $('.bucketsDisplay')
         let $bitsSlider = $('#bitsSlider')
         let $bitsDisplay = $('.bitsDisplay')
+        let $rangeSlider = $('#rangeSlider')
+        let $rangeDisplay = $('.rangeDisplay')
 
         function update() {
             let buckets = parseInt($bucketsSlider.val())
             let bits = parseInt($bitsSlider.val())
+            let range = parseInt($rangeSlider.val())
             encoderDisplay.jsds.set('buckets', buckets)
             encoderDisplay.jsds.set('bits', bits)
+            encoderDisplay.jsds.set('range', range)
             $bucketsDisplay.html(buckets)
             $bitsDisplay.html(bits)
+            $rangeDisplay.html(range)
         }
 
         update()
 
         $bucketsSlider.on('input', update)
         $bitsSlider.on('input', update)
+        $rangeSlider.on('input', update)
     })
 
 }
