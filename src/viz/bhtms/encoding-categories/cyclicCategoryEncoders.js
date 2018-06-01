@@ -1,7 +1,6 @@
 let utils = require('../../../lib/utils')
 let html = require('./cyclicCategoryEncoders.tmpl.html')
 let CyclicCategoryEncoderDisplay = require('CyclicCategoryEncoderDisplay')
-let CyclicCategoryEncoder = require('CyclicCategoryEncoder')
 
 module.exports = (elementId) => {
 

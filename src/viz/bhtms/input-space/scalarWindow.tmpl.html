@@ -2,11 +2,7 @@
     <g class="chart">
         <path id="plot"></path>
         <rect id="index"></rect>
-        <rect id="value"></rect>
         <circle id="value-dot"></circle>
-        <g class="hover" visibility="hidden">
-            <rect class="range"></rect>
-        </g>
         <text id="label"></text>
     </g>
 
@@ -14,29 +10,88 @@
 
     <g class="encoding"></g>
 
-    <text x="500" y="194" font-size="10pt">encoding</text>
+    <text x="10" y="116" font-size="10pt">encoding</text>
 </svg>
-<div>
-    <div style="float:right">
-        slow <input type="range"
-                    id="speed"
-                    style="direction:rtl"
-                    min="10" max="500" step="10" value="300"
-        /> fast
-    </div>
-    <div>
-        <input type="range" min="1" max="100" step="1" value="40" id="windowRes" /> resolution:
-        <span class="windowRes"></span>
-    </div>
-</div>
 
-<div class="figure-description clearfix">
-    <p>
-        A stream of semi-randomly produced scalar values flow across the screen. The red line
-        indicates the value currently being encoded in the bits below the chart. <strong>Mouse
-        over</strong> the output bits to see the scalar data range each bit represents highlighted
-        over the chart.
-    </p>
-    <p>
-    </p>
-</div>
+<svg id="day-of-month">
+
+    <text class="min-display"></text>
+    <text class="value-display"></text>
+    <text class="max-display"></text>
+    <text class="range-display"></text>
+
+    <text class="name-label">
+        <tspan>day of</tspan>
+        <tspan dx="-3em" dy="1em">month</tspan>
+    </text>
+    <text class="min-label">min</text>
+    <text class="max-label">max</text>
+    <text class="range-label">range</text>
+
+    <circle class="track" />
+
+    <g class="bits"></g>
+
+</svg>
+
+<svg id="weekend">
+
+    <text class="min-display"></text>
+    <text class="value-display"></text>
+    <text class="max-display"></text>
+    <text class="range-display"></text>
+
+    <text class="name-label">
+        <tspan>weekend</tspan>
+    </text>
+    <text class="min-label">min</text>
+    <text class="max-label">max</text>
+    <text class="range-label">range</text>
+
+    <circle class="track" />
+
+    <g class="bits"></g>
+
+</svg>
+
+<svg id="day-of-week">
+
+    <text class="min-display"></text>
+    <text class="value-display"></text>
+    <text class="max-display"></text>
+    <text class="range-display"></text>
+
+    <text class="name-label">
+        <tspan>day of</tspan>
+        <tspan dx="-3em" dy="1em">week</tspan>
+    </text>
+    <text class="min-label">min</text>
+    <text class="max-label">max</text>
+    <text class="range-label">range</text>
+
+    <circle class="track" />
+
+    <g class="bits"></g>
+
+</svg>
+
+<svg id="time-of-day">
+
+    <text class="min-display"></text>
+    <text class="value-display"></text>
+    <text class="max-display"></text>
+    <text class="range-display"></text>
+
+    <text class="name-label">
+        <tspan>time of</tspan>
+        <tspan dx="-3em" dy="1em">day</tspan>
+    </text>
+    <text class="min-label">min</text>
+    <text class="max-label">max</text>
+    <text class="range-label">range</text>
+
+    <circle class="track" />
+
+    <g class="bits"></g>
+
+</svg>

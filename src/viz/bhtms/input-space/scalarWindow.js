@@ -1,4 +1,5 @@
 let RelativeScalarEncoder = require('RelativeScalarEncoder')
+let CyclicCategoryEncoderDisplay = require('CyclicCategoryEncoderDisplay')
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
 let html = require('./scalarWindow.tmpl.html')
@@ -11,15 +12,18 @@ module.exports = (elementId) => {
 
     let encoder
     let n = 100
+    let range = 0.5
     let min = -1.25
     let max = 1.25
 
     let jsdsHandles = []
 
-    let timeStep = 15 * 60000 // minutes
+    let timeStep = 60 * 60000 // minutes
     let dataStep = 0.25
     let counter = 0
-    let timeMarker = new Date(2000)
+    let timeMarker = new Date(new Date().setFullYear(new Date().getFullYear() - 1))
+
+    let timeEncoders = {}
 
     function nextSemiRandomSineWaveDataPoint() {
         let x = counter
@@ -29,6 +33,7 @@ module.exports = (elementId) => {
         if (Math.random() > 0.5) value += jitter
         else value -= jitter
         timeMarker = new Date(timeMarker.getTime() + timeStep)
+        // I could add artificial temporal patterns here.
         return {
             value: value,
             time: timeMarker,
@@ -46,24 +51,22 @@ module.exports = (elementId) => {
         let $d3El = d3.select('#' + elementId)
 
         let width = 560,
-            height = 220
+            height = 140
 
-        let chartHeight = 200,
+        let chartHeight = 120,
             chartPadding = 30
 
         let $svg = $d3El.select('svg')
             .attr('width', width)
             .attr('height', height)
 
-        let $resolutionSlider = $('#windowRes'),
-            $resolutionValues = $('.windowRes'),
-            $speedSlider = $('#speed')
-
         let windowSize = 100
         let index = 40
 
-        let scaleX = d3.scaleLinear().domain([0, windowSize]).range([0, width])
-        let scaleY = d3.scaleLinear().domain([1, -1]).range([chartPadding, chartHeight - chartPadding])
+        let scaleX = d3.scaleLinear().domain([0, windowSize])
+            .range([0, width])
+        let scaleY = d3.scaleLinear().domain([1, -1])
+            .range([chartPadding, chartHeight - chartPadding])
         let lineFunction = d3.line()
             .x(function(d, i) {
                 return scaleX(i)
@@ -72,10 +75,9 @@ module.exports = (elementId) => {
                 return scaleY(d)
             })
             .curve(d3.curveCatmullRom.alpha(0.01))
-        let rectWidth = 20
 
         function drawEncoding(encoding) {
-            let topMargin = 200
+            let topMargin = chartHeight
             let bitsToOutputDisplay = d3.scaleLinear()
                 .domain([0, encoding.length])
                 .range([0, width])
@@ -113,24 +115,6 @@ module.exports = (elementId) => {
 
             rects = $outputGroup.selectAll('rect.bit')
 
-            function hoverRange(selectedOutputBit) {
-                let index = selectedOutputBit.index
-                let [low, high] = encoder.getRangeFromBitIndex(index)
-                let scaledBottom = scaleY(low)
-                let scaledTop = scaleY(high)
-                let height = scaledBottom - scaledTop
-                let $hover = $svg.select('g.hover')
-                    .attr('visibility', 'visible')
-                $hover.select('rect.range')
-                    .attr('x', 0)
-                    .attr('width', width)
-                    .attr('y', scaledTop)
-                    .attr('height', height)
-                    .attr('stroke', 'red')
-                    .attr('fill', 'orange')
-                    .attr('opacity', 0.2)
-            }
-
             rects.on('mouseenter', (bit, index) => {
                 jsds.set('selectedOutputBit', {state: bit, index: index})
             })
@@ -141,52 +125,87 @@ module.exports = (elementId) => {
             while (jsdsHandles.length) {
                 jsdsHandles.pop().remove()
             }
+        }
 
-            let setBitHandle = jsds.after('set', 'selectedOutputBit', hoverRange)
-            let setResHandle = jsds.after('set', 'resolution', () => {
-                let selectedBit = jsds.get('selectedOutputBit')
-                if (selectedBit) hoverRange(selectedBit)
+        function renderTimeCycles() {
+            let size = 135
+
+            let params = [{
+                // day of month
+                buckets: 31,
+                range: 9,
+                bits: 21,
+                color: 'red',
+            }, {
+                // weekend
+                buckets: 2,
+                range: 11,
+                bits: 21,
+                color: 'green',
+            }, {
+                // day of week
+                buckets: 7,
+                range: 3,
+                bits: 21,
+                color: 'yellow',
+            }, {
+                // time of day
+                buckets: 24,
+                range: 9,
+                bits: 21,
+                color: 'blue',
+            }]
+
+            let names = [
+                'day-of-month',
+                'weekend',
+                'day-of-week',
+                'time-of-day',
+            ]
+
+            names.forEach((name, i) => {
+                let prms = params[i]
+                prms.size = size
+                let encoderDisplay = new CyclicCategoryEncoderDisplay(name, prms)
+                encoderDisplay.render()
+                timeEncoders[name] = encoderDisplay
+                encoderDisplay.jsds.set('value', 0)
             })
-            jsdsHandles.push(setBitHandle)
-            jsdsHandles.push(setResHandle)
+        }
+
+        function updateTimeEncoders(time) {
+            let dayOfWeek = time.getDay()
+            let isWeekend = 0
+            let hourOfDay = time.getHours()
+            if ((dayOfWeek === 6) || (dayOfWeek === 0)) {
+                isWeekend = 1
+            }
+            timeEncoders['day-of-month'].jsds.set('value', time.getDate())
+            timeEncoders['weekend'].jsds.set('value', isWeekend)
+            timeEncoders['day-of-week'].jsds.set('value', dayOfWeek)
+            timeEncoders['time-of-day'].jsds.set('value', hourOfDay)
         }
 
         function updateValue(value) {
             updateValueDisplays(value)
-            jsds.set('encoding', encoder.encode(value))
+            jsds.set('encoding', encoder.encode(value.value))
+            updateTimeEncoders(value.time)
         }
 
         function updateValueDisplays(value) {
-
-            let radius = jsds.get('resolution') / 2
-            let low = Math.max(min, value - radius)
-            let high = Math.min(max, value + radius)
-            let scaledBottom = scaleY(low)
-            let scaledTop = scaleY(high)
-            let rectHeight = scaledBottom - scaledTop
-
-            $svg.select('rect#value')
-                .attr('x', scaleX(index) - rectWidth/2)
-                .attr('y', scaledTop)
-                .attr('height', rectHeight)
-                .attr('width', rectWidth)
-                .attr('stroke', 'red')
-                .attr('stroke-width', 2)
-                .attr('fill', 'red')
-                .attr('opacity', 0.2)
             $svg.select('circle#value-dot')
                 .attr('cx', scaleX(index))
-                .attr('cy', scaleY(value))
-                .attr('r', 2)
+                .attr('cy', scaleY(value.value))
+                .attr('r', 3)
                 .attr('fill', 'red')
-                .attr('stroke', 'none')
+                .attr('stroke', 'red')
             $svg.select('text#label')
-                .attr('x', scaleX(index) + 20)
-                .attr('y', 190)
+                .attr('x', scaleX(index) + 10)
+                .attr('y', chartHeight - 10)
                 .attr('stroke', 'black')
                 .attr('fill', 'black')
                 .attr('font-size', '12pt')
-                .html(utils.precisionRound(value, 2))
+                .html(utils.precisionRound(value.value, 2) + ' ' + value.time)
         }
 
         function startTimer(speed) {
@@ -206,15 +225,15 @@ module.exports = (elementId) => {
                 .attr('stroke', 'black')
                 .attr('fill', 'none')
             $svg.select('rect#index')
-                .attr('x', scaleX(index) - rectWidth/2)
+                .attr('x', scaleX(index))
                 .attr('y', 0)
-                .attr('height', 200)
-                .attr('width', rectWidth)
+                .attr('height', chartHeight)
+                .attr('width', 1)
                 .attr('stroke', 'red')
-                .attr('stroke-width', 1)
+                .attr('stroke-width', 2)
                 .attr('fill', 'none')
-                .attr('opacity', 0.25)
-            jsds.set('value', data[index].value)
+                .attr('opacity', 0.5)
+            jsds.set('value', data[index])
         })
 
         jsds.set('data', fillWindowWithData([], windowSize))
@@ -223,29 +242,11 @@ module.exports = (elementId) => {
 
         jsds.after('set', 'encoding', drawEncoding)
 
-        jsds.after('set', 'resolution', (resolution) => {
-            encoder = new RelativeScalarEncoder(n, resolution, min, max, bounded=true)
-            let value = jsds.get('value')
-            updateValue(value)
-            $resolutionValues.html(resolution)
-        })
+        encoder = new RelativeScalarEncoder(n, range, min, max, bounded=true)
 
-        $resolutionSlider.on('input', () => {
-            let res = parseInt($resolutionSlider.val()) / 100
-            jsds.set('resolution', res)
-        })
+        renderTimeCycles()
 
-        $speedSlider.on('input', () => {
-            clearInterval(timerHandle)
-            let speed = parseInt($speedSlider.val())
-            timerHandle = startTimer(speed)
-        })
-
-        let speed = parseInt($speedSlider.val())
-        let timerHandle = startTimer(speed)
-
-        let res = parseInt($resolutionSlider.val()) / 100
-        jsds.set('resolution', res)
+        startTimer(50)
 
     })
 
