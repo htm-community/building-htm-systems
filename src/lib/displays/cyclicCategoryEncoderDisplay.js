@@ -136,6 +136,7 @@ class CyclicCategoryEncoderDisplay {
     updateDisplay() {
         let value = this.jsds.get('value')
         let encoding = this.encoder.encode(value)
+        this.jsds.set('encoding', encoding)
         this.$valueDisplay.html(value)
         let half = this.size / 2
         this.$valueDisplay

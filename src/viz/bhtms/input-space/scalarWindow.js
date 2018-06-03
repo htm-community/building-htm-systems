@@ -1,3 +1,5 @@
+let SdrUtils = require('SdrUtils')
+let SdrDrawing = require('SdrDrawing')
 let RelativeScalarEncoder = require('RelativeScalarEncoder')
 let CyclicCategoryEncoderDisplay = require('CyclicCategoryEncoderDisplay')
 let JSDS = require('JSDS')
@@ -7,6 +9,38 @@ let html = require('./scalarWindow.tmpl.html')
 const onColor = 'skyblue'
 const offColor = 'white'
 let jsds = JSDS.create()
+
+let timeEncoderNames = [
+    'day-of-month',
+    'weekend',
+    'day-of-week',
+    'time-of-day',
+]
+let timeEncoderParams = [{
+    // day of month
+    buckets: 31,
+    range: 9,
+    bits: 21,
+    color: 'red',
+}, {
+    // weekend
+    buckets: 2,
+    range: 11,
+    bits: 21,
+    color: 'green',
+}, {
+    // day of week
+    buckets: 7,
+    range: 3,
+    bits: 21,
+    color: 'yellow',
+}, {
+    // time of day
+    buckets: 24,
+    range: 9,
+    bits: 21,
+    color: 'blue',
+}]
 
 module.exports = (elementId) => {
 
@@ -56,7 +90,7 @@ module.exports = (elementId) => {
         let chartHeight = 120,
             chartPadding = 30
 
-        let $svg = $d3El.select('svg')
+        let $svg = $d3El.select('svg#streaming-scalar')
             .attr('width', width)
             .attr('height', height)
 
@@ -75,6 +109,13 @@ module.exports = (elementId) => {
                 return scaleY(d)
             })
             .curve(d3.curveCatmullRom.alpha(0.01))
+
+
+        let combinedHeight = 200
+        let $combinedEncoding = $d3El.select('svg#combined-encoding')
+            .attr('width', width)
+            .attr('height', combinedHeight)
+
 
         function drawEncoding(encoding) {
             let topMargin = chartHeight
@@ -130,41 +171,8 @@ module.exports = (elementId) => {
         function renderTimeCycles() {
             let size = 135
 
-            let params = [{
-                // day of month
-                buckets: 31,
-                range: 9,
-                bits: 21,
-                color: 'red',
-            }, {
-                // weekend
-                buckets: 2,
-                range: 11,
-                bits: 21,
-                color: 'green',
-            }, {
-                // day of week
-                buckets: 7,
-                range: 3,
-                bits: 21,
-                color: 'yellow',
-            }, {
-                // time of day
-                buckets: 24,
-                range: 9,
-                bits: 21,
-                color: 'blue',
-            }]
-
-            let names = [
-                'day-of-month',
-                'weekend',
-                'day-of-week',
-                'time-of-day',
-            ]
-
-            names.forEach((name, i) => {
-                let prms = params[i]
+            timeEncoderNames.forEach((name, i) => {
+                let prms = timeEncoderParams[i]
                 prms.size = size
                 let encoderDisplay = new CyclicCategoryEncoderDisplay(name, prms)
                 encoderDisplay.render()
@@ -180,16 +188,75 @@ module.exports = (elementId) => {
             if ((dayOfWeek === 6) || (dayOfWeek === 0)) {
                 isWeekend = 1
             }
-            timeEncoders['day-of-month'].jsds.set('value', time.getDate())
+
+            timeEncoders['day-of-month'].jsds.set('value', time.getDate() - 1)
             timeEncoders['weekend'].jsds.set('value', isWeekend)
             timeEncoders['day-of-week'].jsds.set('value', dayOfWeek)
             timeEncoders['time-of-day'].jsds.set('value', hourOfDay)
         }
 
+        function _treatCombinedEncodingBits(rects) {
+            let size = 15
+                cellsPerRow = 37
+            rects.attr('class', 'combined')
+                .attr('x', (d, i) => {
+                    return size * (i % cellsPerRow)
+                })
+                .attr('y', (d, i) => {
+                    return Math.floor(i / cellsPerRow) * size
+                })
+                .attr('width', size)
+                .attr('height', size)
+                .attr('stroke', 'black')
+                .attr('fill', (d, i) => {
+                    let typeIndex = timeEncoderNames.indexOf(d.encoder)
+                    if (typeIndex < 0) {
+                        color = onColor
+                    } else {
+                        color = timeEncoderParams[typeIndex].color
+                    }
+                    return color
+                })
+                .attr('opacity', (d, i) => {
+                    let out = 1.0
+                    if (d.bit ===0) out = 0.1
+                    return out
+                })
+        }
+
+        function updateCombinedEncoding() {
+            let combinedEncoding = []
+            let scalarBits = jsds.get('scalar-encoding')
+            scalarBits.forEach((bit, i) => {
+                combinedEncoding.push({
+                    bit: bit,
+                    encoder: 'relative-scalar',
+                })
+            })
+            Object.keys(timeEncoders).forEach(k => {
+                timeEncoders[k].jsds.get('encoding').forEach((bit, i) => {
+                    combinedEncoding.push({
+                        bit: bit,
+                        encoder: k,
+                    })
+                })
+            })
+
+            let $rects = $combinedEncoding.selectAll('rect.combined')
+                            .data(combinedEncoding)
+            _treatCombinedEncodingBits($rects)
+
+            let $newRects = $rects.enter().append('rect')
+            _treatCombinedEncodingBits($newRects)
+
+            $rects.exit().remove()
+        }
+
         function updateValue(value) {
             updateValueDisplays(value)
-            jsds.set('encoding', encoder.encode(value.value))
+            jsds.set('scalar-encoding', encoder.encode(value.value))
             updateTimeEncoders(value.time)
+            updateCombinedEncoding()
         }
 
         function updateValueDisplays(value) {
@@ -240,7 +307,7 @@ module.exports = (elementId) => {
 
         jsds.after('set', 'value', updateValue)
 
-        jsds.after('set', 'encoding', drawEncoding)
+        jsds.after('set', 'scalar-encoding', drawEncoding)
 
         encoder = new RelativeScalarEncoder(n, range, min, max, bounded=true)
 
