@@ -12,25 +12,25 @@ module.exports = (elementId) => {
             buckets: 7,
             range: 9,
             bits: 21,
-            color: 'red',
+            color: '#DF0024',
         }, {
             // day of month
             buckets: 31,
             range: 9,
             bits: 21,
-            color: 'green',
+            color: '#00AC9F',
         }, {
             // weekend
             buckets: 2,
             range: 11,
             bits: 21,
-            color: 'yellow',
+            color: '#F3C300',
         }, {
             // time of day
             buckets: 23,
             range: 9,
             bits: 21,
-            color: 'blue',
+            color: '#2E6DB4',
         }]
 
         let names = [
