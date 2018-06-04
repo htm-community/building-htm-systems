@@ -28,8 +28,11 @@ class CyclicCategoryEncoder {
             }
             let bitIndex = index + move
             // Adjust for out of range, by cycling around
-            if (bitIndex > bits) bitIndex = bitIndex - bits
+            if (bitIndex >= bits) bitIndex = bitIndex - bits
             if (bitIndex < 0) bitIndex = bitIndex + bits
+            if (bitIndex > bits-1) {
+                throw new Error('CyclicCategoryEncoder attempted to store bits out of range!')
+            }
             out[bitIndex] = 1
             flip = ! flip
         }
@@ -38,13 +41,15 @@ class CyclicCategoryEncoder {
             validated++
             return bit === 0 || bit === 1
         }
+
+        // Old checks I left in just in case and also because I didn't write unit tests.
         if (! out.every(isValid) || validated !== out.length) {
-            // console.error('encoding value: %s', value)
-            // console.error(out)
-            // console.error('%s buckets, %s bits, %s range', this.buckets, this.bits, this.range)
-            // console.error('starting index: %s', index)
-            throw new Error('CyclicCategoryEncoder created non-continuous output!!')
+            throw new Error('CyclicCategoryEncoder created non-continuous output!')
         }
+        if (out.length > this.bits) {
+            throw new Error('CyclicCategoryEncoder created output of the wrong length!')
+        }
+
         return out
     }
 }

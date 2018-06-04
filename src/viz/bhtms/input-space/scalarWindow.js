@@ -1,10 +1,9 @@
-let SdrUtils = require('SdrUtils')
-let SdrDrawing = require('SdrDrawing')
 let RelativeScalarEncoder = require('RelativeScalarEncoder')
 let CyclicCategoryEncoderDisplay = require('CyclicCategoryEncoderDisplay')
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
 let html = require('./scalarWindow.tmpl.html')
+let moment = require('moment')
 
 const onColor = 'skyblue'
 const offColor = 'white'
@@ -45,7 +44,7 @@ let timeEncoderParams = [{
 module.exports = (elementId) => {
 
     let encoder
-    let n = 100
+    let scalarBits = 100
     let range = 0.5
     let min = -1.25
     let max = 1.25
@@ -111,7 +110,7 @@ module.exports = (elementId) => {
             .curve(d3.curveCatmullRom.alpha(0.01))
 
 
-        let combinedHeight = 200
+        let combinedHeight = 300
         let $combinedEncoding = $d3El.select('svg#combined-encoding')
             .attr('width', width)
             .attr('height', combinedHeight)
@@ -207,20 +206,16 @@ module.exports = (elementId) => {
                 })
                 .attr('width', size)
                 .attr('height', size)
-                .attr('stroke', 'black')
+                .attr('stroke', '#333')
                 .attr('fill', (d, i) => {
                     let typeIndex = timeEncoderNames.indexOf(d.encoder)
-                    if (typeIndex < 0) {
+                    let color = offColor
+                    if (typeIndex < 0 && d.bit === 1) {
                         color = onColor
-                    } else {
+                    } else if (d.bit === 1) {
                         color = timeEncoderParams[typeIndex].color
                     }
                     return color
-                })
-                .attr('opacity', (d, i) => {
-                    let out = 1.0
-                    if (d.bit ===0) out = 0.1
-                    return out
                 })
         }
 
@@ -234,7 +229,11 @@ module.exports = (elementId) => {
                 })
             })
             Object.keys(timeEncoders).forEach(k => {
-                timeEncoders[k].jsds.get('encoding').forEach((bit, i) => {
+                let encoding = timeEncoders[k].jsds.get('encoding')
+                if (encoding.length > 21) {
+                    console.log('%s: %s', k, encoding.length)
+                }
+                encoding.forEach((bit, i) => {
                     combinedEncoding.push({
                         bit: bit,
                         encoder: k,
@@ -266,13 +265,16 @@ module.exports = (elementId) => {
                 .attr('r', 3)
                 .attr('fill', 'red')
                 .attr('stroke', 'red')
+            let dateString = moment(value.time).format('MMM Do YYYY, ha')
+            let formattedValue = utils.precisionRound(value.value, 2)
+            let valueOut = formattedValue + ' ' + dateString
             $svg.select('text#label')
                 .attr('x', scaleX(index) + 10)
                 .attr('y', chartHeight - 10)
                 .attr('stroke', 'black')
                 .attr('fill', 'black')
                 .attr('font-size', '12pt')
-                .html(utils.precisionRound(value.value, 2) + ' ' + value.time)
+                .html(valueOut)
         }
 
         function startTimer(speed) {
@@ -309,11 +311,11 @@ module.exports = (elementId) => {
 
         jsds.after('set', 'scalar-encoding', drawEncoding)
 
-        encoder = new RelativeScalarEncoder(n, range, min, max, bounded=true)
+        encoder = new RelativeScalarEncoder(scalarBits, range, min, max, bounded=true)
 
         renderTimeCycles()
 
-        startTimer(50)
+        startTimer(300)
 
     })
 

@@ -14,6 +14,7 @@
     "babel-preset-env": "^1.6.1",
     "cell-viz": "^1.4.9",
     "javascript-data-store": "^1.0.2",
+    "moment": "^2.22.2",
     "simplehtm": "0.0.1",
     "webpack": "^4.5.0"
   },
