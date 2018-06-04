@@ -5,9 +5,13 @@ let utils = require('../../../lib/utils')
 let html = require('./scalarWindow.tmpl.html')
 let moment = require('moment')
 
-const onColor = 'skyblue'
-const offColor = 'white'
 let jsds = JSDS.create()
+
+let speed = 300
+let timerHandle
+
+const onColor = '#555'
+const offColor = 'white'
 
 let timeEncoderNames = [
     'day-of-month',
@@ -20,65 +24,65 @@ let timeEncoderParams = [{
     buckets: 31,
     range: 9,
     bits: 21,
-    color: 'red',
+    color: '#DF0024',
 }, {
     // weekend
     buckets: 2,
     range: 11,
     bits: 21,
-    color: 'green',
+    color: '#00AC9F',
 }, {
     // day of week
     buckets: 7,
     range: 3,
     bits: 21,
-    color: 'yellow',
+    color: '#F3C300',
 }, {
     // time of day
     buckets: 24,
     range: 9,
     bits: 21,
-    color: 'blue',
+    color: '#2E6DB4',
 }]
 
+let encoder
+let scalarBits = 100
+let range = 0.5
+let min = -1.25
+let max = 1.25
+
+let jsdsHandles = []
+
+let timeEncoders = {}
+
+let timeStep = 60 * 60000 // minutes
+let dataStep = 2 * Math.PI / 24 // radians
+let counter = 0
+let timeMarker = new Date(new Date().setFullYear(new Date().getFullYear() - 1))
+
+function nextSemiRandomSineWaveDataPoint() {
+    let x = counter
+    counter += dataStep
+    let value = Math.sin(x)
+    let jitter = utils.getRandomArbitrary(0.0, 0.25)
+    if (Math.random() > 0.5) value += jitter
+    else value -= jitter
+    timeMarker = new Date(timeMarker.getTime() + timeStep)
+    // I could add artificial temporal patterns here.
+    return {
+        value: value,
+        time: timeMarker,
+    }
+}
+
+function fillWindowWithData(window, size) {
+    while (window.length < size) {
+        window.push(nextSemiRandomSineWaveDataPoint())
+    }
+    return window
+}
+
 module.exports = (elementId) => {
-
-    let encoder
-    let scalarBits = 100
-    let range = 0.5
-    let min = -1.25
-    let max = 1.25
-
-    let jsdsHandles = []
-
-    let timeStep = 60 * 60000 // minutes
-    let dataStep = 2 * Math.PI / 24 // radians
-    let counter = 0
-    let timeMarker = new Date(new Date().setFullYear(new Date().getFullYear() - 1))
-
-    let timeEncoders = {}
-
-    function nextSemiRandomSineWaveDataPoint() {
-        let x = counter
-        counter += dataStep
-        let value = Math.sin(x)
-        let jitter = utils.getRandomArbitrary(0.0, 0.25)
-        if (Math.random() > 0.5) value += jitter
-        else value -= jitter
-        timeMarker = new Date(timeMarker.getTime() + timeStep)
-        // I could add artificial temporal patterns here.
-        return {
-            value: value,
-            time: timeMarker,
-        }
-    }
-
-    function fillWindowWithData(window, size) {
-        while (window.length < size) {
-            window.push(nextSemiRandomSineWaveDataPoint())
-        }
-        return window
-    }
 
     utils.loadHtml(html.default, elementId, () => {
         let $d3El = d3.select('#' + elementId)
@@ -89,15 +93,18 @@ module.exports = (elementId) => {
         let chartHeight = 120,
             chartPadding = 30
 
-        let $svg = $d3El.select('svg#streaming-scalar')
+        let $streamingScalar = $d3El.select('svg#streaming-scalar')
             .attr('width', width)
             .attr('height', height)
+        let $plot = $streamingScalar.select('path#plot')
 
-        let windowSize = 100
-        let index = 40
+        let windowSize = 200
+        let initialIndex = 40
 
         let scaleX = d3.scaleLinear().domain([0, windowSize])
             .range([0, width])
+        let reverseScaleX = d3.scaleLinear().domain([0, width])
+            .range([0, windowSize])
         let scaleY = d3.scaleLinear().domain([1, -1])
             .range([chartPadding, chartHeight - chartPadding])
         let lineFunction = d3.line()
@@ -108,7 +115,6 @@ module.exports = (elementId) => {
                 return scaleY(d)
             })
             .curve(d3.curveCatmullRom.alpha(0.01))
-
 
         let combinedHeight = 290
         let $combinedEncoding = $d3El.select('svg#combined-encoding')
@@ -123,7 +129,7 @@ module.exports = (elementId) => {
                 // the -2 is to account for the left and right border widths
                 .range([0, width -2])
             let cellWidth = Math.floor(width / encoding.length)
-            let $outputGroup = $svg.select('g.encoding')
+            let $outputGroup = $streamingScalar.select('g.encoding')
             function treatCellRects(r) {
                 r.attr('class', 'bit')
                     .attr('fill', (d) => {
@@ -159,8 +165,8 @@ module.exports = (elementId) => {
             rects.on('mouseenter', (bit, index) => {
                 jsds.set('selectedOutputBit', {state: bit, index: index})
             })
-            $svg.on('mouseout', () => {
-                $svg.select('g.hover').attr('visibility', 'hidden')
+            $streamingScalar.on('mouseout', () => {
+                $streamingScalar.select('g.hover').attr('visibility', 'hidden')
             })
 
             while (jsdsHandles.length) {
@@ -209,6 +215,7 @@ module.exports = (elementId) => {
                 .attr('width', size)
                 .attr('height', size)
                 .attr('stroke', 'darkgrey')
+                .attr('stroke-width', 0.5)
                 .attr('fill', (d, i) => {
                     let typeIndex = timeEncoderNames.indexOf(d.encoder)
                     let color = offColor
@@ -259,8 +266,10 @@ module.exports = (elementId) => {
         }
 
         function updateValueDisplays(value) {
-            $svg.select('circle#value-dot')
-                .attr('cx', scaleX(index))
+            let index = jsds.get('index') || initialIndex
+            let scaled = scaleX(index)
+            $streamingScalar.select('circle#value-dot')
+                .attr('cx', scaled)
                 .attr('cy', scaleY(value.value))
                 .attr('r', 3)
                 .attr('fill', 'red')
@@ -268,8 +277,8 @@ module.exports = (elementId) => {
             let dateString = moment(value.time).format('MMM Do YYYY ha')
             let formattedValue = utils.precisionRound(value.value, 2)
             let valueOut = formattedValue + ' ' + dateString
-            $svg.select('text#label')
-                .attr('x', scaleX(index) + 10)
+            $streamingScalar.select('text#label')
+                .attr('x', scaled + 10)
                 .attr('y', chartHeight - 10)
                 .attr('stroke', 'black')
                 .attr('fill', 'black')
@@ -288,13 +297,11 @@ module.exports = (elementId) => {
             }, speed)
         }
 
-        jsds.after('set', 'data', (data) => {
-            $svg.select('path#plot')
-                .attr('d', lineFunction(data.map(d => d.value)))
-                .attr('stroke', 'black')
-                .attr('fill', 'none')
-            $svg.select('rect#index')
-                .attr('x', scaleX(index))
+        function renderIndex(data) {
+            let index = jsds.get('index') || initialIndex
+            let scaled = scaleX(index)
+            $streamingScalar.select('rect#index')
+                .attr('x', scaled)
                 .attr('y', 0)
                 .attr('height', chartHeight)
                 .attr('width', 1)
@@ -303,6 +310,14 @@ module.exports = (elementId) => {
                 .attr('fill', 'none')
                 .attr('opacity', 0.5)
             jsds.set('value', data[index])
+        }
+
+        jsds.after('set', 'data', (data) => {
+            $plot
+                .attr('d', lineFunction(data.map(d => d.value)))
+                .attr('stroke', 'black')
+                .attr('fill', 'none')
+            renderIndex(data)
         })
 
         jsds.set('data', fillWindowWithData([], windowSize))
@@ -311,11 +326,27 @@ module.exports = (elementId) => {
 
         jsds.after('set', 'scalar-encoding', drawScalarEncoding)
 
+        jsds.after('set', 'index', () => {
+            renderIndex(jsds.get('data'))
+        })
+
         encoder = new RelativeScalarEncoder(scalarBits, range, min, max, bounded=true)
 
         renderTimeCycles()
 
-        startTimer(300)
+        $streamingScalar.on('mouseenter', () => {
+            clearInterval(timerHandle)
+        })
+        $streamingScalar.on('mousemove', () => {
+            let x = d3.mouse($plot.node())[0]
+            let index = Math.round(reverseScaleX(x))
+            jsds.set('index', index)
+        })
+        $streamingScalar.on('mouseleave', () => {
+            timerHandle = startTimer(speed)
+        })
+
+        timerHandle = startTimer(speed)
 
     })
 
