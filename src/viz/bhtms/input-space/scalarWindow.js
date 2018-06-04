@@ -52,7 +52,7 @@ module.exports = (elementId) => {
     let jsdsHandles = []
 
     let timeStep = 60 * 60000 // minutes
-    let dataStep = 0.25
+    let dataStep = 2 * Math.PI / 24 // radians
     let counter = 0
     let timeMarker = new Date(new Date().setFullYear(new Date().getFullYear() - 1))
 
@@ -110,17 +110,18 @@ module.exports = (elementId) => {
             .curve(d3.curveCatmullRom.alpha(0.01))
 
 
-        let combinedHeight = 300
+        let combinedHeight = 290
         let $combinedEncoding = $d3El.select('svg#combined-encoding')
             .attr('width', width)
             .attr('height', combinedHeight)
 
 
-        function drawEncoding(encoding) {
+        function drawScalarEncoding(encoding) {
             let topMargin = chartHeight
             let bitsToOutputDisplay = d3.scaleLinear()
                 .domain([0, encoding.length])
-                .range([0, width])
+                // the -2 is to account for the left and right border widths
+                .range([0, width -2])
             let cellWidth = Math.floor(width / encoding.length)
             let $outputGroup = $svg.select('g.encoding')
             function treatCellRects(r) {
@@ -195,18 +196,19 @@ module.exports = (elementId) => {
         }
 
         function _treatCombinedEncodingBits(rects) {
-            let size = 15
-                cellsPerRow = 37
+            let cellsPerRow = 19,
+                size = Math.round(width / cellsPerRow),
+                leftPad = 2
             rects.attr('class', 'combined')
                 .attr('x', (d, i) => {
-                    return size * (i % cellsPerRow)
+                    return leftPad + size * (i % cellsPerRow)
                 })
                 .attr('y', (d, i) => {
                     return Math.floor(i / cellsPerRow) * size
                 })
                 .attr('width', size)
                 .attr('height', size)
-                .attr('stroke', '#333')
+                .attr('stroke', 'darkgrey')
                 .attr('fill', (d, i) => {
                     let typeIndex = timeEncoderNames.indexOf(d.encoder)
                     let color = offColor
@@ -229,11 +231,9 @@ module.exports = (elementId) => {
                 })
             })
             Object.keys(timeEncoders).forEach(k => {
+                // Each encoder has a specific jsds instance
                 let encoding = timeEncoders[k].jsds.get('encoding')
-                if (encoding.length > 21) {
-                    console.log('%s: %s', k, encoding.length)
-                }
-                encoding.forEach((bit, i) => {
+                encoding.forEach(bit => {
                     combinedEncoding.push({
                         bit: bit,
                         encoder: k,
@@ -265,7 +265,7 @@ module.exports = (elementId) => {
                 .attr('r', 3)
                 .attr('fill', 'red')
                 .attr('stroke', 'red')
-            let dateString = moment(value.time).format('MMM Do YYYY, ha')
+            let dateString = moment(value.time).format('MMM Do YYYY ha')
             let formattedValue = utils.precisionRound(value.value, 2)
             let valueOut = formattedValue + ' ' + dateString
             $svg.select('text#label')
@@ -309,7 +309,7 @@ module.exports = (elementId) => {
 
         jsds.after('set', 'value', updateValue)
 
-        jsds.after('set', 'scalar-encoding', drawEncoding)
+        jsds.after('set', 'scalar-encoding', drawScalarEncoding)
 
         encoder = new RelativeScalarEncoder(scalarBits, range, min, max, bounded=true)
 

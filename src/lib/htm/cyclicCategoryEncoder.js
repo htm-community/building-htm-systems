@@ -6,7 +6,7 @@ class CyclicCategoryEncoder {
         this.bits = opts.bits
         this.scale = d3.scaleLinear()
             .domain([0, this.buckets])
-            .range([0, this.bits])
+            .range([0, this.bits - 1])
     }
 
     encode(value) {
