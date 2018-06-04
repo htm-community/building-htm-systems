@@ -9,14 +9,7 @@ module.exports = (elementId) => {
 
     let width = 560,
         height = 180,
-        minValue = 0,
-        maxValue = 55,
-        bits = 100,
-        value = 'Sun'
-
-    let days = [
-        'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
-    ]
+        bits = 100
 
     let jsds = JSDS.create('weekend-encoder')
 
