@@ -67,8 +67,8 @@ modules.push({
             SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
             ScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/scalar"),
             RelativeScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/relativeScalar"),
-            CyclicCategoryEncoderDisplay: path.join(__dirname, "src/lib/displays/cyclicCategoryEncoderDisplay"),
-            CyclicCategoryEncoder: path.join(__dirname, "src/lib/htm/cyclicCategoryEncoder"),
+            CyclicEncoderDisplay: path.join(__dirname, "src/lib/displays/cyclicEncoderDisplay"),
+            CyclicEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/cyclic"),
         }
     },
     output: {
@@ -102,8 +102,8 @@ modules.push({
             SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
             SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
             RelativeScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/relativeScalar"),
-            CyclicCategoryEncoderDisplay: path.join(__dirname, "src/lib/displays/cyclicCategoryEncoderDisplay"),
-            CyclicCategoryEncoder: path.join(__dirname, "src/lib/htm/cyclicCategoryEncoder"),
+            CyclicEncoderDisplay: path.join(__dirname, "src/lib/displays/cyclicEncoderDisplay"),
+            CyclicEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/cyclic"),
         }
     },
     output: {

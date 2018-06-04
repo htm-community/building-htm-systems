@@ -1,6 +1,6 @@
 let utils = require('../../../lib/utils')
-let html = require('./cyclicCategoryEncoder.tmpl.html')
-let CyclicCategoryEncoderDisplay = require('CyclicCategoryEncoderDisplay')
+let html = require('./cyclicEncoder.tmpl.html')
+let CyclicEncoderDisplay = require('CyclicEncoderDisplay')
 
 module.exports = (elementId) => {
 
@@ -14,7 +14,7 @@ module.exports = (elementId) => {
             color: '#333',
         }
 
-        let encoderDisplay = new CyclicCategoryEncoderDisplay('lone', params)
+        let encoderDisplay = new CyclicEncoderDisplay('lone', params)
         encoderDisplay.render()
         encoderDisplay.jsds.set('value', 0)
         encoderDisplay.loop()

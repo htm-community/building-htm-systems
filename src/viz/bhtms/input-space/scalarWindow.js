@@ -1,5 +1,5 @@
 let RelativeScalarEncoder = require('RelativeScalarEncoder')
-let CyclicCategoryEncoderDisplay = require('CyclicCategoryEncoderDisplay')
+let CyclicEncoderDisplay = require('CyclicEncoderDisplay')
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
 let html = require('./scalarWindow.tmpl.html')
@@ -180,7 +180,7 @@ module.exports = (elementId) => {
             timeEncoderNames.forEach((name, i) => {
                 let prms = timeEncoderParams[i]
                 prms.size = size
-                let encoderDisplay = new CyclicCategoryEncoderDisplay(name, prms)
+                let encoderDisplay = new CyclicEncoderDisplay(name, prms)
                 encoderDisplay.render()
                 timeEncoders[name] = encoderDisplay
                 encoderDisplay.jsds.set('value', 0)

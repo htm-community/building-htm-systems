@@ -1,4 +1,4 @@
-let CyclicCategoryEncoder = require('CyclicCategoryEncoder')
+let CyclicEncoder = require('CyclicEncoder')
 let JSDS = require('JSDS')
 
 let colors = {
@@ -7,7 +7,7 @@ let colors = {
     bitStroke: 'black',
 }
 
-class CyclicCategoryEncoderDisplay {
+class CyclicEncoderDisplay {
 
     constructor(id, opts) {
         this.id = id
@@ -18,13 +18,9 @@ class CyclicCategoryEncoderDisplay {
 
         let $el = $(this.$svg.node())
 
-        this.$minDisplay = $el.find('.min-display')
         this.$valueDisplay = $el.find('.value-display')
-        this.$maxDisplay = $el.find('.max-display')
         this.$rangeDisplay = $el.find('.range-display')
         this.$nameLabel = $el.find('.name-label')
-        this.$minLabel = $el.find('.min-label')
-        this.$maxLabel = $el.find('.max-label')
         this.$rangeLabel = $el.find('.range-label')
 
         this.jsds = JSDS.create('cyclic-category-encoder-' + this.id)
@@ -42,7 +38,7 @@ class CyclicCategoryEncoderDisplay {
         let bits = jsds.get('bits'),
             buckets = jsds.get('buckets'),
             range = jsds.get('range')
-        this.encoder = new CyclicCategoryEncoder({
+        this.encoder = new CyclicEncoder({
             bits: bits,
             buckets: buckets,
             range: range,
@@ -72,40 +68,25 @@ class CyclicCategoryEncoderDisplay {
         $svg.attr('width', size)
             .attr('height', size)
 
-        let third = size * 3/10
-        let twoThirds = size * 21/30
-        let fourth = size / 4
-        let threeFourths = size * 3/4
+        let nameLabelY = size * .37
+        let rangeDisplayY = size * .76
+        let rangeLabelY = size * .58
 
         this.$valueDisplay.attr('font-size', this.bigFont)
             .html(0)
             .attr('x', half - (this.$valueDisplay.get(0).getBBox().width / 2))
             .attr('y', half + (this.$valueDisplay.get(0).getBBox().height / 4))
-        this.$minDisplay.attr('font-size', this.smallFont)
-            .html(0)
-            .attr('x', fourth - (this.$minDisplay.get(0).getBBox().width / 2))
-            .attr('y', half + (this.$minDisplay.get(0).getBBox().height / 4))
-        this.$maxDisplay.attr('font-size', this.smallFont)
-            .html(buckets - 1)
-            .attr('x', threeFourths - (this.$maxDisplay.get(0).getBBox().width / 2))
-            .attr('y', half + (this.$maxDisplay.get(0).getBBox().height / 4))
         this.$rangeDisplay.attr('font-size', this.medFont)
             .html(range + '/' + bits)
             .attr('x', half - (this.$rangeDisplay.get(0).getBBox().width / 2))
-            .attr('y', twoThirds)
+            .attr('y', rangeDisplayY)
 
         this.$nameLabel.attr('font-size', this.medFont)
             .attr('x', half - (this.$nameLabel.find('tspan').get(0).getBBox().width / 2))
-            .attr('y', third)
-        this.$minLabel.attr('font-size', this.smallFont)
-            .attr('x', fourth - (this.$minLabel.get(0).getBBox().width / 2))
-            .attr('y', half + (this.$minLabel.get(0).getBBox().height + 2))
-        this.$maxLabel.attr('font-size', this.smallFont)
-            .attr('x', threeFourths - (this.$maxLabel.get(0).getBBox().width / 2))
-            .attr('y', half + (this.$maxLabel.get(0).getBBox().height + 2))
+            .attr('y', nameLabelY - (this.$nameLabel.find('tspan').get(0).getBBox().height / 2))
         this.$rangeLabel.attr('font-size', this.smallFont)
             .attr('x', half - (this.$rangeLabel.get(0).getBBox().width / 2))
-            .attr('y', twoThirds + (this.$rangeLabel.get(0).getBBox().height - 2))
+            .attr('y', rangeLabelY + (this.$rangeLabel.get(0).getBBox().height - 2))
 
         this._selfListen()
     }
@@ -135,6 +116,7 @@ class CyclicCategoryEncoderDisplay {
 
     updateDisplay() {
         let value = this.jsds.get('value')
+        let buckets = this.jsds.get('buckets')
         let encoding = this.encoder.encode(value)
         this.jsds.set('encoding', encoding)
         this.$valueDisplay.html(value)
@@ -209,4 +191,4 @@ class CyclicCategoryEncoderDisplay {
 
 }
 
-module.exports = CyclicCategoryEncoderDisplay
+module.exports = CyclicEncoderDisplay
