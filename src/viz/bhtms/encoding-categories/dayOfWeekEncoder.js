@@ -7,7 +7,7 @@ module.exports = (elementId) => {
     utils.loadHtml(html.default, elementId, () => {
 
         let params = {
-            values: 21,
+            values: 7,
             range: 3,
             buckets: 21,
             size: 300,

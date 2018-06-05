@@ -62,7 +62,6 @@ module.exports = (elementId) => {
             let cuts = 100
             let count = 0
             let handle = setInterval(() => {
-                console.log('transition from %s to %s cut %s', from, to, count)
                 encoderDisplay._transition = count / cuts
                 if (count++ >= cuts) {
                     encoderDisplay.state = to

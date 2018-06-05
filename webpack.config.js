@@ -44,40 +44,40 @@ modules.push({
         filename: `bhtms-encoding-numbers-${version}.js`
     }
 })
-// // encoding-categories
-// modules.push({
-//     mode: mode,
-//     entry: [
-//         "./src/viz/bhtms/encoding-categories/index.js",
-//     ],
-//     module: {
-//         rules: [
-//             {
-//                 test: /\.js$/,
-//                 loader: "babel-loader"
-//             },
-//             {
-//                 test: /tmpl\.html$/,
-//                 loader: "posthtml-loader"
-//             }
-//         ]
-//     },
-//     resolve: {
-//         alias: {
-//             JSDS: path.join(__dirname, "node_modules/javascript-data-store/src/jsds"),
-//             SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
-//             SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
-//             ScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/scalar"),
-//             RelativeScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/relativeScalar"),
-//             CyclicEncoderDisplay: path.join(__dirname, "src/lib/displays/cyclicEncoderDisplay"),
-//             CyclicEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/cyclic"),
-//         }
-//     },
-//     output: {
-//         path: __dirname + "/docs",
-//         filename: `bhtms-encoding-categories-${version}.js`
-//     }
-// })
+// encoding-categories
+modules.push({
+    mode: mode,
+    entry: [
+        "./src/viz/bhtms/encoding-categories/index.js",
+    ],
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                loader: "babel-loader"
+            },
+            {
+                test: /tmpl\.html$/,
+                loader: "posthtml-loader"
+            }
+        ]
+    },
+    resolve: {
+        alias: {
+            JSDS: path.join(__dirname, "node_modules/javascript-data-store/src/jsds"),
+            SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
+            SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
+            ScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/scalar"),
+            RelativeScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/relativeScalar"),
+            CyclicEncoderDisplay: path.join(__dirname, "src/lib/displays/cyclicEncoderDisplay"),
+            CyclicEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/cyclic"),
+        }
+    },
+    output: {
+        path: __dirname + "/docs",
+        filename: `bhtms-encoding-categories-${version}.js`
+    }
+})
 
 // /input-space/
 modules.push({
