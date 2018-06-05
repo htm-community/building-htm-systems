@@ -8,7 +8,10 @@ let colors = {
     bitStroke: 'black',
 }
 
+// Majic stuph
 let maxCircleRadius = 40
+let interval = 10 // ms
+let cuts = 100
 
 class CyclicEncoderDisplay {
 
@@ -147,6 +150,21 @@ class CyclicEncoderDisplay {
             this._handles.push(jsds.after('set', 'range', reRender))
             this._handles.push(jsds.after('set', 'buckets', reRender))
         }
+    }
+
+    transition(from, to) {
+        let me = this
+        this.state = from + '-to-' + to
+        let count = 0
+        this._xhandle = setInterval(() => {
+            me._transition = count / cuts
+            if (count++ >= cuts) {
+                me.state = to
+                clearInterval(me._xhandle)
+                delete me._transition
+            }
+            me.updateDisplay()
+        }, interval)
     }
 
     updateDisplay() {

@@ -56,21 +56,6 @@ module.exports = (elementId) => {
             $rangeDisplay.html(params.range)
         }
 
-        function transition(from, to) {
-            encoderDisplay.state = from + '-to-' + to
-            let interval = 10 // ms
-            let cuts = 100
-            let count = 0
-            let handle = setInterval(() => {
-                encoderDisplay._transition = count / cuts
-                if (count++ >= cuts) {
-                    encoderDisplay.state = to
-                    clearInterval(handle)
-                }
-                encoderDisplay.updateDisplay()
-            }, interval)
-        }
-
         update()
 
         $valuesSlider.on('input', update)
@@ -101,7 +86,7 @@ module.exports = (elementId) => {
             if (from === 'line') {
                 to = 'circle'
             }
-            transition(from, to)
+            encoderDisplay.transition(from, to)
         })
 
 
