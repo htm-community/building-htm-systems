@@ -10,8 +10,9 @@ module.exports = (elementId) => {
             values: 7,
             range: 9,
             buckets: 20,
-            size: 300,
-            color: '#333',
+            size: 560,
+            color: '#444',
+            state: 'line',
         }
 
         let encoderDisplay = new CyclicEncoderDisplay('lone', params)
@@ -28,6 +29,7 @@ module.exports = (elementId) => {
         let $rangeDisplay = $el.find('.rangeDisplay')
         let $discreteButton = $el.find('button.discrete')
         let $continuousButton = $el.find('button.continuous')
+        let $switchButton = $el.find('button.switch')
 
         function update() {
             let values = parseInt($valuesSlider.val())
@@ -54,6 +56,22 @@ module.exports = (elementId) => {
             $rangeDisplay.html(params.range)
         }
 
+        function transition(from, to) {
+            encoderDisplay.state = from + '-to-' + to
+            let interval = 10 // ms
+            let cuts = 100
+            let count = 0
+            let handle = setInterval(() => {
+                console.log('transition from %s to %s cut %s', from, to, count)
+                encoderDisplay._transition = count / cuts
+                if (count++ >= cuts) {
+                    encoderDisplay.state = to
+                    clearInterval(handle)
+                }
+                encoderDisplay.updateDisplay()
+            }, interval)
+        }
+
         update()
 
         $valuesSlider.on('input', update)
@@ -76,6 +94,15 @@ module.exports = (elementId) => {
                 buckets: 23,
                 range: 7,
             })
+        })
+
+        $switchButton.on('click', () => {
+            let from = encoderDisplay.state
+            let to = 'line'
+            if (from === 'line') {
+                to = 'circle'
+            }
+            transition(from, to)
         })
 
 

@@ -8,7 +8,7 @@ let colors = {
     bitStroke: 'black',
 }
 
-let maxCircleRadius = 20
+let maxCircleRadius = 40
 
 class CyclicEncoderDisplay {
 
@@ -33,7 +33,7 @@ class CyclicEncoderDisplay {
         this.jsds.set('range', opts.range)
 
         // State of display
-        this.state = 'circle'
+        this.state = opts.state || 'circle'
         // this.state = 'line'
     }
 
@@ -57,13 +57,6 @@ class CyclicEncoderDisplay {
 
         // Some aesthetic stuff. The order is important below because of the radius
         this.largeCircleRatio = 3/4
-        let radius = this.radius
-        let circumference = 2 * Math.PI * radius
-        if (this.state === 'circle') {
-            this.smallCircleRadius = Math.min(circumference / buckets / 2, maxCircleRadius)
-        } else {
-            this.smallCircleRadius = Math.min(size / buckets / 2, maxCircleRadius)
-        }
         this.tinyFont = 12
         this.smallFont = 18
         this.medFont = 26
@@ -106,6 +99,31 @@ class CyclicEncoderDisplay {
             .attr('y', rangeLabelY + (this.$rangeLabel.get(0).getBBox().height - 2))
 
         this._selfListen()
+    }
+
+    get smallCircleRadius() {
+        let buckets = this.jsds.get('buckets')
+        let circumference = 2 * Math.PI * this.radius
+        let out
+        let displayState = this.state
+        if (displayState === 'circle') {
+            out = Math.min(circumference / buckets / 2, maxCircleRadius)
+        } else if (displayState === 'line-to-circle') {
+            out = d3.scaleLinear().domain([0, 1]).range([
+                Math.min(this.size / buckets / 2, maxCircleRadius),
+                Math.min(circumference / buckets / 2, maxCircleRadius),
+            ])(this._transition)
+        } else if (displayState === 'line') {
+            out = Math.min(this.size / buckets / 2, maxCircleRadius)
+        } else if (displayState === 'circle-to-line') {
+            out = d3.scaleLinear().domain([0, 1]).range([
+                Math.min(circumference / buckets / 2, maxCircleRadius),
+                Math.min(this.size / buckets / 2, maxCircleRadius),
+            ])(this._transition)
+        } else {
+            throw new Error('Unknown display format: ' + displayState)
+        }
+        return out
     }
 
     _selfListen() {
@@ -170,15 +188,34 @@ class CyclicEncoderDisplay {
         let linearScale = d3.scaleLinear()
             .domain([0, encoding.length])
             .range([this.smallCircleRadius, this.smallCircleRadius + size])
+
         let data = encoding.map((bit, i) => {
-            let theta = i * bucketSpread
+            let theta = i * bucketSpread + Math.PI
             let out = {bit: bit}
             if (displayState === 'circle') {
                 out.cx = center.x + radius * Math.sin(theta)
                 out.cy = center.y + radius * Math.cos(theta)
+            } else if (displayState === 'line-to-circle') {
+                out.cx = d3.scaleLinear().domain([0, 1]).range([
+                    linearScale(i),
+                    center.x + radius * Math.sin(theta),
+                ])(this._transition)
+                out.cy = d3.scaleLinear().domain([0, 1]).range([
+                    size / 10,
+                    center.y + radius * Math.cos(theta),
+                ])(this._transition)
             } else if (displayState === 'line') {
                 out.cx = linearScale(i)
                 out.cy = size / 10
+            } else if (displayState === 'circle-to-line') {
+                out.cx = d3.scaleLinear().domain([0, 1]).range([
+                    center.x + radius * Math.sin(theta),
+                    linearScale(i),
+                ])(this._transition)
+                out.cy = d3.scaleLinear().domain([0, 1]).range([
+                    center.y + radius * Math.cos(theta),
+                    size / 10,
+                ])(this._transition)
             } else {
                 throw new Error('Unknown display format: ' + displayState)
             }
