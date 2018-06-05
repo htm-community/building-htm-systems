@@ -1,49 +1,14 @@
 let RelativeScalarEncoder = require('RelativeScalarEncoder')
-let CyclicEncoderDisplay = require('CyclicEncoderDisplay')
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
-let html = require('./scalarWindow.tmpl.html')
+let html = require('./streamingScalarWindow.tmpl.html')
 let moment = require('moment')
-
-let jsds = JSDS.create('scalar-window')
 
 let speed = 300
 let timerHandle
 
 const onColor = '#555'
 const offColor = 'white'
-
-let timeEncoderNames = [
-    'day-of-month',
-    'weekend',
-    'day-of-week',
-    'time-of-day',
-]
-let timeEncoderParams = [{
-    // day of month
-    values: 31,
-    range: 9,
-    buckets: 21,
-    color: '#DF0024',
-}, {
-    // weekend
-    values: 2,
-    range: 11,
-    buckets: 21,
-    color: '#00AC9F',
-}, {
-    // day of week
-    values: 7,
-    range: 3,
-    buckets: 21,
-    color: '#F3C300',
-}, {
-    // time of day
-    values: 24,
-    range: 9,
-    buckets: 21,
-    color: '#2E6DB4',
-}]
 
 let encoder
 let scalarBits = 100
@@ -52,8 +17,6 @@ let min = -1.25
 let max = 1.25
 
 let jsdsHandles = []
-
-let timeEncoders = {}
 
 let timeStep = 60 * 60000 // minutes
 let dataStep = 2 * Math.PI / 24 // radians
@@ -87,6 +50,8 @@ module.exports = (elementId) => {
     utils.loadHtml(html.default, elementId, () => {
         let $d3El = d3.select('#' + elementId)
 
+        let jsds = JSDS.create(elementId)
+
         let width = 560,
             height = 140
 
@@ -115,12 +80,6 @@ module.exports = (elementId) => {
                 return scaleY(d)
             })
             .curve(d3.curveCatmullRom.alpha(0.01))
-
-        let combinedHeight = 290
-        let $combinedEncoding = $d3El.select('svg#combined-encoding')
-            .attr('width', width)
-            .attr('height', combinedHeight)
-
 
         function drawScalarEncoding(encoding) {
             let topMargin = chartHeight
@@ -174,95 +133,9 @@ module.exports = (elementId) => {
             }
         }
 
-        function renderTimeCycles() {
-            let size = 135
-
-            timeEncoderNames.forEach((name, i) => {
-                let prms = timeEncoderParams[i]
-                prms.size = size
-                let encoderDisplay = new CyclicEncoderDisplay(name, prms)
-                encoderDisplay.render()
-                timeEncoders[name] = encoderDisplay
-                encoderDisplay.jsds.set('value', 0)
-            })
-        }
-
-        function updateTimeEncoders(time) {
-            let dayOfWeek = time.getDay()
-            let isWeekend = 0
-            let hourOfDay = time.getHours()
-            if ((dayOfWeek === 6) || (dayOfWeek === 0)) {
-                isWeekend = 1
-            }
-
-            timeEncoders['day-of-month'].jsds.set('value', time.getDate() - 1)
-            timeEncoders['weekend'].jsds.set('value', isWeekend)
-            timeEncoders['day-of-week'].jsds.set('value', dayOfWeek)
-            timeEncoders['time-of-day'].jsds.set('value', hourOfDay)
-        }
-
-        function _treatCombinedEncodingBits(rects) {
-            let cellsPerRow = 19,
-                size = Math.round(width / cellsPerRow),
-                leftPad = 2
-            rects.attr('class', 'combined')
-                .attr('x', (d, i) => {
-                    return leftPad + size * (i % cellsPerRow)
-                })
-                .attr('y', (d, i) => {
-                    return Math.floor(i / cellsPerRow) * size
-                })
-                .attr('width', size)
-                .attr('height', size)
-                .attr('stroke', 'darkgrey')
-                .attr('stroke-width', 0.5)
-                .attr('fill', (d, i) => {
-                    let typeIndex = timeEncoderNames.indexOf(d.encoder)
-                    let color = offColor
-                    if (typeIndex < 0 && d.bit === 1) {
-                        color = onColor
-                    } else if (d.bit === 1) {
-                        color = timeEncoderParams[typeIndex].color
-                    }
-                    return color
-                })
-        }
-
-        function updateCombinedEncoding() {
-            let combinedEncoding = []
-            let scalarBits = jsds.get('scalar-encoding')
-            scalarBits.forEach((bit, i) => {
-                combinedEncoding.push({
-                    bit: bit,
-                    encoder: 'relative-scalar',
-                })
-            })
-            Object.keys(timeEncoders).forEach(k => {
-                // Each encoder has a specific jsds instance
-                let encoding = timeEncoders[k].jsds.get('encoding')
-                encoding.forEach(bit => {
-                    combinedEncoding.push({
-                        bit: bit,
-                        encoder: k,
-                    })
-                })
-            })
-
-            let $rects = $combinedEncoding.selectAll('rect.combined')
-                            .data(combinedEncoding)
-            _treatCombinedEncodingBits($rects)
-
-            let $newRects = $rects.enter().append('rect')
-            _treatCombinedEncodingBits($newRects)
-
-            $rects.exit().remove()
-        }
-
         function updateValue(value) {
             updateValueDisplays(value)
             jsds.set('scalar-encoding', encoder.encode(value.value))
-            updateTimeEncoders(value.time)
-            updateCombinedEncoding()
         }
 
         function updateValueDisplays(value) {
@@ -331,8 +204,6 @@ module.exports = (elementId) => {
         })
 
         encoder = new RelativeScalarEncoder(scalarBits, range, min, max, bounded=true)
-
-        renderTimeCycles()
 
         $streamingScalar.on('mouseenter', () => {
             clearInterval(timerHandle)

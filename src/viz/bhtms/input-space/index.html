@@ -51,38 +51,62 @@
 </head>
 <body>
 
+<!--<div class="widget">-->
+
+    <!--<div id="potentialPoolWidget"></div>-->
+
+    <!--<script>-->
+        <!--$(function() {-->
+            <!--BHTMS.miniColumnPotentialPools("potentialPoolWidget")-->
+        <!--});-->
+    <!--</script>-->
+
+<!--</div>-->
+
+
+<!--<div class="widget">-->
+
+    <!--<div id="initialPermsWidget"></div>-->
+
+    <!--<script>-->
+        <!--$(function() {-->
+            <!--BHTMS.miniColumnInitialPerms("initialPermsWidget")-->
+        <!--});-->
+    <!--</script>-->
+
+<!--</div>-->
+
+<!--<div class="widget">-->
+
+    <!--<div id="scalarWindow"></div>-->
+
+    <!--<script>-->
+        <!--$(function() {-->
+            <!--BHTMS.scalarWindow("scalarWindow")-->
+        <!--});-->
+    <!--</script>-->
+
+<!--</div>-->
+
 <div class="widget">
 
-    <div id="potentialPoolWidget"></div>
+    <div id="streamingScalarWindow"></div>
 
     <script>
         $(function() {
-            BHTMS.miniColumnPotentialPools("potentialPoolWidget")
+            BHTMS.streamingScalarWindow("streamingScalarWindow")
         });
     </script>
 
 </div>
 
-
 <div class="widget">
 
-    <div id="initialPermsWidget"></div>
+    <div id="cyclicTimeEncodings"></div>
 
     <script>
         $(function() {
-            BHTMS.miniColumnInitialPerms("initialPermsWidget")
-        });
-    </script>
-
-</div>
-
-<div class="widget">
-
-    <div id="scalarWindow"></div>
-
-    <script>
-        $(function() {
-            BHTMS.scalarWindow("scalarWindow")
+            BHTMS.cyclicTimeEncodings("cyclicTimeEncodings", "streamingScalarWindow")
         });
     </script>
 

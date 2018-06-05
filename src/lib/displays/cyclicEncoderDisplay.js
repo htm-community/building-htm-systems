@@ -16,19 +16,11 @@ let cuts = 100
 class CyclicEncoderDisplay {
 
     constructor(id, opts) {
-        this.id = id
         this.$svg = d3.select('#' + id)
 
+        this.id = id
         this.size = opts.size
         this.color = opts.color
-
-        let $el = $(this.$svg.node())
-
-        this.$valueDisplay = $el.find('.value-display')
-        this.$rangeDisplay = $el.find('.range-display')
-        this.$resolutionLabel = $el.find('.resolution-display')
-        this.$nameLabel = $el.find('.name-label')
-        this.$rangeLabel = $el.find('.range-label')
 
         this.jsds = JSDS.create('cyclic-category-encoder-' + this.id)
         this.jsds.set('values', opts.values)
@@ -72,6 +64,13 @@ class CyclicEncoderDisplay {
             this.bigFont = 28
             this.circleStrokeWidth = 1
         }
+
+        let $el = $(this.$svg.node())
+        this.$valueDisplay = $el.find('.value-display')
+        this.$rangeDisplay = $el.find('.range-display')
+        this.$resolutionLabel = $el.find('.resolution-display')
+        this.$nameLabel = $el.find('.name-label')
+        this.$rangeLabel = $el.find('.range-label')
 
         $svg.attr('width', size)
             .attr('height', size)
