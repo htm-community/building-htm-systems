@@ -7,9 +7,9 @@ module.exports = (elementId) => {
     utils.loadHtml(html.default, elementId, () => {
 
         let params = {
-            buckets: 21,
+            values: 21,
             range: 3,
-            bits: 21,
+            buckets: 21,
             size: 300,
             color: '#333',
         }
@@ -20,8 +20,8 @@ module.exports = (elementId) => {
         encoderDisplay.loop()
 
         function update() {
+            encoderDisplay.jsds.set('values', params.values)
             encoderDisplay.jsds.set('buckets', params.buckets)
-            encoderDisplay.jsds.set('bits', params.bits)
             encoderDisplay.jsds.set('range', params.range)
         }
 

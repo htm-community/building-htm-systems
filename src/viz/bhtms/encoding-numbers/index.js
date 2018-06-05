@@ -1,5 +1,5 @@
 window.BHTMS = {
     simpleNumberEncoder: require('./simpleNumberEncoder'),
-    cyclicCategoryEncoder: require('./cyclicEncoder'),
+    cyclicEncoder: require('./cyclicEncoder'),
     JSDS: require('JSDS'),
 }

@@ -7,9 +7,9 @@ module.exports = (elementId) => {
     utils.loadHtml(html.default, elementId, () => {
 
         let params = {
-            buckets: 7,
+            values: 7,
             range: 9,
-            bits: 21,
+            buckets: 20,
             size: 300,
             color: '#333',
         }
@@ -20,24 +20,24 @@ module.exports = (elementId) => {
         encoderDisplay.loop()
 
         let $el = $('#' + elementId)
+        let $valuesSlider = $el.find('#valuesSlider')
+        let $valuesDisplay = $el.find('.valuesDisplay')
         let $bucketsSlider = $el.find('#bucketsSlider')
         let $bucketsDisplay = $el.find('.bucketsDisplay')
-        let $bitsSlider = $el.find('#bitsSlider')
-        let $bitsDisplay = $el.find('.bitsDisplay')
         let $rangeSlider = $el.find('#rangeSlider')
         let $rangeDisplay = $el.find('.rangeDisplay')
         let $discreteButton = $el.find('button.discrete')
         let $continuousButton = $el.find('button.continuous')
 
         function update() {
+            let values = parseInt($valuesSlider.val())
             let buckets = parseInt($bucketsSlider.val())
-            let bits = parseInt($bitsSlider.val())
             let range = parseInt($rangeSlider.val())
+            encoderDisplay.jsds.set('values', values)
             encoderDisplay.jsds.set('buckets', buckets)
-            encoderDisplay.jsds.set('bits', bits)
             encoderDisplay.jsds.set('range', range)
+            $valuesDisplay.html(values)
             $bucketsDisplay.html(buckets)
-            $bitsDisplay.html(bits)
             $rangeDisplay.html(range)
         }
 
@@ -46,25 +46,25 @@ module.exports = (elementId) => {
             keys.forEach(function(key) {
                 encoderDisplay.jsds.set(key, params[key])
             })
+            $valuesSlider.val(params.values)
+            $valuesDisplay.html(params.values)
             $bucketsSlider.val(params.buckets)
             $bucketsDisplay.html(params.buckets)
-            $bitsSlider.val(params.bits)
-            $bitsDisplay.html(params.bits)
             $rangeSlider.val(params.range)
             $rangeDisplay.html(params.range)
         }
 
         update()
 
+        $valuesSlider.on('input', update)
         $bucketsSlider.on('input', update)
-        $bitsSlider.on('input', update)
         $rangeSlider.on('input', update)
 
         $discreteButton.on('click', () => {
             slideParams({
                 value: 0,
-                buckets: 7,
-                bits: 21,
+                values: 7,
+                buckets: 21,
                 range: 3,
             })
         })
@@ -72,9 +72,9 @@ module.exports = (elementId) => {
         $continuousButton.on('click', () => {
             slideParams({
                 value: 0,
-                buckets: 29,
-                bits: 47,
-                range: 18,
+                values: 68,
+                buckets: 23,
+                range: 7,
             })
         })
 

@@ -21,27 +21,27 @@ let timeEncoderNames = [
 ]
 let timeEncoderParams = [{
     // day of month
-    buckets: 31,
+    values: 31,
     range: 9,
-    bits: 21,
+    buckets: 21,
     color: '#DF0024',
 }, {
     // weekend
-    buckets: 2,
+    values: 2,
     range: 11,
-    bits: 21,
+    buckets: 21,
     color: '#00AC9F',
 }, {
     // day of week
-    buckets: 7,
+    values: 7,
     range: 3,
-    bits: 21,
+    buckets: 21,
     color: '#F3C300',
 }, {
     // time of day
-    buckets: 24,
+    values: 24,
     range: 9,
-    bits: 21,
+    buckets: 21,
     color: '#2E6DB4',
 }]
 
