@@ -31,6 +31,10 @@ class CyclicEncoderDisplay {
         this.jsds.set('values', opts.values)
         this.jsds.set('buckets', opts.buckets)
         this.jsds.set('range', opts.range)
+
+        // State of display
+        this.state = 'circle'
+        // this.state = 'line'
     }
 
     get radius() {
@@ -55,7 +59,11 @@ class CyclicEncoderDisplay {
         this.largeCircleRatio = 3/4
         let radius = this.radius
         let circumference = 2 * Math.PI * radius
-        this.smallCircleRadius = Math.min(circumference / buckets / 2, maxCircleRadius)
+        if (this.state === 'circle') {
+            this.smallCircleRadius = Math.min(circumference / buckets / 2, maxCircleRadius)
+        } else {
+            this.smallCircleRadius = Math.min(size / buckets / 2, maxCircleRadius)
+        }
         this.tinyFont = 12
         this.smallFont = 18
         this.medFont = 26
@@ -153,18 +161,28 @@ class CyclicEncoderDisplay {
 
     _updateCircles(encoding) {
         let buckets = this.jsds.get('buckets'),
+            displayState = this.state,
             size = this.size,
             radius = this.radius,
             $svg = this.$svg
         let bucketSpread = (2 * Math.PI) / buckets
         let center = {x: size / 2, y: size / 2}
+        let linearScale = d3.scaleLinear()
+            .domain([0, encoding.length])
+            .range([this.smallCircleRadius, this.smallCircleRadius + size])
         let data = encoding.map((bit, i) => {
             let theta = i * bucketSpread
-            return {
-                bit: bit,
-                cx: center.x + radius * Math.sin(theta),
-                cy: center.y + radius * Math.cos(theta),
+            let out = {bit: bit}
+            if (displayState === 'circle') {
+                out.cx = center.x + radius * Math.sin(theta)
+                out.cy = center.y + radius * Math.cos(theta)
+            } else if (displayState === 'line') {
+                out.cx = linearScale(i)
+                out.cy = size / 10
+            } else {
+                throw new Error('Unknown display format: ' + displayState)
             }
+            return out
         })
         let $group = $svg.selectAll('g.bits')
 
