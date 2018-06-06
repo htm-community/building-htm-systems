@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Number Encoding Widgets</title>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://d3js.org/d3.v5.js"></script>
+    <script src="../../../../docs/bhtms-encoding-numbers-0.2.8.js"></script>
+
+    <style>
+        body {
+            background-color: white;
+        }
+        .widget {
+            width: 560px;
+            background-color: white;
+            margin-bottom: 20px;
+        }
+        svg {
+            /*border: solid 1px orange;*/
+        }
+        table {
+            width: 100%
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="widget">
+    <h1>Cyclic Encoder</h1>
+    <div id="cyclicEncoder"></div>
+    <script>
+        $(function() {
+            BHTMS.cyclicEncoder("cyclicEncoder")
+        });
+    </script>
+</div>
+
+</body>
+</html>
