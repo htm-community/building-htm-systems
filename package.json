@@ -1,6 +1,6 @@
 {
   "name": "building-htm-systems",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Supporting code for Building HTM Systems document.",
   "scripts": {
     "start": "./node_modules/.bin/webpack",

@@ -16,8 +16,6 @@ let range = 0.5
 let min = -1.25
 let max = 1.25
 
-let jsdsHandles = []
-
 let timeStep = 60 * 60000 // minutes
 let dataStep = 2 * Math.PI / 24 // radians
 let counter = 0
@@ -127,10 +125,6 @@ module.exports = (elementId) => {
             $streamingScalar.on('mouseout', () => {
                 $streamingScalar.select('g.hover').attr('visibility', 'hidden')
             })
-
-            while (jsdsHandles.length) {
-                jsdsHandles.pop().remove()
-            }
         }
 
         function updateValue(value) {
