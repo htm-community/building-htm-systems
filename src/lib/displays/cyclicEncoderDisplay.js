@@ -13,6 +13,8 @@ let maxCircleRadius = 40
 let interval = 10 // ms
 let cuts = 100
 
+let lineStateHeight = 80
+
 class CyclicEncoderDisplay {
 
     constructor(id, opts) {
@@ -38,6 +40,7 @@ class CyclicEncoderDisplay {
 
     render() {
         let jsds = this.jsds
+        let displayState = this.state
         let values = jsds.get('values'),
             buckets = jsds.get('buckets'),
             range = jsds.get('range')
@@ -46,6 +49,7 @@ class CyclicEncoderDisplay {
             values: values,
             range: range,
         })
+        let me = this
         let $svg = this.$svg
         let size = this.size
         let half = size / 2
@@ -73,7 +77,13 @@ class CyclicEncoderDisplay {
         this.$rangeLabel = $el.find('.range-label')
 
         $svg.attr('width', size)
-            .attr('height', size)
+
+        this._circleToLineScaleY = d3.scaleLinear()
+            .domain([0, 1])
+            .range([size, lineStateHeight])
+        this._lineToCircleScaleY = d3.scaleLinear()
+            .domain([0, 1])
+            .range([lineStateHeight, size])
 
         let nameLabelY = size * .37
         let rangeLabelY = size * .56
@@ -167,6 +177,9 @@ class CyclicEncoderDisplay {
     }
 
     updateDisplay() {
+        let displayState = this.state
+        let me = this
+        let size = this.size
         let value = this.jsds.get('value')
         let values = this.jsds.get('values')
         let encoding = this.encoder.encode(value)
@@ -177,6 +190,19 @@ class CyclicEncoderDisplay {
             .attr('x', half - (this.$valueDisplay.get(0).getBBox().width / 2))
             .attr('y', half + (this.$valueDisplay.get(0).getBBox().height / 4))
         // console.log(encoding)
+        this.$svg.attr('height', () => {
+            if (displayState === 'circle') {
+                return size
+            } else if (displayState === 'line') {
+                return lineStateHeight
+            } else if (displayState === 'circle-to-line') {
+                return me._circleToLineScaleY(me._transition)
+            } else if (displayState === 'line-to-circle') {
+                return me._lineToCircleScaleY(me._transition)
+            } else {
+                throw new Error('Unknown display state ' + displayState)
+            }
+        })
         this._updateCircles(encoding)
     }
 
