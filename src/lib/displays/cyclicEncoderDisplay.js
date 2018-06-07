@@ -26,8 +26,8 @@ class CyclicEncoderDisplay {
 
         this.jsds = JSDS.create('cyclic-category-encoder-' + this.id)
         this.jsds.set('resolution', opts.resolution)
-        this.jsds.set('buckets', opts.n)
-        this.jsds.set('range', opts.w)
+        this.jsds.set('n', opts.n)
+        this.jsds.set('w', opts.w)
 
         // State of display
         this.state = opts.state || 'circle'
@@ -40,16 +40,13 @@ class CyclicEncoderDisplay {
 
     render() {
         let jsds = this.jsds
-        let displayState = this.state
-        let values = jsds.get('values'),
-            buckets = jsds.get('buckets'),
-            range = jsds.get('range')
+        let n = jsds.get('n'),
+            w = jsds.get('w')
         this.encoder = new CyclicEncoder({
-            buckets: buckets,
-            values: values,
-            range: range,
+            resolution: 1,
+            n: n,
+            w: w,
         })
-        let me = this
         let $svg = this.$svg
         let size = this.size
         let half = size / 2
@@ -71,8 +68,7 @@ class CyclicEncoderDisplay {
 
         let $el = $(this.$svg.node())
         this.$valueDisplay = $el.find('.value-display')
-        this.$rangeDisplay = $el.find('.range-display')
-        this.$resolutionLabel = $el.find('.resolution-display')
+        this.$outputDisplay = $el.find('.output-display')
         this.$nameLabel = $el.find('.name-label')
         this.$rangeLabel = $el.find('.range-label')
 
@@ -88,20 +84,15 @@ class CyclicEncoderDisplay {
         let nameLabelY = size * .37
         let rangeLabelY = size * .56
         let outDisplay = size * .72
-        let resLabelY = size * .78
 
         this.$valueDisplay.attr('font-size', this.bigFont)
-            .html(0)
             .attr('x', half - (this.$valueDisplay.get(0).getBBox().width / 2))
             .attr('y', half + (this.$valueDisplay.get(0).getBBox().height / 4))
-        this.$rangeDisplay.attr('font-size', this.medFont)
-            .html(range + ' / ' + buckets)
-            .attr('x', half - (this.$rangeDisplay.get(0).getBBox().width / 2))
+            .html(0)
+        this.$outputDisplay.attr('font-size', this.medFont)
+            .attr('x', half - (this.$outputDisplay.get(0).getBBox().width / 2))
             .attr('y', outDisplay)
-        this.$resolutionLabel.attr('font-size', this.tinyFont)
-            .html(utils.precisionRound(this.encoder.resolution, 2))
-            .attr('x', half - (this.$resolutionLabel.get(0).getBBox().width / 2))
-            .attr('y', resLabelY)
+            .html(w + ' / ' + n)
 
         this.$nameLabel.attr('font-size', this.medFont)
             .attr('x', half - (this.$nameLabel.find('tspan').get(0).getBBox().width / 2))
@@ -114,7 +105,7 @@ class CyclicEncoderDisplay {
     }
 
     get smallCircleRadius() {
-        let buckets = this.jsds.get('buckets')
+        let buckets = this.jsds.get('n')
         let circumference = 2 * Math.PI * this.radius
         let out
         let displayState = this.state
@@ -139,25 +130,28 @@ class CyclicEncoderDisplay {
     }
 
     _selfListen() {
-        let me = this
+        let me = this,
+            jsds = this.jsds,
+            encoder = this.encoder
         if (! this._handles) {
-            let jsds = this.jsds
             this._handles = []
             function reRender() {
                 // If the value is out of range, we gotta push it back into range.
-                let value = me.jsds.get('value')
-                let buckets = me.jsds.get('buckets')
+                let value = jsds.get('value')
+                let buckets = jsds.get('n')
                 if (value < 0) value = 0
                 if (value >= buckets) value = buckets - 1
                 me.render()
                 me.updateDisplay()
+                jsds.set('encoding', encoder.encode(value))
             }
             jsds.after('set', 'value', () => {
+                let value = jsds.get('value')
+                jsds.set('encoding', encoder.encode(value))
                 me.updateDisplay()
             })
-            this._handles.push(jsds.after('set', 'values', reRender))
-            this._handles.push(jsds.after('set', 'range', reRender))
-            this._handles.push(jsds.after('set', 'buckets', reRender))
+            this._handles.push(jsds.after('set', 'w', reRender))
+            this._handles.push(jsds.after('set', 'n', reRender))
         }
     }
 
@@ -181,10 +175,9 @@ class CyclicEncoderDisplay {
         let me = this
         let size = this.size
         let value = this.jsds.get('value')
-        let values = this.jsds.get('values')
-        let encoding = this.encoder.encode(value)
-        this.jsds.set('encoding', encoding)
-        this.$valueDisplay.html(value + ' / ' + (values - 1))
+        let encoding = this.jsds.get('encoding') || this.encoder.encode(value)
+        let maxRange = this.encoder.inputDomain[1]
+        this.$valueDisplay.html(value + ' / ' + maxRange)
         let half = this.size / 2
         this.$valueDisplay
             .attr('x', half - (this.$valueDisplay.get(0).getBBox().width / 2))
@@ -221,7 +214,7 @@ class CyclicEncoderDisplay {
     }
 
     _updateCircles(encoding) {
-        let buckets = this.jsds.get('buckets'),
+        let buckets = this.jsds.get('n'),
             displayState = this.state,
             size = this.size,
             radius = this.radius,

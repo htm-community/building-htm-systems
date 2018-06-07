@@ -21,26 +21,26 @@ module.exports = (elementId) => {
         encoderDisplay.loop()
 
         let $el = $('#' + elementId)
-        let $valuesSlider = $el.find('#valuesSlider')
-        let $valuesDisplay = $el.find('.valuesDisplay')
-        let $bucketsSlider = $el.find('#bucketsSlider')
-        let $bucketsDisplay = $el.find('.bucketsDisplay')
-        let $rangeSlider = $el.find('#rangeSlider')
-        let $rangeDisplay = $el.find('.rangeDisplay')
+        let $inputRangeSlider = $el.find('#inputRangeSlider')
+        let $inputRangeDisplay = $el.find('.inputRangeDisplay')
+        let $nSlider = $el.find('#nSlider')
+        let $nDisplay = $el.find('.nDisplay')
+        let $wSlider = $el.find('#wSlider')
+        let $wDisplay = $el.find('.wDisplay')
         let $discreteButton = $el.find('button.discrete')
         let $continuousButton = $el.find('button.continuous')
         let $switchButton = $el.find('button.switch')
 
         function update() {
-            let values = parseInt($valuesSlider.val())
-            let buckets = parseInt($bucketsSlider.val())
-            let range = parseInt($rangeSlider.val())
+            let values = parseInt($inputRangeSlider.val())
+            let buckets = parseInt($nSlider.val())
+            let range = parseInt($wSlider.val())
             encoderDisplay.jsds.set('values', values)
             encoderDisplay.jsds.set('buckets', buckets)
             encoderDisplay.jsds.set('range', range)
-            $valuesDisplay.html(values)
-            $bucketsDisplay.html(buckets)
-            $rangeDisplay.html(range)
+            $inputRangeDisplay.html(values)
+            $nDisplay.html(buckets)
+            $wDisplay.html(range)
         }
 
         function slideParams(params) {
@@ -48,19 +48,19 @@ module.exports = (elementId) => {
             keys.forEach(function(key) {
                 encoderDisplay.jsds.set(key, params[key])
             })
-            $valuesSlider.val(params.values)
-            $valuesDisplay.html(params.values)
-            $bucketsSlider.val(params.buckets)
-            $bucketsDisplay.html(params.buckets)
-            $rangeSlider.val(params.range)
-            $rangeDisplay.html(params.range)
+            $inputRangeSlider.val(params.values)
+            $inputRangeDisplay.html(params.values)
+            $nSlider.val(params.buckets)
+            $nDisplay.html(params.buckets)
+            $wSlider.val(params.range)
+            $wDisplay.html(params.range)
         }
 
         update()
 
-        $valuesSlider.on('input', update)
-        $bucketsSlider.on('input', update)
-        $rangeSlider.on('input', update)
+        $inputRangeSlider.on('input', update)
+        $nSlider.on('input', update)
+        $wSlider.on('input', update)
 
         $discreteButton.on('click', () => {
             slideParams({
