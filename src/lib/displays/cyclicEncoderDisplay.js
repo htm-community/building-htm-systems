@@ -25,9 +25,9 @@ class CyclicEncoderDisplay {
         this.color = opts.color
 
         this.jsds = JSDS.create('cyclic-category-encoder-' + this.id)
-        this.jsds.set('values', opts.values)
-        this.jsds.set('buckets', opts.buckets)
-        this.jsds.set('range', opts.range)
+        this.jsds.set('resolution', opts.resolution)
+        this.jsds.set('buckets', opts.n)
+        this.jsds.set('range', opts.w)
 
         // State of display
         this.state = opts.state || 'circle'
