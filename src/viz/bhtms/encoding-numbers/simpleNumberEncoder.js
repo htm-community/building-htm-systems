@@ -25,10 +25,10 @@ module.exports = (elementId, bounded=false) => {
         let valueScaleTopMargin = 40,
             valueScaleSideMargins = 10
 
-        let $resolutionSlider = $jqEl.find('.resolutionSlider'),
-            $resolutionDisplays = $jqEl.find('.resolutionDisplay')
+        let $wSlider = $jqEl.find('.wSlider'),
+            $wDisplays = $jqEl.find('.wDisplay')
 
-        let resolution = parseInt(parseInt($resolutionSlider.val()) / 100)
+        let w = parseInt(parseInt($wSlider.val()) / 100)
 
         let $svg = $d3El.select('svg')
             .attr('width', width)
@@ -194,7 +194,7 @@ module.exports = (elementId, bounded=false) => {
             }
 
             let setBitHandle = jsds.after('set', 'selectedOutputBit', hoverRange)
-            let setResHandle = jsds.after('set', 'resolution', () => {
+            let setResHandle = jsds.after('set', 'w', () => {
                 let selectedBit = jsds.get('selectedOutputBit')
                 if (selectedBit) hoverRange(selectedBit)
             })
@@ -240,16 +240,16 @@ module.exports = (elementId, bounded=false) => {
             updateDisplays(jsds.get(elementId + '-encoding'), jsds.get('value'))
         }
 
-        // User interaction via resolution slider.
-        $resolutionSlider.on('input', () => {
-            jsds.set('resolution', Math.max(1, parseInt(parseInt($resolutionSlider.val()) / 100)))
+        // User interaction via w slider.
+        $wSlider.on('input', () => {
+            jsds.set('w', Math.max(1, parseInt(parseInt($wSlider.val()) / 100)))
         })
 
         // Once an encoding is set, we can draw.
         jsds.after('set', elementId + '-encoding', redraw)
 
-        // When user changes resolution, we must re-create the encoder and re-encode the value.
-        jsds.after('set', 'resolution', (v) => {
+        // When user changes w, we must re-create the encoder and re-encode the value.
+        jsds.after('set', 'w', (v) => {
             encoder = new ScalarEncoder({
                 w: v,
                 n: bits,
@@ -257,8 +257,8 @@ module.exports = (elementId, bounded=false) => {
                 max: maxValue,
                 bounded: bounded,
             })
-            $resolutionDisplays.html(v)
-            $resolutionSlider.val(v * 100)
+            $wDisplays.html(v)
+            $wSlider.val(v * 100)
             let value = jsds.get('value')
             jsds.set(elementId + '-encoding', encoder.encode(value))
         })
@@ -272,14 +272,14 @@ module.exports = (elementId, bounded=false) => {
 
         setUpValueAxis(minValue, maxValue, width)
         encoder = new ScalarEncoder({
-            w: resolution,
+            w: w,
             n: bits,
             min: minValue,
             max: maxValue,
             bounded: bounded,
         })
         jsds.set('value', value)
-        jsds.set('resolution', parseInt(parseInt($resolutionSlider.val()) / 100))
+        jsds.set('w', parseInt(parseInt($wSlider.val()) / 100))
 
     })
 
