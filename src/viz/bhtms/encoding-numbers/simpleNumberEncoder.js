@@ -2,33 +2,59 @@ let ScalarEncoder = require('ScalarEncoder')
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
 let html = require('./simpleNumberEncoder.tmpl.html')
+let dat = require('dat.gui')
 
-const onColor = 'skyblue'
-const offColor = 'white'
-let jsds = JSDS.create('simple-number-encoder')
+let DefaultUiValues = function() {
+    this.w = 6
+    this.n = 100
+    this.min = 0
+    this.max = 55
+    this.bounded = true
+};
+let uiValues = new DefaultUiValues();
 
-module.exports = (elementId, bounded=false) => {
+function setupDatGui($el, onChange) {
+    let gui = new dat.GUI({
+        autoPlace: false,
+    });
+
+    gui.add(uiValues, 'w', 1, uiValues.n/2).onChange(value => {
+        uiValues.w = value
+        onChange()
+    })
+    gui.add(uiValues, 'n', 50, 100).onChange(value => {
+        uiValues.n = value
+        onChange()
+    })
+    gui.add(uiValues, 'min', -50, 50).onChange(value => {
+        uiValues.min = value
+        onChange()
+    })
+    gui.add(uiValues, 'max', 50, 150).onChange(value => {
+        uiValues.max = value
+        onChange()
+    })
+    $el.append(gui.domElement)
+}
+
+function renderSimpleNumberEncoder(elementId, bounded=false) {
+
+    const onColor = 'skyblue'
+    const offColor = 'white'
+    let jsds = JSDS.create('simple-number-encoder')
 
     utils.loadHtml(html.default, elementId, () => {
         let $d3El = d3.select('#' + elementId),
-            $jqEl = $('#' + elementId)
+            $jqEl = $('#' + elementId),
+            $datGui = $jqEl.find('.dat-gui')
 
         let width = 560,
-            height = 180,
-            minValue = 0,
-            maxValue = 55,
-            bits = 100,
-            value = 30
+            height = 180
 
         let jsdsHandles = []
 
         let valueScaleTopMargin = 40,
             valueScaleSideMargins = 10
-
-        let $wSlider = $jqEl.find('.wSlider'),
-            $wDisplays = $jqEl.find('.wDisplay')
-
-        let w = parseInt(parseInt($wSlider.val()) / 100)
 
         let $svg = $d3El.select('svg')
             .attr('width', width)
@@ -40,6 +66,7 @@ module.exports = (elementId, bounded=false) => {
         let encoder
 
         function setUpValueAxis(min, max, maxWidth) {
+            console.log('Setting up value axis from %s to %s', min, max)
             let width = maxWidth - valueScaleSideMargins * 2
             let x = valueScaleSideMargins, y = valueScaleTopMargin
             valueToX = d3.scaleLinear()
@@ -49,9 +76,16 @@ module.exports = (elementId, bounded=false) => {
                 .domain([0, width])
                 .range([min, max])
             let xAxis = d3.axisBottom(valueToX)
-            $svg.append('g')
-                .attr('transform', 'translate(' + x + ',' + y + ')')
-                .call(xAxis)
+            let treatAxis = (axis) => {
+                axis.attr('class', 'axis')
+                    .attr('transform', 'translate(' + x + ',' + y + ')')
+                    .call(xAxis)
+            }
+            let $axis = $svg.selectAll('g.axis').data([null])
+            treatAxis($axis)
+            let $newAxis = $axis.enter().append('g')
+            treatAxis($newAxis)
+            $axis.exit().remove()
             $svg.on('mousemove', () => {
                 let mouse = d3.mouse($svg.node())
                 if (mouse[1] > 80) return
@@ -109,9 +143,9 @@ module.exports = (elementId, bounded=false) => {
             rects = $outputGroup.selectAll('rect.bit')
 
             let lineFunction = d3.line()
-                                 .x(function(d) { return d.x; })
-                                 .y(function(d) { return d.y; })
-                                 .curve(d3.curveCatmullRom.alpha(0.5));
+                .x(function(d) { return d.x; })
+                .y(function(d) { return d.y; })
+                .curve(d3.curveCatmullRom.alpha(0.5));
 
             function getRangeFromBitIndex(i, encoder) {
                 let v = encoder.reverseScale(i),
@@ -139,8 +173,8 @@ module.exports = (elementId, bounded=false) => {
                     .attr('cx', cx)
                     .attr('cy', cy)
                     .attr('fill', 'royalblue')
-                let leftValueBound = Math.max(minValue, valueRange[0]),
-                    rightValueBound = Math.min(maxValue, valueRange[1])
+                let leftValueBound = Math.max(uiValues.min, valueRange[0]),
+                    rightValueBound = Math.min(uiValues.max, valueRange[1])
                 let leftLineData = []
                 let rightLineData = []
                 leftLineData.push({x: cx, y: cy})
@@ -236,51 +270,32 @@ module.exports = (elementId, bounded=false) => {
             updateValue(value)
         }
 
-        function redraw() {
-            updateDisplays(jsds.get(elementId + '-encoding'), jsds.get('value'))
-        }
-
-        // User interaction via w slider.
-        $wSlider.on('input', () => {
-            jsds.set('w', Math.max(1, parseInt(parseInt($wSlider.val()) / 100)))
-        })
-
-        // Once an encoding is set, we can draw.
-        jsds.after('set', elementId + '-encoding', redraw)
-
-        // When user changes w, we must re-create the encoder and re-encode the value.
-        jsds.after('set', 'w', (v) => {
-            encoder = new ScalarEncoder({
-                w: v,
-                n: bits,
-                min: minValue,
-                max: maxValue,
-                bounded: bounded,
-            })
-            $wDisplays.html(v)
-            $wSlider.val(v * 100)
+        function render() {
             let value = jsds.get('value')
-            jsds.set(elementId + '-encoding', encoder.encode(value))
-        })
+            encoder = new ScalarEncoder(uiValues)
+            let encoding = encoder.encode(value)
+            setUpValueAxis(uiValues.min, uiValues.max, width)
+            updateDisplays(encoding, value)
+        }
 
         // When a new value is set, it should be encoded.
         jsds.after('set', 'value', (v) => {
-            jsds.set(elementId + '-encoding', encoder.encode(v))
+            console.log('value %s was set', v)
+            // jsds.set(elementId + '-encoding', encoder.encode(v))
+            render()
         })
+        // // Once an encoding is set, we want to re-render completely.
+        // jsds.after('set', elementId + '-encoding', (v) => {
+        //     console.log(v.join(''))
+        //     render()
+        // })
 
         // Start Program
-
-        setUpValueAxis(minValue, maxValue, width)
-        encoder = new ScalarEncoder({
-            w: w,
-            n: bits,
-            min: minValue,
-            max: maxValue,
-            bounded: bounded,
-        })
-        jsds.set('value', value)
-        jsds.set('w', parseInt(parseInt($wSlider.val()) / 100))
-
+        setupDatGui($datGui, render)
+        render()
+        jsds.set('value', (uiValues.max - uiValues.min) / 2)
     })
 
 }
+
+module.exports = renderSimpleNumberEncoder

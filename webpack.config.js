@@ -30,12 +30,13 @@ modules.push({
     },
     resolve: {
         alias: {
+            'dat.gui': path.join(__dirname, "node_modules/dat.gui/build/dat.gui.min"),
             JSDS: path.join(__dirname, "node_modules/javascript-data-store/src/jsds"),
             SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
             SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
-            ScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/scalar"),
+            ScalarEncoder: path.join(__dirname, "../simplehtm/src/encoders/scalar"),
             CyclicEncoderDisplay: path.join(__dirname, "src/lib/displays/cyclicEncoderDisplay"),
-            CyclicEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/cyclicScalar"),
+            CyclicEncoder: path.join(__dirname, "../simplehtm/src/encoders/cyclicScalar"),
         }
     },
     output: {
@@ -66,9 +67,9 @@ modules.push({
             JSDS: path.join(__dirname, "node_modules/javascript-data-store/src/jsds"),
             SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
             SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
-            ScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/scalar"),
+            ScalarEncoder: path.join(__dirname, "../simplehtm/src/encoders/scalar"),
             CyclicEncoderDisplay: path.join(__dirname, "src/lib/displays/cyclicEncoderDisplay"),
-            CyclicEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/cyclicScalar"),
+            CyclicEncoder: path.join(__dirname, "../simplehtm/src/encoders/cyclicScalar"),
         }
     },
     output: {
@@ -101,9 +102,9 @@ modules.push({
             JSDS: path.join(__dirname, "node_modules/javascript-data-store/src/jsds"),
             SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
             SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
-            ScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/scalar"),
+            ScalarEncoder: path.join(__dirname, "../simplehtm/src/encoders/scalar"),
             CyclicEncoderDisplay: path.join(__dirname, "src/lib/displays/cyclicEncoderDisplay"),
-            CyclicEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/cyclicScalar"),
+            CyclicEncoder: path.join(__dirname, "../simplehtm/src/encoders/cyclicScalar"),
         }
     },
     output: {
