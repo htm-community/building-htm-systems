@@ -1,4 +1,4 @@
-let RelativeScalarEncoder = require('RelativeScalarEncoder')
+let ScalarEncoder = require('ScalarEncoder')
 let CyclicEncoderDisplay = require('CyclicEncoderDisplay')
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
@@ -77,7 +77,9 @@ module.exports = (elementId, dataProviderId) => {
             timeEncoders['time-of-day'].jsds.set('value', hourOfDay)
         }
 
-        encoder = new RelativeScalarEncoder(scalarBits, range, min, max, bounded=true)
+        encoder = new ScalarEncoder({
+            w: range, n: scalarBits, min: min, max: max, bounded: true
+        })
 
         renderTimeCycles()
 

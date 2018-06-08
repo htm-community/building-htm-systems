@@ -5,6 +5,13 @@ let CyclicEncoderDisplay = require('CyclicEncoderDisplay')
 module.exports = (elementId) => {
 
     utils.loadHtml(html.default, elementId, () => {
+        let $d3El = d3.select('#' + elementId),
+            $el = $('#' + elementId)
+
+        let width = 560,
+            height = 60,
+            minValue = 0,
+            maxValue = 100
 
         let params = {
             resolution: 1,
@@ -17,10 +24,14 @@ module.exports = (elementId) => {
 
         let encoderDisplay = new CyclicEncoderDisplay('lone', params)
         encoderDisplay.render()
-        encoderDisplay.jsds.set('value', 0)
         encoderDisplay.loop()
 
-        let $el = $('#' + elementId)
+        let jsds = encoderDisplay.jsds
+
+        let $valueSvg = $d3El.select('#value-line')
+            .attr('width', width)
+            .attr('height', height)
+
         let $inputRangeSlider = $el.find('#inputRangeSlider')
         let $inputRangeDisplay = $el.find('.inputRangeDisplay')
         let $nSlider = $el.find('#nSlider')
@@ -30,6 +41,39 @@ module.exports = (elementId) => {
         let $discreteButton = $el.find('button.discrete')
         let $continuousButton = $el.find('button.continuous')
         let $switchButton = $el.find('button.switch')
+
+        let valueScaleTopMargin = 40,
+            valueScaleSideMargins = 10
+
+        function setUpValueAxis($svg, min, max, maxWidth) {
+            let width = maxWidth - valueScaleSideMargins * 2
+            let x = valueScaleSideMargins, y = valueScaleTopMargin
+            valueToX = d3.scaleLinear()
+                .domain([min, max])
+                .range([0, width])
+            xToValue = d3.scaleLinear()
+                .domain([0, width])
+                .range([min, max])
+            let xAxis = d3.axisBottom(valueToX)
+            $svg.append('g')
+                .attr('transform', 'translate(' + x + ',' + y + ')')
+                .call(xAxis)
+            $svg.on('mouseenter', () => {
+                encoderDisplay.stop()
+            })
+            $svg.on('mouseleave', () => {
+                encoderDisplay.loop()
+            })
+            $svg.on('mousemove', () => {
+                let mouse = d3.mouse($svg.node())
+                if (mouse[1] > 80) return
+                let mouseX = mouse[0] - valueScaleSideMargins
+                mouseX = Math.min(maxWidth - (valueScaleSideMargins * 2), mouseX)
+                mouseX = Math.max(0, mouseX)
+                value = utils.precisionRound(xToValue(mouseX), 1)
+                jsds.set('value', value)
+            })
+        }
 
         function update() {
             let values = parseInt($inputRangeSlider.val())
@@ -56,12 +100,13 @@ module.exports = (elementId) => {
             $wDisplay.html(params.range)
         }
 
-        update()
 
+        // Input slider handling
         $inputRangeSlider.on('input', update)
         $nSlider.on('input', update)
         $wSlider.on('input', update)
 
+        // Input Button handling
         $discreteButton.on('click', () => {
             slideParams({
                 value: 0,
@@ -70,7 +115,6 @@ module.exports = (elementId) => {
                 range: 3,
             })
         })
-
         $continuousButton.on('click', () => {
             slideParams({
                 value: 0,
@@ -79,7 +123,6 @@ module.exports = (elementId) => {
                 range: 7,
             })
         })
-
         $switchButton.on('click', () => {
             let from = encoderDisplay.state
             let to = 'line'
@@ -88,6 +131,9 @@ module.exports = (elementId) => {
             }
             encoderDisplay.transition(from, to)
         })
+
+        setUpValueAxis($valueSvg, minValue, maxValue, width)
+        update()
 
 
     })

@@ -277,6 +277,7 @@ class CyclicEncoderDisplay {
 
     loop() {
         let me = this
+        if (! this.jsds.get('value')) this.jsds.set('value', 0)
         this._loopHandle = setInterval(() => {
             me.step(1)
         }, 300)

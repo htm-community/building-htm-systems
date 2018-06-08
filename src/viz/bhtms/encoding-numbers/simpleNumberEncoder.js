@@ -1,4 +1,4 @@
-let RelativeScalarEncoder = require('RelativeScalarEncoder')
+let ScalarEncoder = require('ScalarEncoder')
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
 let html = require('./simpleNumberEncoder.tmpl.html')
@@ -113,11 +113,27 @@ module.exports = (elementId, bounded=false) => {
                                  .y(function(d) { return d.y; })
                                  .curve(d3.curveCatmullRom.alpha(0.5));
 
+            function getRangeFromBitIndex(i, encoder) {
+                let v = encoder.reverseScale(i),
+                    res = encoder.resolution,
+                    min = encoder.min,
+                    max = encoder.max,
+                    radius = res / 2,
+                    left = Math.max(encoder.min, v - radius),
+                    right = Math.min(encoder.max, v + radius)
+                // Keeps the bucket from changing size at min/max values
+                if (encoder.bounded) {
+                    if (left < (min + radius)) left = min
+                    if (right > (max - radius)) right = max
+                }
+                return [left, right]
+            }
+
             function hoverRange(selectedOutputBit) {
                 let index = selectedOutputBit.index
                 let cx = padding + bitsToOutputDisplay(index) + (cellWidth / 2)
                 let cy = topMargin + 30
-                let valueRange = encoder.getRangeFromBitIndex(index)
+                let valueRange = getRangeFromBitIndex(index, encoder)
                 $hoverGroup.select('g.range circle')
                     .attr('r', cellWidth / 2)
                     .attr('cx', cx)
@@ -234,7 +250,13 @@ module.exports = (elementId, bounded=false) => {
 
         // When user changes resolution, we must re-create the encoder and re-encode the value.
         jsds.after('set', 'resolution', (v) => {
-            encoder = new RelativeScalarEncoder(bits, v, minValue, maxValue, bounded)
+            encoder = new ScalarEncoder({
+                w: v,
+                n: bits,
+                min: minValue,
+                max: maxValue,
+                bounded: bounded,
+            })
             $resolutionDisplays.html(v)
             $resolutionSlider.val(v * 100)
             let value = jsds.get('value')
@@ -249,7 +271,13 @@ module.exports = (elementId, bounded=false) => {
         // Start Program
 
         setUpValueAxis(minValue, maxValue, width)
-        encoder = new RelativeScalarEncoder(bits, resolution, minValue, maxValue, bounded)
+        encoder = new ScalarEncoder({
+            w: resolution,
+            n: bits,
+            min: minValue,
+            max: maxValue,
+            bounded: bounded,
+        })
         jsds.set('value', value)
         jsds.set('resolution', parseInt(parseInt($resolutionSlider.val()) / 100))
 

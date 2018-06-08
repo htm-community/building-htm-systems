@@ -1,4 +1,4 @@
-let RelativeScalarEncoder = require('RelativeScalarEncoder')
+let ScalarEncoder = require('ScalarEncoder')
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
 let html = require('./streamingScalarWindow.tmpl.html')
@@ -197,7 +197,9 @@ module.exports = (elementId) => {
             renderIndex(jsds.get('data'))
         })
 
-        encoder = new RelativeScalarEncoder(scalarBits, range, min, max, bounded=true)
+        encoder = new ScalarEncoder({
+            w: range, n: scalarBits, min: min, max: max, bounded: true
+        })
 
         $streamingScalar.on('mouseenter', () => {
             clearInterval(timerHandle)
