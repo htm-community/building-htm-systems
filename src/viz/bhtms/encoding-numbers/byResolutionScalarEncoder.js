@@ -1,37 +1,36 @@
 let ScalarEncoder = require('ScalarEncoder')
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
-let html = require('./simpleNumberEncoder.tmpl.html')
+let html = require('./byResolutionScalarEncoder.tmpl.html')
 let dat = require('dat.gui')
 
 let DefaultUiValues = function() {
     this.w = 6
     this.n = 100
-    this.min = 0
-    this.max = 55
+    this.resolution = 1
     this.bounded = true
 };
 let uiValues = new DefaultUiValues();
+let jsds = JSDS.create('byResolutionScalarEncoder')
 
 function setupDatGui($el, onChange) {
     let gui = new dat.GUI({
         autoPlace: false,
     });
 
+    gui.add(uiValues, 'resolution', 0.1, 5.0).onChange(value => {
+        uiValues.resolution = value
+        jsds.set('param-update', new Date())
+        onChange()
+    })
     gui.add(uiValues, 'w', 1, uiValues.n/2).onChange(value => {
         uiValues.w = value
+        jsds.set('param-update', new Date())
         onChange()
     })
     gui.add(uiValues, 'n', 50, 100).onChange(value => {
         uiValues.n = value
-        onChange()
-    })
-    gui.add(uiValues, 'min', -50, 50).onChange(value => {
-        uiValues.min = value
-        onChange()
-    })
-    gui.add(uiValues, 'max', 50, 150).onChange(value => {
-        uiValues.max = value
+        jsds.set('param-update', new Date())
         onChange()
     })
     $el.append(gui.domElement)
@@ -41,7 +40,6 @@ function renderSimpleNumberEncoder(elementId, bounded=false) {
 
     const onColor = 'skyblue'
     const offColor = 'white'
-    let jsds = JSDS.create('simple-number-encoder')
 
     utils.loadHtml(html.default, elementId, () => {
         let $d3El = d3.select('#' + elementId),
@@ -66,7 +64,7 @@ function renderSimpleNumberEncoder(elementId, bounded=false) {
         let encoder
 
         function setUpValueAxis(min, max, maxWidth) {
-            console.log('Setting up value axis from %s to %s', min, max)
+            // console.log('Setting up value axis from %s to %s', min, max)
             let width = maxWidth - valueScaleSideMargins * 2
             let x = valueScaleSideMargins, y = valueScaleTopMargin
             valueToX = d3.scaleLinear()
@@ -149,12 +147,13 @@ function renderSimpleNumberEncoder(elementId, bounded=false) {
 
             function getRangeFromBitIndex(i, encoder) {
                 let v = encoder.reverseScale(i),
+                    w = encoder.w,
                     res = encoder.resolution,
                     min = encoder.min,
                     max = encoder.max,
-                    radius = res / 2,
-                    left = Math.max(encoder.min, v - radius),
-                    right = Math.min(encoder.max, v + radius)
+                    radius = w * res / 2,
+                    left = Math.max(min, v - radius),
+                    right = Math.min(max, v + radius)
                 // Keeps the bucket from changing size at min/max values
                 if (encoder.bounded) {
                     if (left < (min + radius)) left = min
@@ -163,7 +162,8 @@ function renderSimpleNumberEncoder(elementId, bounded=false) {
                 return [left, right]
             }
 
-            function hoverRange(selectedOutputBit) {
+            function hoverRange() {
+                let selectedOutputBit = jsds.get('selectedOutputBit')
                 let index = selectedOutputBit.index
                 let cx = padding + bitsToOutputDisplay(index) + (cellWidth / 2)
                 let cy = topMargin + 30
@@ -173,8 +173,8 @@ function renderSimpleNumberEncoder(elementId, bounded=false) {
                     .attr('cx', cx)
                     .attr('cy', cy)
                     .attr('fill', 'royalblue')
-                let leftValueBound = Math.max(uiValues.min, valueRange[0]),
-                    rightValueBound = Math.min(uiValues.max, valueRange[1])
+                let leftValueBound = Math.max(encoder.min, valueRange[0]),
+                    rightValueBound = Math.min(encoder.max, valueRange[1])
                 let leftLineData = []
                 let rightLineData = []
                 leftLineData.push({x: cx, y: cy})
@@ -228,7 +228,7 @@ function renderSimpleNumberEncoder(elementId, bounded=false) {
             }
 
             let setBitHandle = jsds.after('set', 'selectedOutputBit', hoverRange)
-            let setResHandle = jsds.after('set', 'w', () => {
+            let setResHandle = jsds.after('set', 'param-update', () => {
                 let selectedBit = jsds.get('selectedOutputBit')
                 if (selectedBit) hoverRange(selectedBit)
             })
@@ -267,33 +267,27 @@ function renderSimpleNumberEncoder(elementId, bounded=false) {
 
         function updateDisplays(encoding, value) {
             updateOutputBits(encoding, width)
-            updateValue(value)
+            if (value) updateValue(value)
         }
 
         function render() {
             let value = jsds.get('value')
             encoder = new ScalarEncoder(uiValues)
             let encoding = encoder.encode(value)
-            setUpValueAxis(uiValues.min, uiValues.max, width)
+            setUpValueAxis(encoder.min, encoder.max, width)
             updateDisplays(encoding, value)
         }
 
         // When a new value is set, it should be encoded.
         jsds.after('set', 'value', (v) => {
-            console.log('value %s was set', v)
-            // jsds.set(elementId + '-encoding', encoder.encode(v))
+            // console.log('value %s was set', v)
             render()
         })
-        // // Once an encoding is set, we want to re-render completely.
-        // jsds.after('set', elementId + '-encoding', (v) => {
-        //     console.log(v.join(''))
-        //     render()
-        // })
 
         // Start Program
         setupDatGui($datGui, render)
-        render()
-        jsds.set('value', (uiValues.max - uiValues.min) / 2)
+        encoder = new ScalarEncoder(uiValues)
+        jsds.set('value', (encoder.max - encoder.min) / 2)
     })
 
 }

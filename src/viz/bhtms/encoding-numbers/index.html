@@ -30,13 +30,27 @@
 
 <div class="widget">
 
-    <h1>Raw Relative Scalar</h1>
+    <h1>Scalar Encoding by min/max</h1>
 
-    <div id="raw-relative-scalar"></div>
+    <div id="byMinMaxScalarEncoder"></div>
 
     <script>
         $(function() {
-            BHTMS.simpleNumberEncoder("raw-relative-scalar")
+            BHTMS.byMinMaxScalarEncoder("byMinMaxScalarEncoder")
+        });
+    </script>
+
+</div>
+
+<div class="widget">
+
+    <h1>Scalar Encoding by Resolution</h1>
+
+    <div id="byResolutionScalarEncoder"></div>
+
+    <script>
+        $(function() {
+            BHTMS.byResolutionScalarEncoder("byResolutionScalarEncoder")
         });
     </script>
 
