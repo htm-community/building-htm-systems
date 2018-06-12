@@ -36,7 +36,9 @@ modules.push({
             SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
             // ScalarEncoder: path.join(__dirname, "../simplehtm/src/encoders/scalar"),
             // CyclicEncoder: path.join(__dirname, "../simplehtm/src/encoders/cyclicScalar"),
+            // BoundedScalarEncoder: path.join(__dirname, "../simplehtm/src/encoders/boundedScalar"),
             ScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/scalar"),
+            BoundedScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/boundedScalar"),
             CyclicEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/cyclicScalar"),
             CyclicEncoderDisplay: path.join(__dirname, "src/lib/displays/cyclicEncoderDisplay"),
         }

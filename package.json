@@ -16,7 +16,7 @@
     "dat.gui": "^0.7.2",
     "javascript-data-store": "^1.0.3",
     "moment": "^2.22.2",
-    "simplehtm": "0.0.10",
+    "simplehtm": "0.0.11",
     "webpack": "^4.5.0"
   },
   "devDependencies": {

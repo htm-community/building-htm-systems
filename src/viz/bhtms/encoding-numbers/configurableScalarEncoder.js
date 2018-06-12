@@ -1,4 +1,5 @@
 let ScalarEncoder = require('ScalarEncoder')
+let BoundedScalarEncoder = require('BoundedScalarEncoder')
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
 let html = require('./configurableScalarEncoder.tmpl.html')
@@ -268,9 +269,17 @@ function renderSimpleNumberEncoder(elementId, config) {
             if (value) updateValue(value)
         }
 
+        function createEncoder() {
+            if (uiValues.bounded) {
+                encoder = new BoundedScalarEncoder(uiValues)
+            } else {
+                encoder = new ScalarEncoder(uiValues)
+            }
+        }
+
         function render() {
             let value = jsds.get('value')
-            encoder = new ScalarEncoder(uiValues)
+            createEncoder()
             let encoding = encoder.encode(value)
             setUpValueAxis(encoder.min, encoder.max, width)
             updateDisplays(encoding, value)
@@ -283,7 +292,7 @@ function renderSimpleNumberEncoder(elementId, config) {
 
         // Start Program
         setupDatGui($datGui, config, render)
-        encoder = new ScalarEncoder(uiValues)
+        createEncoder()
         jsds.set('value', (encoder.max - encoder.min) / 2)
     })
 

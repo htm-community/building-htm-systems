@@ -1,4 +1,5 @@
 let ScalarEncoder = require('ScalarEncoder')
+let BoundedScalarEncoder = require('BoundedScalarEncoder')
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
 let html = require('./simpleScalarEncoder.tmpl.html')
@@ -237,9 +238,17 @@ function renderSimpleNumberEncoder(elementId, encoderParams) {
             if (value) updateValue(value)
         }
 
+        function createEncoder() {
+            if (encoderParams.bounded) {
+                encoder = new BoundedScalarEncoder(encoderParams)
+            } else {
+                encoder = new ScalarEncoder(encoderParams)
+            }
+        }
+
         function render() {
             let value = jsds.get('value')
-            encoder = new ScalarEncoder(encoderParams)
+            createEncoder()
             let encoding = encoder.encode(value)
             setUpValueAxis(encoder.min, encoder.max, width)
             updateDisplays(encoding, value)
