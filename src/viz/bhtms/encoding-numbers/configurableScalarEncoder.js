@@ -28,6 +28,7 @@ function renderSimpleNumberEncoder(elementId, config) {
                 uiValues[propName] = start
                 gui.add.apply(gui, args).onChange(value => {
                     uiValues[propName] = value
+                    jsds.set(propName, value)
                     jsds.set('param-update', new Date())
                     onChange()
                 })
@@ -275,9 +276,8 @@ function renderSimpleNumberEncoder(elementId, config) {
             updateDisplays(encoding, value)
         }
 
-        // When a new value is set, it should be encoded.
-        jsds.after('set', 'value', (v) => {
-            // console.log('value %s was set', v)
+        // When a new value is set, render
+        jsds.after('set', 'value', () => {
             render()
         })
 
