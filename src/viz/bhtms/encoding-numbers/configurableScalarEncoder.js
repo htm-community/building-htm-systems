@@ -1,45 +1,42 @@
 let ScalarEncoder = require('ScalarEncoder')
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
-let html = require('./byResolutionScalarEncoder.tmpl.html')
+let html = require('./configurableScalarEncoder.tmpl.html')
 let dat = require('dat.gui')
 
-let DefaultUiValues = function() {
-    this.w = 6
-    this.n = 100
-    this.resolution = 1
-    this.bounded = true
-};
-let uiValues = new DefaultUiValues();
-let jsds = JSDS.create('byResolutionScalarEncoder')
-
-function setupDatGui($el, onChange) {
-    let gui = new dat.GUI({
-        autoPlace: false,
-    });
-
-    gui.add(uiValues, 'resolution', 0.1, 5.0).onChange(value => {
-        uiValues.resolution = value
-        jsds.set('param-update', new Date())
-        onChange()
-    })
-    gui.add(uiValues, 'w', 1, uiValues.n/2).onChange(value => {
-        uiValues.w = value
-        jsds.set('param-update', new Date())
-        onChange()
-    })
-    gui.add(uiValues, 'n', 50, 100).onChange(value => {
-        uiValues.n = value
-        jsds.set('param-update', new Date())
-        onChange()
-    })
-    $el.append(gui.domElement)
-}
-
-function renderSimpleNumberEncoder(elementId, bounded=false) {
+function renderSimpleNumberEncoder(elementId, config) {
 
     const onColor = 'skyblue'
     const offColor = 'white'
+    let uiValues = {}
+
+    let jsds = JSDS.create('configurableScalarEncoder-' + elementId)
+
+    function setupDatGui($el, cfg, onChange) {
+        let gui = new dat.GUI({
+            autoPlace: false,
+        })
+        Object.keys(cfg).forEach(propName => {
+            let value = cfg[propName]
+            let args = [uiValues, propName]
+            if (Array.isArray(value)) {
+                let min = value[0],
+                    start = value[1],
+                    max = value[2]
+                args.push(min)
+                args.push(max)
+                uiValues[propName] = start
+                gui.add.apply(gui, args).onChange(value => {
+                    uiValues[propName] = value
+                    jsds.set('param-update', new Date())
+                    onChange()
+                })
+            } else {
+                uiValues[propName] = value
+            }
+        })
+        $el.append(gui.domElement)
+    }
 
     utils.loadHtml(html.default, elementId, () => {
         let $d3El = d3.select('#' + elementId),
@@ -285,7 +282,7 @@ function renderSimpleNumberEncoder(elementId, bounded=false) {
         })
 
         // Start Program
-        setupDatGui($datGui, render)
+        setupDatGui($datGui, config, render)
         encoder = new ScalarEncoder(uiValues)
         jsds.set('value', (encoder.max - encoder.min) / 2)
     })

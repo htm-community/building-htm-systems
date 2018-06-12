@@ -1,56 +1,17 @@
 let ScalarEncoder = require('ScalarEncoder')
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
-let html = require('./byMinMaxScalarEncoder.tmpl.html')
-let dat = require('dat.gui')
+let html = require('./simpleScalarEncoder.tmpl.html')
 
-let DefaultUiValues = function() {
-    this.w = 18
-    this.n = 100
-    this.min = 0
-    this.max = 55
-    this.bounded = false
-};
-let uiValues = new DefaultUiValues();
-let jsds = JSDS.create('byMinMaxScalarEncoder')
-
-function setupDatGui($el, onChange) {
-    let gui = new dat.GUI({
-        autoPlace: false,
-    });
-
-    gui.add(uiValues, 'min', -50, 50).onChange(value => {
-        uiValues.min = value
-        jsds.set('param-update', new Date())
-        onChange()
-    })
-    gui.add(uiValues, 'max', 50, 150).onChange(value => {
-        uiValues.max = value
-        jsds.set('param-update', new Date())
-        onChange()
-    })
-    gui.add(uiValues, 'w', 1, uiValues.n/2, 1).onChange(value => {
-        uiValues.w = value
-        jsds.set('param-update', new Date())
-        onChange()
-    })
-    gui.add(uiValues, 'n', 50, 100).onChange(value => {
-        uiValues.n = value
-        jsds.set('param-update', new Date())
-        onChange()
-    })
-    $el.append(gui.domElement)
-}
-
-function renderSimpleNumberEncoder(elementId, bounded=false) {
+function renderSimpleNumberEncoder(elementId, encoderParams) {
 
     const onColor = 'skyblue'
     const offColor = 'white'
 
     utils.loadHtml(html.default, elementId, () => {
-        let $d3El = d3.select('#' + elementId),
-            $jqEl = $('#' + elementId),
-            $datGui = $jqEl.find('.dat-gui')
+        let $d3El = d3.select('#' + elementId)
+
+        let jsds = JSDS.create('simpleScalarEncoder-' + elementId)
 
         let width = 560,
             height = 180
@@ -179,8 +140,8 @@ function renderSimpleNumberEncoder(elementId, bounded=false) {
                     .attr('cx', cx)
                     .attr('cy', cy)
                     .attr('fill', 'royalblue')
-                let leftValueBound = Math.max(uiValues.min, valueRange[0]),
-                    rightValueBound = Math.min(uiValues.max, valueRange[1])
+                let leftValueBound = Math.max(encoder.min, valueRange[0]),
+                    rightValueBound = Math.min(encoder.max, valueRange[1])
                 let leftLineData = []
                 let rightLineData = []
                 leftLineData.push({x: cx, y: cy})
@@ -278,9 +239,9 @@ function renderSimpleNumberEncoder(elementId, bounded=false) {
 
         function render() {
             let value = jsds.get('value')
-            encoder = new ScalarEncoder(uiValues)
+            encoder = new ScalarEncoder(encoderParams)
             let encoding = encoder.encode(value)
-            setUpValueAxis(uiValues.min, uiValues.max, width)
+            setUpValueAxis(encoder.min, encoder.max, width)
             updateDisplays(encoding, value)
         }
 
@@ -291,9 +252,8 @@ function renderSimpleNumberEncoder(elementId, bounded=false) {
         })
 
         // Start Program
-        setupDatGui($datGui, render)
         render()
-        jsds.set('value', (uiValues.max - uiValues.min) / 2)
+        jsds.set('value', (encoderParams.max - encoderParams.min) / 2)
     })
 
 }

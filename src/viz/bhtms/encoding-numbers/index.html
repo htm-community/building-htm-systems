@@ -6,7 +6,7 @@
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://d3js.org/d3.v5.js"></script>
-    <script src="../../../../docs/bhtms-encoding-numbers-0.2.10.js"></script>
+    <script src="../../../../docs/bhtms-encoding-numbers-0.2.11.js"></script>
 
     <style>
         body {
@@ -15,7 +15,8 @@
         .widget {
             width: 560px;
             background-color: white;
-            margin-bottom: 20px;
+            margin-bottom: 100px;
+            /*border: solid 1px darkorange;*/
         }
         svg {
             /*border: solid 1px orange;*/
@@ -23,38 +24,166 @@
         table {
             width: 100%
         }
+
+        /* DAT.GUI lighter theme */
+        .dg.main .close-button.close-bottom {
+            position: inherit;
+        }
+        .dg.main.taller-than-window .close-button {
+            border-top: 1px solid #ddd;
+        }
+
+        .dg.main .close-button {
+            background-color: #ccc;
+        }
+
+        .dg.main .close-button:hover {
+            background-color: #ddd;
+        }
+
+        .dg {
+            color: #555;
+            text-shadow: none !important;
+        }
+
+        .dg.main::-webkit-scrollbar {
+            background: #fafafa;
+        }
+
+        .dg.main::-webkit-scrollbar-thumb {
+            background: #bbb;
+        }
+
+        .dg li:not(.folder) {
+            background: #fafafa;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .dg li.save-row .button {
+            text-shadow: none !important;
+        }
+
+        .dg li.title {
+            background: #e8e8e8 url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlI+hKgFxoCgAOw==) 6px 10px no-repeat;
+        }
+        .dg .cr.function:hover,.dg .cr.boolean:hover {
+            background: #fff;
+        }
+        .dg .close-button {
+            display: none;
+        }
+        .dg .c input[type=text] {
+            background: #e9e9e9;
+        }
+
+        .dg .c input[type=text]:hover {
+            background: #eee;
+        }
+
+        .dg .c input[type=text]:focus {
+            background: #eee;
+            color: #555;
+        }
+
+        .dg .c .slider {
+            background: #e9e9e9;
+        }
+
+        .dg .c .slider:hover {
+            background: #eee;
+        }
     </style>
 
 </head>
 <body>
 
 <div class="widget">
-
-    <h1>Scalar Encoding by min/max</h1>
-
-    <div id="byMinMaxScalarEncoder"></div>
-
+    <h1>Simple Scalar Encoder</h1>
+    <div id="simpleScalarEncoder"></div>
     <script>
         $(function() {
-            BHTMS.byMinMaxScalarEncoder("byMinMaxScalarEncoder")
+            BHTMS.simpleScalarEncoder("simpleScalarEncoder", {
+                min: 0, max: 55,
+                w: 18, n: 100,
+                bounded: false
+            })
         });
     </script>
-
 </div>
 
 <div class="widget">
-
-    <h1>Scalar Encoding by Resolution</h1>
-
-    <div id="byResolutionScalarEncoder"></div>
-
+    <h1>Bounded Scalar Encoder</h1>
+    <div id="boundedScalarEncoder"></div>
     <script>
         $(function() {
-            BHTMS.byResolutionScalarEncoder("byResolutionScalarEncoder")
+            BHTMS.simpleScalarEncoder("boundedScalarEncoder", {
+                min: 0, max: 55,
+                w: 18, n: 100,
+                bounded: true
+            })
         });
     </script>
-
 </div>
+
+<div class="widget">
+    <h1>Scalar Encoder Output Params</h1>
+    <div id="outputRange"></div>
+    <script>
+        $(function() {
+            BHTMS.configurableScalarEncoder("outputRange", {
+                min: 0,
+                max: 100,
+                w: [1, 18, 50],
+                n: [50, 100, 200],
+                bounded: true,
+            })
+        });
+    </script>
+</div>
+
+<div class="widget">
+    <h1>Scalar Encoder by min/max</h1>
+    <div id="byMinMaxScalarEncoder"></div>
+    <script>
+        $(function() {
+            BHTMS.configurableScalarEncoder("byMinMaxScalarEncoder", {
+                min: [-100, 0, 100],
+                max: [101, 500, 1500],
+                w: 18, n: 100,
+                bounded: true,
+            })
+        });
+    </script>
+</div>
+
+<div class="widget">
+    <h1>Scalar Encoder by bit resolution</h1>
+    <div id="byResolutionScalarEncoder"></div>
+    <script>
+        $(function() {
+            BHTMS.configurableScalarEncoder("byResolutionScalarEncoder", {
+                resolution: [0.1, 1.0, 5.0],
+                w: 10, n: 100,
+                bounded: true,
+            })
+        });
+    </script>
+</div>
+
+<!--<div class="widget">-->
+    <!--<h1>Scalar Encoding by Resolution</h1>-->
+    <!--<div id="byResolutionScalarEncoder"></div>-->
+    <!--<script>-->
+        <!--$(function() {-->
+            <!--BHTMS.configurableScalarEncoder("byResolutionScalarEncoder", {-->
+                <!--resolution: [0.1, 1.0, 5.0],-->
+                <!--w: [1, 18, 50],-->
+                <!--n: [20, 100, 300],-->
+                <!--bounded: true,-->
+            <!--})-->
+        <!--});-->
+    <!--</script>-->
+<!--</div>-->
 
 <!--<div class="widget">-->
     <!--<h1>Bounded Relative Scalar</h1>-->
