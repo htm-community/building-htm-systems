@@ -16,13 +16,19 @@ module.exports = (elementId, config) => {
             let value = cfg[propName]
             let args = [uiValues, propName]
             if (Array.isArray(value)) {
-                let min = value[0],
-                    start = value[1],
-                    max = value[2],
+                let step
+                if (typeof(value[0]) === 'number') {
+                    let min = value[0],
+                        start = value[1],
+                        max = value[2]
                     step = value[3]
-                args.push(min)
-                args.push(max)
-                uiValues[propName] = start
+                    args.push(min)
+                    args.push(max)
+                    uiValues[propName] = start
+                } else if (typeof(value[0]) === 'string') {
+                    args.push(value)
+                    uiValues[propName] = value[0]
+                }
                 let item = gui.add.apply(gui, args).onChange(value => {
                     uiValues[propName] = value
                     onChange()
@@ -45,7 +51,7 @@ module.exports = (elementId, config) => {
             $bitsSvg = $d3El.select('.bits')
 
         let width = 560,
-            valueLineHeight = 180
+            valueLineHeight = 80
 
         let valueScaleTopMargin = 40,
             valueScaleSideMargins = 10
@@ -94,7 +100,7 @@ module.exports = (elementId, config) => {
             })
         }
 
-        function updateOutputBits(encoding, maxWidth) {
+        function updateOutputBits() {
             encoderDisplay.updateDisplay()
         }
 
@@ -128,18 +134,20 @@ module.exports = (elementId, config) => {
         }
 
         function updateDisplays(encoding, value) {
-            updateOutputBits(encoding, width)
+            updateOutputBits()
             if (value) updateValue(value)
         }
 
-        function createEncoder() {
-            encoderDisplay = new CyclicEncoderDisplay($bitsSvg, {
+        function createEncoder(opts) {
+            let params = Object.assign({
                 size: width,
                 color: onColor,
                 w: uiValues.w,
                 n: uiValues.n,
                 resolution: uiValues.resolution,
-            })
+                display: uiValues.display,
+            }, opts)
+            encoderDisplay = new CyclicEncoderDisplay($bitsSvg, params)
         }
 
         function render() {
@@ -151,9 +159,18 @@ module.exports = (elementId, config) => {
 
         // Start Program
         setupDatGui($datGui, config, () => {
-            createEncoder()
+            let previousState = encoderDisplay.display
+            let newState = uiValues.display
+            createEncoder({state: previousState})
+            if (newState !== previousState) {
+                encoderDisplay.transition(previousState, newState)
+            }
+            let encoding = encoderDisplay.encoder.encode(
+                encoderDisplay.jsds.get('value')
+            )
             encoderDisplay.render()
             render()
+            encoderDisplay.jsds.set('encoding', encoding)
         })
 
         createEncoder()
@@ -168,7 +185,7 @@ module.exports = (elementId, config) => {
         })
         // When an encoding is set, update bits
         encoderDisplay.jsds.after('set', 'encoding', (encoding) => {
-            updateOutputBits(encoding, width)
+            updateOutputBits()
         })
 
         encoderDisplay.jsds.set(

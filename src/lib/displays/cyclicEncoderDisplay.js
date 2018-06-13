@@ -13,7 +13,7 @@ let maxCircleRadius = 40
 let interval = 10 // ms
 let cuts = 100
 
-let lineStateHeight = 80
+let lineStateHeight = 50
 
 class CyclicEncoderDisplay {
 
@@ -38,8 +38,8 @@ class CyclicEncoderDisplay {
         this.jsds.set('w', opts.w)
 
         // State of display
-        this.state = opts.state || 'circle'
-        // this.state = 'line'
+        this.display = opts.display || 'circle'
+        // this.display = 'line'
         this.encoder = new CyclicEncoder({
             resolution: opts.resolution,
             n: opts.n,
@@ -76,9 +76,7 @@ class CyclicEncoderDisplay {
 
         let $el = $(this.$svg.node())
         this.$valueDisplay = $el.find('.value-display')
-        this.$outputDisplay = $el.find('.output-display')
         this.$nameLabel = $el.find('.name-label')
-        this.$rangeLabel = $el.find('.range-label')
 
         $svg.attr('width', size)
 
@@ -90,31 +88,22 @@ class CyclicEncoderDisplay {
             .range([lineStateHeight, size])
 
         let nameLabelY = size * .37
-        let rangeLabelY = size * .56
-        let outDisplay = size * .72
 
         this.$valueDisplay.attr('font-size', this.bigFont)
             .attr('x', half - (this.$valueDisplay.get(0).getBBox().width / 2))
             .attr('y', half + (this.$valueDisplay.get(0).getBBox().height / 4))
             .html(0)
-        this.$outputDisplay.attr('font-size', this.medFont)
-            .attr('x', half - (this.$outputDisplay.get(0).getBBox().width / 2))
-            .attr('y', outDisplay)
-            .html(w + ' / ' + n)
 
         this.$nameLabel.attr('font-size', this.medFont)
             .attr('x', half - (this.$nameLabel.find('tspan').get(0).getBBox().width / 2))
             .attr('y', nameLabelY - (this.$nameLabel.find('tspan').get(0).getBBox().height / 2))
-        this.$rangeLabel.attr('font-size', this.smallFont)
-            .attr('x', half - (this.$rangeLabel.get(0).getBBox().width / 2))
-            .attr('y', rangeLabelY + (this.$rangeLabel.get(0).getBBox().height - 2))
     }
 
     get smallCircleRadius() {
         let buckets = this.jsds.get('n')
         let circumference = 2 * Math.PI * this.radius
         let out
-        let displayState = this.state
+        let displayState = this.display
         if (displayState === 'circle') {
             out = Math.min(circumference / buckets / 2, maxCircleRadius)
         } else if (displayState === 'line-to-circle') {
@@ -137,12 +126,12 @@ class CyclicEncoderDisplay {
 
     transition(from, to) {
         let me = this
-        this.state = from + '-to-' + to
+        this.display = from + '-to-' + to
         let count = 0
         this._xhandle = setInterval(() => {
             me._transition = count / cuts
             if (count++ >= cuts) {
-                me.state = to
+                me.display = to
                 clearInterval(me._xhandle)
                 delete me._transition
             }
@@ -151,12 +140,12 @@ class CyclicEncoderDisplay {
     }
 
     updateDisplay() {
-        let displayState = this.state
+        let displayState = this.display
         let me = this
         let size = this.size
         let value = this.jsds.get('value')
         let encoding = this.jsds.get('encoding') || this.encoder.encode(value)
-        let maxRange = this.encoder.inputDomain[1]
+        let maxRange = Math.floor(this.encoder.inputDomain[1])
         this.$valueDisplay.html(value + ' / ' + maxRange)
         let half = this.size / 2
         this.$valueDisplay
@@ -195,7 +184,7 @@ class CyclicEncoderDisplay {
 
     _updateCircles(encoding) {
         let buckets = this.jsds.get('n'),
-            displayState = this.state,
+            displayState = this.display,
             size = this.size,
             radius = this.radius,
             $svg = this.$svg
@@ -208,6 +197,7 @@ class CyclicEncoderDisplay {
         let data = encoding.map((bit, i) => {
             let theta = i * bucketSpread + Math.PI
             let out = {bit: bit}
+            let ratioToTop = size / 20
             if (displayState === 'circle') {
                 out.cx = center.x + radius * Math.sin(theta)
                 out.cy = center.y + radius * Math.cos(theta)
@@ -217,12 +207,12 @@ class CyclicEncoderDisplay {
                     center.x + radius * Math.sin(theta),
                 ])(this._transition)
                 out.cy = d3.scaleLinear().domain([0, 1]).range([
-                    size / 10,
+                    ratioToTop,
                     center.y + radius * Math.cos(theta),
                 ])(this._transition)
             } else if (displayState === 'line') {
                 out.cx = linearScale(i)
-                out.cy = size / 10
+                out.cy = ratioToTop
             } else if (displayState === 'circle-to-line') {
                 out.cx = d3.scaleLinear().domain([0, 1]).range([
                     center.x + radius * Math.sin(theta),
@@ -230,7 +220,7 @@ class CyclicEncoderDisplay {
                 ])(this._transition)
                 out.cy = d3.scaleLinear().domain([0, 1]).range([
                     center.y + radius * Math.cos(theta),
-                    size / 10,
+                    ratioToTop,
                 ])(this._transition)
             } else {
                 throw new Error('Unknown display format: ' + displayState)

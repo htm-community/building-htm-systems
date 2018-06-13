@@ -6,7 +6,7 @@
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://d3js.org/d3.v5.js"></script>
-    <script src="../../../../docs/bhtms-encoding-numbers-0.2.11.js"></script>
+    <script src="../../../../docs/bhtms-encoding-numbers-0.2.12.js"></script>
 
     <style>
         body {
@@ -16,7 +16,6 @@
             width: 560px;
             background-color: white;
             margin-bottom: 100px;
-            /*border: solid 1px darkorange;*/
         }
         svg {
             /*border: solid 1px orange;*/
@@ -168,9 +167,10 @@
         $(function() {
             BHTMS.cyclicEncoder("cyclicEncoder", {
                 resolution: [0.1, 1.0, 5.0, 0.1],
-                w: [1, 18, 50, 1],
-                n: [60, 100, 200, 1],
+                w: [1, 6, 14, 1],
+                n: [15, 30, 50, 1],
                 bounded: true,
+                display: ['circle', 'line', 'circle'],
             })
         });
     </script>
