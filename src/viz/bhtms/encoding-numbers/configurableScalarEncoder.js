@@ -21,18 +21,26 @@ function renderSimpleNumberEncoder(elementId, config) {
             let value = cfg[propName]
             let args = [uiValues, propName]
             if (Array.isArray(value)) {
-                let min = value[0],
-                    start = value[1],
-                    max = value[2]
-                args.push(min)
-                args.push(max)
-                uiValues[propName] = start
-                gui.add.apply(gui, args).onChange(value => {
+                let step
+                if (typeof(value[0]) === 'number') {
+                    let min = value[0],
+                        start = value[1],
+                        max = value[2]
+                    step = value[3]
+                    args.push(min)
+                    args.push(max)
+                    uiValues[propName] = start
+                } else if (typeof(value[0]) === 'string') {
+                    args.push(value)
+                    uiValues[propName] = value[0]
+                }
+                let item = gui.add.apply(gui, args).onChange(value => {
                     uiValues[propName] = value
-                    jsds.set(propName, value)
-                    jsds.set('param-update', new Date())
                     onChange()
                 })
+                if (step) {
+                    item.step(step)
+                }
             } else {
                 uiValues[propName] = value
             }
@@ -46,7 +54,7 @@ function renderSimpleNumberEncoder(elementId, config) {
             $datGui = $jqEl.find('.dat-gui')
 
         let width = 560,
-            height = 180
+            height = 140
 
         let jsdsHandles = []
 
@@ -95,7 +103,7 @@ function renderSimpleNumberEncoder(elementId, config) {
         }
 
         function updateOutputBits(encoding, maxWidth) {
-            let topMargin = 120
+            let topMargin = 80
             let padding = 30
             let bits = encoding.length
             let width = maxWidth - (padding * 2)

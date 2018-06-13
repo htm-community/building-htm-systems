@@ -15,7 +15,7 @@ function renderSimpleNumberEncoder(elementId, encoderParams) {
         let jsds = JSDS.create('simpleScalarEncoder-' + elementId)
 
         let width = 560,
-            height = 180
+            height = 140
 
         let jsdsHandles = []
 
@@ -64,7 +64,7 @@ function renderSimpleNumberEncoder(elementId, encoderParams) {
         }
 
         function updateOutputBits(encoding, maxWidth) {
-            let topMargin = 120
+            let topMargin = 80
             let padding = 30
             let bits = encoding.length
             let width = maxWidth - (padding * 2)

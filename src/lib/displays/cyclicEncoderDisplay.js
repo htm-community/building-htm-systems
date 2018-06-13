@@ -18,19 +18,21 @@ let lineStateHeight = 50
 class CyclicEncoderDisplay {
 
     constructor(id, opts) {
-        if (typeof id === 'string')
+        if (typeof id === 'string') {
             this.$svg = d3.select('#' + id)
-        else
+        } else {
             this.$svg = id
+            id = '?'
+        }
 
         this.id = id
         this.size = opts.size
         this.color = opts.color
 
         try {
-            this.jsds = JSDS.create('cyclic-category-encoder-' + this.id)
+            this.jsds = JSDS.create('CyclicEncoderDisplay-' + this.id)
         } catch (e) {
-            this.jsds = JSDS.get('cyclic-category-encoder-' + this.id)
+            this.jsds = JSDS.get('CyclicEncoderDisplay-' + this.id)
             if (! this.jsds) throw new Error('Cannot get JSDS!')
         }
         this.jsds.set('resolution', opts.resolution)
