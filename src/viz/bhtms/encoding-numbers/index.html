@@ -194,27 +194,26 @@ par            })
                 w: [1, 6, 14, 1],
                 n: 30,
                 // n: [15, 30, 50, 1],
-                bounded: true,
                 display: ['line', 'circle'],
             })
             $('#button3').click(() => {
-                let jsds = BHTMS.JSDS.get('CyclicEncoderDisplay-?')
+let jsds = BHTMS.JSDS.get('CyclicEncoderDisplay-?')
 
-                let value = 20,
-                    targetValue = 30,
-                    valueDiff = targetValue - value,
-                    cuts = 16,
-                    cut = 0,
-                    speed = 100
+let value = 20,
+    targetValue = 30,
+    valueDiff = targetValue - value,
+    cuts = 16,
+    cut = 0,
+    speed = 100
 
-                let handle = setInterval(() => {
-                    let ratio = cut / cuts,
-                        currentValue = value + (valueDiff * ratio)
-                    jsds.set('value', currentValue)
-                    if (cut++ >= cuts) {
-                        clearInterval(handle)
-                    }
-                }, speed)
+let handle = setInterval(() => {
+    let ratio = cut / cuts,
+        currentValue = value + (valueDiff * ratio)
+    jsds.set('value', currentValue)
+    if (cut++ >= cuts) {
+        clearInterval(handle)
+    }
+}, speed)
             })
         });
     </script>
