@@ -1,42 +1,17 @@
-<svg id="value-line">
+<svg class="value-line">
     <g class="value">
         <text></text>
         <rect></rect>
     </g>
 </svg>
-
-<svg id="lone">
-
+<svg class="bits">
     <text class="value-display"></text>
-
     <text class="name-label">
         <tspan dx="0.5em">cyclic</tspan>
         <tspan dx="-3.25em" dy="1em">encoding</tspan>
     </text>
-
     <text class="range-label">w/n</text>
     <text class="output-display"></text>
-
     <g class="bits"></g>
-
 </svg>
-
-<div style="width:300px">
-    <div style="float:right">
-        <button class="switch">switch</button>
-        <br/>
-        <button class="discrete">discrete</button>
-        <br/>
-        <button class="continuous">continuous</button>
-    </div>
-    <div>
-        <input type="range" min="2" max="100" value="7" id="inputRangeSlider" />
-        input range: <span class="inputRangeDisplay"></span>
-        <br/>
-        <input type="range" min="10" max="100" step="1" value="20" id="nSlider" />
-        n: <span class="nDisplay"></span>
-        <br/>
-        <input type="range" min="1" max="21" step="1" value="9" id="wSlider" />
-        w: <span class="wDisplay"></span>
-    </div>
-</div>
+<div class="dat-gui"></div>

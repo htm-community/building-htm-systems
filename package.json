@@ -1,6 +1,6 @@
 {
   "name": "building-htm-systems",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "description": "Supporting code for Building HTM Systems document.",
   "scripts": {
     "start": "./node_modules/.bin/webpack",
@@ -16,7 +16,7 @@
     "dat.gui": "^0.7.2",
     "javascript-data-store": "^1.0.3",
     "moment": "^2.22.2",
-    "simplehtm": "0.0.11",
+    "simplehtm": "0.0.13",
     "webpack": "^4.5.0"
   },
   "devDependencies": {

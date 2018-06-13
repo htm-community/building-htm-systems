@@ -1,51 +1,69 @@
 let utils = require('../../../lib/utils')
 let html = require('./cyclicEncoder.tmpl.html')
+let dat = require('dat.gui')
 let CyclicEncoderDisplay = require('CyclicEncoderDisplay')
 
-module.exports = (elementId) => {
+module.exports = (elementId, config) => {
+
+    const onColor = 'skyblue'
+    let uiValues = {}
+
+    function setupDatGui($el, cfg, onChange) {
+        let gui = new dat.GUI({
+            autoPlace: false,
+        })
+        Object.keys(cfg).forEach(propName => {
+            let value = cfg[propName]
+            let args = [uiValues, propName]
+            if (Array.isArray(value)) {
+                let min = value[0],
+                    start = value[1],
+                    max = value[2],
+                    step = value[3]
+                args.push(min)
+                args.push(max)
+                uiValues[propName] = start
+                let item = gui.add.apply(gui, args).onChange(value => {
+                    uiValues[propName] = value
+                    onChange()
+                })
+                if (step) {
+                    item.step(step)
+                }
+            } else {
+                uiValues[propName] = value
+            }
+        })
+        $el.append(gui.domElement)
+    }
 
     utils.loadHtml(html.default, elementId, () => {
         let $d3El = d3.select('#' + elementId),
-            $el = $('#' + elementId)
+            $jqEl = $('#' + elementId),
+            $datGui = $jqEl.find('.dat-gui'),
+            $lineSvg = $d3El.select('.value-line'),
+            $bitsSvg = $d3El.select('.bits')
 
         let width = 560,
-            height = 60,
-            minValue = 0,
-            maxValue = 100
-
-        let params = {
-            resolution: 1,
-            w: 9,
-            n: 20,
-            size: 560,
-            color: '#444',
-            state: 'line',
-        }
-
-        let encoderDisplay = new CyclicEncoderDisplay('lone', params)
-        encoderDisplay.render()
-        encoderDisplay.loop()
-
-        let jsds = encoderDisplay.jsds
-
-        let $valueSvg = $d3El.select('#value-line')
-            .attr('width', width)
-            .attr('height', height)
-
-        let $inputRangeSlider = $el.find('#inputRangeSlider')
-        let $inputRangeDisplay = $el.find('.inputRangeDisplay')
-        let $nSlider = $el.find('#nSlider')
-        let $nDisplay = $el.find('.nDisplay')
-        let $wSlider = $el.find('#wSlider')
-        let $wDisplay = $el.find('.wDisplay')
-        let $discreteButton = $el.find('button.discrete')
-        let $continuousButton = $el.find('button.continuous')
-        let $switchButton = $el.find('button.switch')
+            valueLineHeight = 180
 
         let valueScaleTopMargin = 40,
             valueScaleSideMargins = 10
 
-        function setUpValueAxis($svg, min, max, maxWidth) {
+        $lineSvg
+            .attr('width', width)
+            .attr('height', valueLineHeight)
+
+        $bitsSvg
+            .attr('width', width)
+
+        let valueToX
+        let xToValue
+
+        let encoderDisplay
+
+        function setUpValueAxis(min, max, maxWidth) {
+            // console.log('Setting up value axis from %s to %s', min, max)
             let width = maxWidth - valueScaleSideMargins * 2
             let x = valueScaleSideMargins, y = valueScaleTopMargin
             valueToX = d3.scaleLinear()
@@ -55,85 +73,108 @@ module.exports = (elementId) => {
                 .domain([0, width])
                 .range([min, max])
             let xAxis = d3.axisBottom(valueToX)
-            $svg.append('g')
-                .attr('transform', 'translate(' + x + ',' + y + ')')
-                .call(xAxis)
-            $svg.on('mouseenter', () => {
-                encoderDisplay.stop()
-            })
-            $svg.on('mouseleave', () => {
-                encoderDisplay.loop()
-            })
-            $svg.on('mousemove', () => {
-                let mouse = d3.mouse($svg.node())
+            let treatAxis = (axis) => {
+                axis.attr('class', 'axis')
+                    .attr('transform', 'translate(' + x + ',' + y + ')')
+                    .call(xAxis)
+            }
+            let $axis = $lineSvg.selectAll('g.axis').data([null])
+            treatAxis($axis)
+            let $newAxis = $axis.enter().append('g')
+            treatAxis($newAxis)
+            $axis.exit().remove()
+            $lineSvg.on('mousemove', () => {
+                let mouse = d3.mouse($lineSvg.node())
                 if (mouse[1] > 80) return
                 let mouseX = mouse[0] - valueScaleSideMargins
                 mouseX = Math.min(maxWidth - (valueScaleSideMargins * 2), mouseX)
                 mouseX = Math.max(0, mouseX)
                 value = utils.precisionRound(xToValue(mouseX), 1)
-                jsds.set('value', value)
+                encoderDisplay.jsds.set('value', value)
             })
         }
 
-        function update() {
-            let values = parseInt($inputRangeSlider.val())
-            let buckets = parseInt($nSlider.val())
-            let range = parseInt($wSlider.val())
-            encoderDisplay.jsds.set('values', values)
-            encoderDisplay.jsds.set('buckets', buckets)
-            encoderDisplay.jsds.set('range', range)
-            $inputRangeDisplay.html(values)
-            $nDisplay.html(buckets)
-            $wDisplay.html(range)
+        function updateOutputBits(encoding, maxWidth) {
+            encoderDisplay.updateDisplay()
         }
 
-        function slideParams(params) {
-            let keys = Object.keys(params)
-            keys.forEach(function(key) {
-                encoderDisplay.jsds.set(key, params[key])
-            })
-            $inputRangeSlider.val(params.values)
-            $inputRangeDisplay.html(params.values)
-            $nSlider.val(params.buckets)
-            $nDisplay.html(params.buckets)
-            $wSlider.val(params.range)
-            $wDisplay.html(params.range)
+        function updateValue(value) {
+            let xOffset = valueScaleSideMargins,
+                yOffset = valueScaleTopMargin,
+                markerWidth = 1,
+                markerHeight = 40
+
+            let x = valueToX(value) - (markerWidth / 2)
+            let y = 0 - (markerHeight / 2) - 6
+
+            $lineSvg.select('g.value text')
+                .attr('x', x - 6)
+                .attr('y', y)
+                .attr('font-family', 'sans-serif')
+                .attr('font-size', '10pt')
+                .text(value)
+            let spacing = 7
+            $lineSvg.select('g.value rect')
+                .attr('stroke', 'red')
+                .attr('stroke-width', 1.5)
+                .attr('fill', 'none')
+                .attr('width', markerWidth)
+                .attr('height', markerHeight)
+                .attr('x', x)
+                .attr('y', y + spacing)
+
+            $lineSvg.select('g.value')
+                .attr('transform', 'translate(' + xOffset + ',' + yOffset + ')')
         }
 
+        function updateDisplays(encoding, value) {
+            updateOutputBits(encoding, width)
+            if (value) updateValue(value)
+        }
 
-        // Input slider handling
-        $inputRangeSlider.on('input', update)
-        $nSlider.on('input', update)
-        $wSlider.on('input', update)
-
-        // Input Button handling
-        $discreteButton.on('click', () => {
-            slideParams({
-                value: 0,
-                values: 7,
-                buckets: 21,
-                range: 3,
+        function createEncoder() {
+            encoderDisplay = new CyclicEncoderDisplay($bitsSvg, {
+                size: width,
+                color: onColor,
+                w: uiValues.w,
+                n: uiValues.n,
+                resolution: uiValues.resolution,
             })
-        })
-        $continuousButton.on('click', () => {
-            slideParams({
-                value: 0,
-                values: 68,
-                buckets: 23,
-                range: 7,
-            })
-        })
-        $switchButton.on('click', () => {
-            let from = encoderDisplay.state
-            let to = 'line'
-            if (from === 'line') {
-                to = 'circle'
-            }
-            encoderDisplay.transition(from, to)
+        }
+
+        function render() {
+            let value = encoderDisplay.jsds.get('value')
+            let encoding = encoderDisplay.encoder.encode(value)
+            setUpValueAxis(encoderDisplay.encoder.min, encoderDisplay.encoder.max, width)
+            updateDisplays(encoding, value)
+        }
+
+        // Start Program
+        setupDatGui($datGui, config, () => {
+            createEncoder()
+            encoderDisplay.render()
+            render()
         })
 
-        setUpValueAxis($valueSvg, minValue, maxValue, width)
-        update()
+        createEncoder()
+        encoderDisplay.render()
+        render()
+
+        // When a new value is set, update value bar
+        encoderDisplay.jsds.after('set', 'value', (value) => {
+            updateValue(value)
+            let encoding = encoderDisplay.encoder.encode(value)
+            encoderDisplay.jsds.set('encoding', encoding)
+        })
+        // When an encoding is set, update bits
+        encoderDisplay.jsds.after('set', 'encoding', (encoding) => {
+            updateOutputBits(encoding, width)
+        })
+
+        encoderDisplay.jsds.set(
+            'value',
+            (encoderDisplay.encoder.max - encoderDisplay.encoder.min) / 2
+        )
 
 
     })

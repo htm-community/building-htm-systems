@@ -18,13 +18,21 @@ let lineStateHeight = 80
 class CyclicEncoderDisplay {
 
     constructor(id, opts) {
-        this.$svg = d3.select('#' + id)
+        if (typeof id === 'string')
+            this.$svg = d3.select('#' + id)
+        else
+            this.$svg = id
 
         this.id = id
         this.size = opts.size
         this.color = opts.color
 
-        this.jsds = JSDS.create('cyclic-category-encoder-' + this.id)
+        try {
+            this.jsds = JSDS.create('cyclic-category-encoder-' + this.id)
+        } catch (e) {
+            this.jsds = JSDS.get('cyclic-category-encoder-' + this.id)
+            if (! this.jsds) throw new Error('Cannot get JSDS!')
+        }
         this.jsds.set('resolution', opts.resolution)
         this.jsds.set('n', opts.n)
         this.jsds.set('w', opts.w)
@@ -32,6 +40,11 @@ class CyclicEncoderDisplay {
         // State of display
         this.state = opts.state || 'circle'
         // this.state = 'line'
+        this.encoder = new CyclicEncoder({
+            resolution: opts.resolution,
+            n: opts.n,
+            w: opts.w,
+        })
     }
 
     get radius() {
@@ -39,17 +52,12 @@ class CyclicEncoderDisplay {
     }
 
     render() {
-        let jsds = this.jsds
-        let n = jsds.get('n'),
-            w = jsds.get('w')
-        this.encoder = new CyclicEncoder({
-            resolution: 1,
-            n: n,
-            w: w,
-        })
-        let $svg = this.$svg
-        let size = this.size
-        let half = size / 2
+        let jsds = this.jsds,
+            n = jsds.get('n'),
+            w = jsds.get('w'),
+            $svg = this.$svg,
+            size = this.size,
+            half = size / 2;
 
         // Some aesthetic stuff. The order is important below because of the radius
         this.largeCircleRatio = 3/4
@@ -100,8 +108,6 @@ class CyclicEncoderDisplay {
         this.$rangeLabel.attr('font-size', this.smallFont)
             .attr('x', half - (this.$rangeLabel.get(0).getBBox().width / 2))
             .attr('y', rangeLabelY + (this.$rangeLabel.get(0).getBBox().height - 2))
-
-        this._selfListen()
     }
 
     get smallCircleRadius() {
@@ -127,32 +133,6 @@ class CyclicEncoderDisplay {
             throw new Error('Unknown display format: ' + displayState)
         }
         return out
-    }
-
-    _selfListen() {
-        let me = this,
-            jsds = this.jsds,
-            encoder = this.encoder
-        if (! this._handles) {
-            this._handles = []
-            function reRender() {
-                // If the value is out of range, we gotta push it back into range.
-                let value = jsds.get('value')
-                let buckets = jsds.get('n')
-                if (value < 0) value = 0
-                if (value >= buckets) value = buckets - 1
-                me.render()
-                me.updateDisplay()
-                jsds.set('encoding', encoder.encode(value))
-            }
-            jsds.after('set', 'value', () => {
-                let value = jsds.get('value')
-                jsds.set('encoding', encoder.encode(value))
-                me.updateDisplay()
-            })
-            this._handles.push(jsds.after('set', 'w', reRender))
-            this._handles.push(jsds.after('set', 'n', reRender))
-        }
     }
 
     transition(from, to) {
