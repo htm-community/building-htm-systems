@@ -185,18 +185,20 @@ class CyclicEncoderDisplay {
     }
 
     _updateCircles(encoding) {
-        let buckets = this.jsds.get('n'),
+        let buckets = this.encoder.n,
             displayState = this.display,
             size = this.size,
             radius = this.radius,
-            $svg = this.$svg
-        let bucketSpread = (2 * Math.PI) / buckets
-        let center = {x: size / 2, y: size / 2}
+            $svg = this.$svg,
+            bucketSpread = (2 * Math.PI) / buckets,
+            center = {x: size / 2, y: size / 2}
+
         let linearScale = d3.scaleLinear()
             .domain([0, encoding.length])
             .range([this.smallCircleRadius, this.smallCircleRadius + size])
 
         let data = encoding.map((bit, i) => {
+            // Adding pi starts it at the top of the circle (180 into it)
             let theta = i * bucketSpread + Math.PI
             let out = {bit: bit}
             let ratioToTop = size / 20
