@@ -111,15 +111,15 @@ module.exports = (elementId, blueValue, yellowValue, encoderCfg) => {
 
             leftLineData.push({x: cx, y: cy})
             rightLineData.push({x: cx, y: cy})
-            let nearX = Math.max(outputRangeScale(leftValue), uiRange[0]),
-                farX = Math.min(outputRangeScale(rightValue), uiRange[1])
+            let leftX = Math.max(outputRangeScale(leftValue), uiRange[0]),
+                rightX = Math.min(outputRangeScale(rightValue), uiRange[1])
             // Intermediary points for curving
             leftLineData.push({
                 x: cx - 10,
                 y: cy - 10,
             })
             leftLineData.push({
-                x: nearX,
+                x: leftX,
                 y: valueScaleTopMargin + 10
             })
             rightLineData.push({
@@ -127,17 +127,17 @@ module.exports = (elementId, blueValue, yellowValue, encoderCfg) => {
                 y: cy - 10,
             })
             rightLineData.push({
-                x: farX,
+                x: rightX,
                 y: valueScaleTopMargin + 10
             })
 
             // Point on value line
             leftLineData.push({
-                x: nearX,
+                x: leftX,
                 y: valueScaleTopMargin
             })
             rightLineData.push({
-                x: farX,
+                x: rightX,
                 y: valueScaleTopMargin
             })
             $leftPath

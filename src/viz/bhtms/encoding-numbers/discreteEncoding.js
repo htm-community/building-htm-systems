@@ -99,12 +99,12 @@ module.exports = (elementId, initialValue, encoderCfg) => {
             let rightLineData = []
             let index = Math.floor(encoder.scale(value))
             let w = encoder.w
-            let leftIndex = encoder.reverseScale(index - (w/2)),
+            let leftIndex = encoder.reverseScale(index),
                 leftValue = encoder.scale(leftIndex),
-                rightIndex = encoder.reverseScale(index + (w/2)),
+                rightIndex = encoder.reverseScale(index + w),
                 rightValue = encoder.scale(rightIndex)
 
-            let cx = gutter + index * rectWidth // center x
+            let cx = gutter + index * rectWidth + (rectWidth * w / 2) // center x
             let cy = rectHeight * 2.2 // center y
 
             $label.attr('x', cx)
@@ -113,15 +113,15 @@ module.exports = (elementId, initialValue, encoderCfg) => {
 
             leftLineData.push({x: cx, y: cy})
             rightLineData.push({x: cx, y: cy})
-            let nearX = Math.max(outputRangeScale(leftValue), uiRange[0]),
-                farX = Math.min(outputRangeScale(rightValue), uiRange[1])
+            let leftX = Math.max(outputRangeScale(leftValue), uiRange[0]),
+                rightX = Math.min(outputRangeScale(rightValue), uiRange[1])
             // Intermediary points for curving
             leftLineData.push({
                 x: cx - 10,
                 y: cy - 10,
             })
             leftLineData.push({
-                x: nearX,
+                x: leftX,
                 y: valueScaleTopMargin + 10
             })
             rightLineData.push({
@@ -129,17 +129,17 @@ module.exports = (elementId, initialValue, encoderCfg) => {
                 y: cy - 10,
             })
             rightLineData.push({
-                x: farX,
+                x: rightX,
                 y: valueScaleTopMargin + 10
             })
 
             // Point on value line
             leftLineData.push({
-                x: nearX,
+                x: leftX,
                 y: valueScaleTopMargin
             })
             rightLineData.push({
-                x: farX,
+                x: rightX,
                 y: valueScaleTopMargin
             })
             $leftPath
