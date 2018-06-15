@@ -1,16 +1,18 @@
 let utils = require('../../../lib/utils')
-let html = require('./continuousOverlap.tmpl.html')
+let html = require('./discreteEncoding.tmpl.html')
 let dat = require('dat.gui')
 let JSDS = require('JSDS')
-let BoundedScalarEncoder = require('BoundedScalarEncoder')
+let CategoryEncoder = require('CategoryEncoder')
 
-module.exports = (elementId, blueValue, yellowValue, encoderCfg) => {
+module.exports = (elementId, initialValue, encoderCfg) => {
 
     utils.loadHtml(html.default, elementId, () => {
 
-        let encoder = new BoundedScalarEncoder(encoderCfg)
+        let cfg = Object.assign({}, encoderCfg)
+        cfg.categories = d3.range(0, encoderCfg.categories-1)
+        let encoder = new CategoryEncoder(cfg)
 
-        let jsds = JSDS.create('continuousOverlap-' + elementId)
+        let jsds = JSDS.create('discreteEncoding-' + elementId)
 
         let width = 560,
             height = 100,
@@ -24,10 +26,10 @@ module.exports = (elementId, blueValue, yellowValue, encoderCfg) => {
             .attr('height', height)
 
         let uiValues = {
-            blue: blueValue,
-            yellow: yellowValue,
+            value: initialValue,
             w: encoderCfg.w,
             n: encoderCfg.n,
+            categories: encoderCfg.categories,
         }
         // Stash for later mutation outside UI.
         Object.keys(uiValues).forEach(k => {
@@ -85,10 +87,10 @@ module.exports = (elementId, blueValue, yellowValue, encoderCfg) => {
             $el.html(gui.domElement)
         }
 
-        function drawBracket(value, i) {
+        function drawBracket(value) {
             let valueScaleTopMargin = 30
 
-            let $bracketGroup = $svg.select('.val' + i),
+            let $bracketGroup = $svg.select('g.range'),
                 $leftPath = $bracketGroup.select('path.left'),
                 $rightPath = $bracketGroup.select('path.right'),
                 $label = $bracketGroup.select('text')
@@ -152,8 +154,7 @@ module.exports = (elementId, blueValue, yellowValue, encoderCfg) => {
         }
 
         function drawBrackets() {
-            drawBracket(uiValues.blue, 1)
-            drawBracket(uiValues.yellow, 2)
+            drawBracket(uiValues.value)
         }
 
         function treatRects(rects) {
@@ -166,22 +167,15 @@ module.exports = (elementId, blueValue, yellowValue, encoderCfg) => {
                 .attr('height', rectHeight)
                 .attr('stroke', 'grey')
                 .attr('fill', (d) => {
-                    let color = 'white',
-                        blue = d[0],
-                        yellow = d[1]
-                    if (blue === 1) {
-                        if (yellow === 1) color = 'green'
-                        else color = 'blue'
-                    } else if (yellow === 1) {
-                        color = 'yellow'
-                    }
-                    return color
+                    if (d === 1) return 'skyblue'
+                    return 'white'
                 })
         }
 
         function createEncoder() {
-            let newEncoderCfg = Object.assign({}, encoderCfg, uiValues)
-            encoder = new BoundedScalarEncoder(newEncoderCfg)
+            let cfg = Object.assign({}, encoderCfg, uiValues)
+            cfg.categories = d3.range(0, cfg.categories-1)
+            encoder = new CategoryEncoder(cfg)
             rectWidth = (uiRange[1] - uiRange[0]) / encoder.n
             outputRangeScale = d3.scaleLinear()
                 .domain(encoder.outputRange)
@@ -193,12 +187,7 @@ module.exports = (elementId, blueValue, yellowValue, encoderCfg) => {
             Object.keys(uiValues).forEach(k => {
                 uiValues[k] = jsds.get(k)
             })
-            let encoding1 = encoder.encode(uiValues.blue),
-                encoding2 = encoder.encode(uiValues.yellow)
-
-            let data = encoding1.map((e, i) => {
-                return [e, encoding2[i]]
-            })
+            let data = encoder.encode(uiValues.value)
 
             let rects = $svg.selectAll('rect').data(data)
             treatRects(rects)
@@ -212,10 +201,9 @@ module.exports = (elementId, blueValue, yellowValue, encoderCfg) => {
         }
 
         let guiCfg = {
-            blue: [2, blueValue, 9],
-            yellow: [2, yellowValue, 9],
-            w: [3, encoderCfg.w, 40, 1],
-            n: [45, encoderCfg.n, 120, 1],
+            value: [encoder.min, initialValue, encoder.max - 1, 1],
+            w: [3, encoderCfg.w, 10, 1],
+            categories: [3, uiValues.categories, 16, 1],
         }
         setupDatGui($datGui, guiCfg, render)
 
