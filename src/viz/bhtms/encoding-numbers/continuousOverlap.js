@@ -1,13 +1,16 @@
 let utils = require('../../../lib/utils')
 let html = require('./continuousOverlap.tmpl.html')
 let dat = require('dat.gui')
+let JSDS = require('JSDS')
 let BoundedScalarEncoder = require('BoundedScalarEncoder')
 
-module.exports = (elementId, val1, val2, encoderCfg) => {
+module.exports = (elementId, blueValue, yellowValue, encoderCfg) => {
 
     utils.loadHtml(html.default, elementId, () => {
 
         let encoder = new BoundedScalarEncoder(encoderCfg)
+
+        let jsds = JSDS.create('continuousOverlap-' + elementId)
 
         let width = 560,
             height = 100,
@@ -21,11 +24,15 @@ module.exports = (elementId, val1, val2, encoderCfg) => {
             .attr('height', height)
 
         let uiValues = {
-            blue: 4,
-            yellow: 5,
-            w: 14,
-            n: 100,
+            blue: blueValue,
+            yellow: yellowValue,
+            w: encoderCfg.w,
+            n: encoderCfg.n,
         }
+        // Stash for later mutation outside UI.
+        Object.keys(uiValues).forEach(k => {
+            jsds.set(k, uiValues[k])
+        })
 
         let $datGui = $('#' + elementId + ' .dat-gui')
 
@@ -59,9 +66,8 @@ module.exports = (elementId, val1, val2, encoderCfg) => {
                         args.push(value)
                         uiValues[propName] = value[0]
                     }
-                    let item = gui.add.apply(gui, args).onChange(value => {
-                        uiValues[propName] = value
-                        onChange()
+                    let item = gui.add.apply(gui, args).listen().onChange(value => {
+                        jsds.set(propName, value)
                     })
                     if (step) {
                         item.step(step)
@@ -69,8 +75,14 @@ module.exports = (elementId, val1, val2, encoderCfg) => {
                 } else {
                     uiValues[propName] = value
                 }
+                // When someone sets a property through JSDS, the UI needs to update.
+                jsds.after('set', propName, (value) => {
+                    uiValues[propName] = value
+                    onChange()
+                })
             })
-            $el.append(gui.domElement)
+
+            $el.html(gui.domElement)
         }
 
         function drawBracket(value, i) {
@@ -179,6 +191,9 @@ module.exports = (elementId, val1, val2, encoderCfg) => {
 
         function render() {
             createEncoder()
+            Object.keys(uiValues).forEach(k => {
+                uiValues[k] = jsds.get(k)
+            })
             let encoding1 = encoder.encode(uiValues.blue),
                 encoding2 = encoder.encode(uiValues.yellow)
 
@@ -197,13 +212,17 @@ module.exports = (elementId, val1, val2, encoderCfg) => {
             drawBrackets()
         }
 
-        let guiCfg = {}
-        guiCfg.blue = [2, 4, 9]
-        guiCfg.yellow = [2, 5, 9]
-        guiCfg.w = [3, 14, 40, 1]
-        guiCfg.n = [45, 60, 120, 1]
-
+        let guiCfg = {
+            blue: [2, blueValue, 9],
+            yellow: [2, yellowValue, 9],
+            w: [3, encoderCfg.w, 40, 1],
+            n: [45, encoderCfg.n, 120, 1],
+        }
         setupDatGui($datGui, guiCfg, render)
+
+        // // Respond to any changes to left/right values
+        // jsds.after('set', 'blue', render)
+        // jsds.after('set', 'yellow', render)
 
         render()
 
