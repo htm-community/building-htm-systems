@@ -1,9 +1,9 @@
-let ScalarEncoder = require('ScalarEncoder')
-let BoundedScalarEncoder = require('BoundedScalarEncoder')
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
 let html = require('./configurableScalarEncoder.tmpl.html')
 let dat = require('dat.gui')
+let ScalarEncoder = require('ScalarEncoder')
+let BoundedScalarEncoder = require('BoundedScalarEncoder')
 
 function renderSimpleNumberEncoder(elementId, config) {
 
