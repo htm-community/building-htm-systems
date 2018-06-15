@@ -87,164 +87,167 @@
 </head>
 <body>
 
+<!--<div class="widget">-->
+    <!--<h1>Simple Scalar Encoder</h1>-->
+    <!--<div id="simpleScalarEncoder"></div>-->
+    <!--<button id="button1">animate value to 0</button>-->
+    <!--<script>-->
+        <!--$(function() {-->
+            <!--BHTMS.simpleScalarEncoder("simpleScalarEncoder", {-->
+                <!--min: 0, max: 55,-->
+                <!--w: 18, n: 100,-->
+                <!--bounded: false-->
+            <!--})-->
+            <!--$('#button1').click(() => {-->
+<!--par            })-->
+        <!--});-->
+    <!--</script>-->
+<!--</div>-->
+
+<!--<div class="widget">-->
+    <!--<h1>Bounded Scalar Encoder</h1>-->
+    <!--<div id="boundedScalarEncoder"></div>-->
+    <!--<button id="button2">animate selected index to 99</button>-->
+    <!--<script>-->
+        <!--$(function() {-->
+            <!--BHTMS.simpleScalarEncoder("boundedScalarEncoder", {-->
+                <!--min: 0, max: 55,-->
+                <!--w: 18, n: 100,-->
+                <!--bounded: true-->
+            <!--})-->
+            <!--$('#button2').click(() => {-->
+                <!--let jsds = BHTMS.JSDS.get('simpleScalarEncoder-boundedScalarEncoder')-->
+
+                <!--let index = 80,-->
+                    <!--targetIndex = 99,-->
+                    <!--indexDiff = targetIndex - index,-->
+                    <!--cuts = 16,-->
+                    <!--cut = 0,-->
+                    <!--speed = 100-->
+
+                <!--let handle = setInterval(() => {-->
+                    <!--let ratio = cut / cuts,-->
+                        <!--currentIndex = Math.round(index + (indexDiff * ratio))-->
+                    <!--jsds.set('selectedOutputBit', { state: 0, index: currentIndex })-->
+                    <!--if (cut++ >= cuts) {-->
+                        <!--clearInterval(handle)-->
+                    <!--}-->
+                <!--}, speed)-->
+            <!--})-->
+        <!--});-->
+    <!--</script>-->
+<!--</div>-->
+
+<!--<div class="widget">-->
+    <!--<h1>Scalar Encoder Output Params</h1>-->
+    <!--<div id="outputRange"></div>-->
+    <!--<script>-->
+        <!--$(function() {-->
+            <!--BHTMS.configurableScalarEncoder("outputRange", {-->
+                <!--min: 0,-->
+                <!--max: 100,-->
+                <!--w: [1, 18, 50, 1],-->
+                <!--n: [50, 100, 200, 1],-->
+                <!--bounded: true,-->
+            <!--})-->
+        <!--});-->
+    <!--</script>-->
+<!--</div>-->
+
+<!--<div class="widget">-->
+    <!--<h1>Scalar Encoder by min/max</h1>-->
+    <!--<div id="byMinMaxScalarEncoder"></div>-->
+    <!--<script>-->
+        <!--$(function() {-->
+            <!--BHTMS.configurableScalarEncoder("byMinMaxScalarEncoder", {-->
+                <!--min: [-100, 0, 100],-->
+                <!--max: [101, 500, 1500],-->
+                <!--w: 18, n: 100,-->
+                <!--bounded: true,-->
+            <!--})-->
+        <!--});-->
+    <!--</script>-->
+<!--</div>-->
+
+<!--<div class="widget">-->
+    <!--<h1>Scalar Encoder by bit resolution</h1>-->
+    <!--<div id="byResolutionScalarEncoder"></div>-->
+    <!--<script>-->
+        <!--$(function() {-->
+            <!--BHTMS.configurableScalarEncoder("byResolutionScalarEncoder", {-->
+                <!--resolution: [0.1, 1.0, 5.0],-->
+                <!--w: 10, n: 100,-->
+                <!--bounded: true,-->
+            <!--})-->
+        <!--});-->
+    <!--</script>-->
+<!--</div>-->
+
+<!--<div class="widget">-->
+    <!--<h1>Cyclic Encoder</h1>-->
+    <!--<div id="cyclicEncoder"></div>-->
+    <!--<button id="button3">animate value to max</button>-->
+    <!--<script>-->
+        <!--$(function() {-->
+            <!--BHTMS.cyclicEncoder("cyclicEncoder", {-->
+                <!--resolution: 1,-->
+                <!--w: [1, 6, 14, 1],-->
+                <!--n: 30,-->
+                <!--// n: [15, 30, 50, 1],-->
+                <!--display: ['line', 'circle'],-->
+            <!--})-->
+            <!--$('#button3').click(() => {-->
+<!--let jsds = BHTMS.JSDS.get('CyclicEncoderDisplay-?')-->
+
+<!--let value = 20,-->
+    <!--targetValue = 30,-->
+    <!--valueDiff = targetValue - value,-->
+    <!--cuts = 16,-->
+    <!--cut = 0,-->
+    <!--speed = 100-->
+
+<!--let handle = setInterval(() => {-->
+    <!--let ratio = cut / cuts,-->
+        <!--currentValue = value + (valueDiff * ratio)-->
+    <!--jsds.set('value', currentValue)-->
+    <!--if (cut++ >= cuts) {-->
+        <!--clearInterval(handle)-->
+    <!--}-->
+<!--}, speed)-->
+            <!--})-->
+        <!--});-->
+    <!--</script>-->
+<!--</div>-->
+
 <div class="widget">
-    <h1>Simple Scalar Encoder</h1>
-    <div id="simpleScalarEncoder"></div>
-    <button id="button1">animate value to 0</button>
+    <h1>Continous Overlap 4 & 5</h1>
+    <div id="continuousOverlap1"></div>
     <script>
         $(function() {
-            BHTMS.simpleScalarEncoder("simpleScalarEncoder", {
-                min: 0, max: 55,
-                w: 18, n: 100,
-                bounded: false
+            BHTMS.continousOverlap("continuousOverlap1", 4, 5, {
+                min: 1, max: 10,
+                w: 14,
+                n: 50,
             })
-            $('#button1').click(() => {
-par            })
         });
     </script>
 </div>
 
 <div class="widget">
-    <h1>Bounded Scalar Encoder</h1>
-    <div id="boundedScalarEncoder"></div>
-    <button id="button2">animate selected index to 99</button>
+    <h1>Continous Overlap 3 & 7</h1>
+    <div id="continuousOverlap2"></div>
     <script>
         $(function() {
-            BHTMS.simpleScalarEncoder("boundedScalarEncoder", {
-                min: 0, max: 55,
-                w: 18, n: 100,
-                bounded: true
-            })
-            $('#button2').click(() => {
-                let jsds = BHTMS.JSDS.get('simpleScalarEncoder-boundedScalarEncoder')
-
-                let index = 80,
-                    targetIndex = 99,
-                    indexDiff = targetIndex - index,
-                    cuts = 16,
-                    cut = 0,
-                    speed = 100
-
-                let handle = setInterval(() => {
-                    let ratio = cut / cuts,
-                        currentIndex = Math.round(index + (indexDiff * ratio))
-                    jsds.set('selectedOutputBit', { state: 0, index: currentIndex })
-                    if (cut++ >= cuts) {
-                        clearInterval(handle)
-                    }
-                }, speed)
+            BHTMS.continousOverlap("continuousOverlap2", 3, 7, {
+                min: 1, max: 10,
+                w: 14,
+                n: 50,
             })
         });
     </script>
 </div>
 
-<div class="widget">
-    <h1>Scalar Encoder Output Params</h1>
-    <div id="outputRange"></div>
-    <script>
-        $(function() {
-            BHTMS.configurableScalarEncoder("outputRange", {
-                min: 0,
-                max: 100,
-                w: [1, 18, 50, 1],
-                n: [50, 100, 200, 1],
-                bounded: true,
-            })
-        });
-    </script>
-</div>
 
-<div class="widget">
-    <h1>Scalar Encoder by min/max</h1>
-    <div id="byMinMaxScalarEncoder"></div>
-    <script>
-        $(function() {
-            BHTMS.configurableScalarEncoder("byMinMaxScalarEncoder", {
-                min: [-100, 0, 100],
-                max: [101, 500, 1500],
-                w: 18, n: 100,
-                bounded: true,
-            })
-        });
-    </script>
-</div>
-
-<div class="widget">
-    <h1>Scalar Encoder by bit resolution</h1>
-    <div id="byResolutionScalarEncoder"></div>
-    <script>
-        $(function() {
-            BHTMS.configurableScalarEncoder("byResolutionScalarEncoder", {
-                resolution: [0.1, 1.0, 5.0],
-                w: 10, n: 100,
-                bounded: true,
-            })
-        });
-    </script>
-</div>
-
-<div class="widget">
-    <h1>Cyclic Encoder</h1>
-    <div id="cyclicEncoder"></div>
-    <button id="button3">animate value to max</button>
-    <script>
-        $(function() {
-            BHTMS.cyclicEncoder("cyclicEncoder", {
-                resolution: 1,
-                w: [1, 6, 14, 1],
-                n: 30,
-                // n: [15, 30, 50, 1],
-                display: ['line', 'circle'],
-            })
-            $('#button3').click(() => {
-let jsds = BHTMS.JSDS.get('CyclicEncoderDisplay-?')
-
-let value = 20,
-    targetValue = 30,
-    valueDiff = targetValue - value,
-    cuts = 16,
-    cut = 0,
-    speed = 100
-
-let handle = setInterval(() => {
-    let ratio = cut / cuts,
-        currentValue = value + (valueDiff * ratio)
-    jsds.set('value', currentValue)
-    if (cut++ >= cuts) {
-        clearInterval(handle)
-    }
-}, speed)
-            })
-        });
-    </script>
-</div>
-
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
 
 </body>
 </html>
