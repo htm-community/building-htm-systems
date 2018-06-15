@@ -99,7 +99,24 @@
                 bounded: false
             })
             $('#button1').click(() => {
-par            })
+                let jsds = BHTMS.JSDS.get('simpleScalarEncoder-simpleScalarEncoder')
+
+                let value = jsds.get('value'),
+                    target = 0,
+                    diff = target - value,
+                    cuts = 16,
+                    cut = 0,
+                    speed = 100
+
+                let handle = setInterval(() => {
+                    let ratio = cut / cuts,
+                        current = Math.round(value + (diff * ratio))
+                    jsds.set('value', current)
+                    if (cut++ >= cuts) {
+                        clearInterval(handle)
+                    }
+                }, speed)
+            })
         });
     </script>
 </div>
@@ -118,17 +135,17 @@ par            })
             $('#button2').click(() => {
                 let jsds = BHTMS.JSDS.get('simpleScalarEncoder-boundedScalarEncoder')
 
-                let index = 80,
-                    targetIndex = 99,
-                    indexDiff = targetIndex - index,
+                let value = 80,
+                    target = 99,
+                    diff = target - value,
                     cuts = 16,
                     cut = 0,
                     speed = 100
 
                 let handle = setInterval(() => {
                     let ratio = cut / cuts,
-                        currentIndex = Math.round(index + (indexDiff * ratio))
-                    jsds.set('selectedOutputBit', { state: 0, index: currentIndex })
+                        current = Math.round(value + (diff * ratio))
+                    jsds.set('value', { state: 0, index: current })
                     if (cut++ >= cuts) {
                         clearInterval(handle)
                     }
