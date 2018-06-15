@@ -1,6 +1,6 @@
 window.BHTMS = {
     cyclicEncoders: require('./cyclicEncoders'),
-    dayOfWeekEncoder: require('./dayOfWeekEncoder'),
+    nameCategoryEncoder: require('./nameCategoryEncoder'),
     weekendEncoder: require('./weekendEncoder'),
     JSDS: require('JSDS'),
 }

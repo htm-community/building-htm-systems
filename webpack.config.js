@@ -77,6 +77,7 @@ modules.push({
             CyclicEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/cyclicScalar"),
             CategoryEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/category"),
             CyclicEncoderDisplay: path.join(__dirname, "src/lib/displays/cyclicEncoderDisplay"),
+            CategoryEncoderDisplay: path.join(__dirname, "src/lib/displays/categoryEncoderDisplay"),
         }
     },
     output: {
