@@ -72,6 +72,7 @@ function renderSimpleNumberEncoder(elementId, encoderParams) {
                 .domain([0, bits])
                 .range([0, width])
             let cellWidth = Math.floor(width / bits)
+            let cellHeight = 30
             let $outputGroup = $svg.select('g.encoding')
             let $hoverGroup = $svg.select('g.range')
 
@@ -89,7 +90,7 @@ function renderSimpleNumberEncoder(elementId, encoderParams) {
                     })
                     .attr('y', padding)
                     .attr('width', cellWidth)
-                    .attr('height', cellWidth * 4)
+                    .attr('height', cellHeight)
             }
 
             // Update
