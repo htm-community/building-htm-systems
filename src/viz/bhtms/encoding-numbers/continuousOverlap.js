@@ -23,6 +23,8 @@ module.exports = (elementId, val1, val2, encoderCfg) => {
         let uiValues = {
             blue: 4,
             yellow: 5,
+            w: 14,
+            n: 100,
         }
 
         let $datGui = $('#' + elementId + ' .dat-gui')
@@ -166,7 +168,17 @@ module.exports = (elementId, val1, val2, encoderCfg) => {
                 })
         }
 
+        function createEncoder() {
+            let newEncoderCfg = Object.assign({}, encoderCfg, uiValues)
+            encoder = new BoundedScalarEncoder(newEncoderCfg)
+            rectWidth = (uiRange[1] - uiRange[0]) / encoder.n
+            outputRangeScale = d3.scaleLinear()
+                .domain(encoder.outputRange)
+                .range(uiRange)
+        }
+
         function render() {
+            createEncoder()
             let encoding1 = encoder.encode(uiValues.blue),
                 encoding2 = encoder.encode(uiValues.yellow)
 
@@ -188,6 +200,8 @@ module.exports = (elementId, val1, val2, encoderCfg) => {
         let guiCfg = {}
         guiCfg.blue = [2, 4, 9]
         guiCfg.yellow = [2, 5, 9]
+        guiCfg.w = [3, 14, 40, 1]
+        guiCfg.n = [45, 60, 120, 1]
 
         setupDatGui($datGui, guiCfg, render)
 
