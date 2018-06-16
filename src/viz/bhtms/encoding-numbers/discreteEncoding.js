@@ -9,7 +9,7 @@ module.exports = (elementId, initialValue, encoderCfg) => {
     utils.loadHtml(html.default, elementId, () => {
 
         let cfg = Object.assign({}, encoderCfg)
-        cfg.categories = d3.range(0, encoderCfg.categories-1)
+        cfg.categories = d3.range(0, encoderCfg.categories)
         let encoder = new CategoryEncoder(cfg)
 
         let jsds = JSDS.create('discreteEncoding-' + elementId)
@@ -80,6 +80,16 @@ module.exports = (elementId, initialValue, encoderCfg) => {
                 // When someone sets a property through JSDS, the UI needs to update.
                 jsds.after('set', propName, (value) => {
                     uiValues[propName] = value
+                    // If user changed the number of categories, we need to update the
+                    // UI to allow user to update value to new max
+                    if (propName === 'categories') {
+                        // Iterate over all controllers
+                        gui.__controllers.forEach((controller, i) => {
+                            if (controller.property === 'value') {
+                                controller.max(value - 1).updateDisplay()
+                            }
+                        })
+                    }
                     onChange()
                 })
             })
@@ -174,7 +184,7 @@ module.exports = (elementId, initialValue, encoderCfg) => {
 
         function createEncoder() {
             let cfg = Object.assign({}, encoderCfg, uiValues)
-            cfg.categories = d3.range(0, cfg.categories-1)
+            cfg.categories = d3.range(0, cfg.categories)
             encoder = new CategoryEncoder(cfg)
             rectWidth = (uiRange[1] - uiRange[0]) / encoder.n
             outputRangeScale = d3.scaleLinear()
@@ -202,8 +212,8 @@ module.exports = (elementId, initialValue, encoderCfg) => {
 
         let guiCfg = {
             value: [encoder.min, initialValue, encoder.max - 1, 1],
-            w: [3, encoderCfg.w, 10, 1],
-            categories: [3, uiValues.categories, 16, 1],
+            w: [3, encoderCfg.w, 20, 1],
+            categories: [3, uiValues.categories, 30, 1],
         }
         setupDatGui($datGui, guiCfg, render)
 

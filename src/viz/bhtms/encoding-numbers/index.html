@@ -236,56 +236,56 @@
     <!--</script>-->
 <!--</div>-->
 
-<div class="widget">
-    <h1>Continuous Overlap of Scalar Values</h1>
-    <div id="continuousOverlap"></div>
-    <button id="button4">open</button>
-    <button id="button5">close</button>
-    <script>
-        $(function() {
-            BHTMS.continuousOverlap("continuousOverlap", 4, 5, {
-                min: 1, max: 10,
-                w: 14, n: 100,
-            })
-            function setValuesTo(blue, yellow) {
-                let jsds = BHTMS.JSDS.get('continuousOverlap-continuousOverlap')
-                let blueStart = jsds.get('blue'),
-                    yellowStart = jsds.get('yellow'),
-                    blueTarget = blue,
-                    yellowTarget = yellow,
-                    blueDiff = blueTarget - blueStart,
-                    yellowDiff = yellowTarget - yellowStart,
-                    cuts = 16,
-                    cut = 0,
-                    speed = 100
+<!--<div class="widget">-->
+    <!--<h1>Continuous Overlap of Scalar Values</h1>-->
+    <!--<div id="continuousOverlap"></div>-->
+    <!--<button id="button4">open</button>-->
+    <!--<button id="button5">close</button>-->
+    <!--<script>-->
+        <!--$(function() {-->
+            <!--BHTMS.continuousOverlap("continuousOverlap", 4, 5, {-->
+                <!--min: 1, max: 10,-->
+                <!--w: 14, n: 100,-->
+            <!--})-->
+            <!--function setValuesTo(blue, yellow) {-->
+                <!--let jsds = BHTMS.JSDS.get('continuousOverlap-continuousOverlap')-->
+                <!--let blueStart = jsds.get('blue'),-->
+                    <!--yellowStart = jsds.get('yellow'),-->
+                    <!--blueTarget = blue,-->
+                    <!--yellowTarget = yellow,-->
+                    <!--blueDiff = blueTarget - blueStart,-->
+                    <!--yellowDiff = yellowTarget - yellowStart,-->
+                    <!--cuts = 16,-->
+                    <!--cut = 0,-->
+                    <!--speed = 100-->
 
-                let handle = setInterval(() => {
-                    let ratio = cut / cuts,
-                        currentBlue = blueStart + blueDiff * ratio,
-                        currentYellow = yellowStart + yellowDiff * ratio
-                    jsds.set('blue', currentBlue)
-                    jsds.set('yellow', currentYellow)
-                    if (cut++ >= cuts) {
-                        clearInterval(handle)
-                    }
-                }, speed)
-            }
-            $('#button4').click(() => {
-                setValuesTo(3, 7)
-            })
-            $('#button5').click(() => {
-                setValuesTo(4, 5)
-            })
-        });
-    </script>
-</div>
+                <!--let handle = setInterval(() => {-->
+                    <!--let ratio = cut / cuts,-->
+                        <!--currentBlue = blueStart + blueDiff * ratio,-->
+                        <!--currentYellow = yellowStart + yellowDiff * ratio-->
+                    <!--jsds.set('blue', currentBlue)-->
+                    <!--jsds.set('yellow', currentYellow)-->
+                    <!--if (cut++ >= cuts) {-->
+                        <!--clearInterval(handle)-->
+                    <!--}-->
+                <!--}, speed)-->
+            <!--}-->
+            <!--$('#button4').click(() => {-->
+                <!--setValuesTo(3, 7)-->
+            <!--})-->
+            <!--$('#button5').click(() => {-->
+                <!--setValuesTo(4, 5)-->
+            <!--})-->
+        <!--});-->
+    <!--</script>-->
+<!--</div>-->
 
 <div class="widget">
     <h1>Discrete Representation of Scalar Values</h1>
     <div id="discreteEncoding"></div>
     <script>
         $(function() {
-            BHTMS.discreteEncoding("discreteEncoding", 5, {
+            BHTMS.discreteEncoding("discreteEncoding", 2, {
                 categories: 5,
                 w: 5,
             })
