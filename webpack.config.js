@@ -69,7 +69,7 @@ modules.push({
     },
     resolve: {
         alias: {
-            moment: path.join(__dirname, "node_modules/moment/src/moment"),
+            moment: path.join(__dirname, "node_modules/moment/min/moment.min"),
             JSDS: path.join(__dirname, "node_modules/javascript-data-store/src/jsds"),
             SdrUtils: path.join(__dirname, "node_modules/cell-viz/src/SdrUtils"),
             SdrDrawing: path.join(__dirname, "node_modules/cell-viz/src/SdrDrawing"),
@@ -78,6 +78,7 @@ modules.push({
             ScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/scalar"),
             CyclicEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/cyclicScalar"),
             CategoryEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/category"),
+            WeekendEncoder: path.join(__dirname, "../simplehtm/src/encoders/weekend"),
             CyclicEncoderDisplay: path.join(__dirname, "src/lib/displays/cyclicEncoderDisplay"),
             CategoryEncoderDisplay: path.join(__dirname, "src/lib/displays/categoryEncoderDisplay"),
         }
