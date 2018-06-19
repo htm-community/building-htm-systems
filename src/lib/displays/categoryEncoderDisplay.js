@@ -9,6 +9,7 @@ let colors = {
 
 // Majic stuph
 let maxCircleRadius = 40
+let minCircleRadius = 10
 
 class CategoryEncoderDisplay {
 
@@ -65,32 +66,20 @@ class CategoryEncoderDisplay {
         this.$valueDisplay = $el.find('.value-display')
 
         $svg.attr('width', size)
-
-        let center = this.center
-        let $valueDisplay = this.$valueDisplay
-        let value = this.jsds.get('value')
-        if (value) {
-            $valueDisplay.html(value)
-        }
-        let valueX = center.x - ($valueDisplay.get(0).getBBox().width / 2)
-        let valueY = center.y + ($valueDisplay.get(0).getBBox().height / 2)
-        $valueDisplay
-            .attr('x', valueX)
-            .attr('y', valueY)
-            .attr('font-size', this.bigFont)
     }
 
     get smallCircleRadius() {
         let buckets = this.encoder.n
         let circumference = 2 * Math.PI * this.radius
-        return Math.min(circumference / buckets / 2, maxCircleRadius)
+        let out = Math.min(circumference / buckets / 2, maxCircleRadius)
+        out = Math.max(out, minCircleRadius)
+        return out
     }
 
     updateDisplay() {
         let size = this.size
         let value = this.jsds.get('value')
         let encoding = this.jsds.get('encoding') || this.encoder.encode(value)
-        let center = this.center
         this._updateLabels(value)
         this._updateCircles(encoding)
         this.$svg.attr('height', size)
@@ -159,10 +148,11 @@ class CategoryEncoderDisplay {
         let valueX = center.x - ($valueDisplay.get(0).getBBox().width / 2)
         let valueY = center.y + ($valueDisplay.get(0).getBBox().height / 2)
         $valueDisplay
+            .attr('font-size', this.bigFont)
             .attr('x', valueX)
             .attr('y', valueY)
         let categories = this.encoder.categories
-        let radius = this.radius + 3*this.smallCircleRadius
+        let radius = this.radius + this.smallCircleRadius + 30
         let wedge = (2 * Math.PI) / categories.length
         let data = categories.map((category, index) => {
             // The + Math.PI rotates the labels 180 degress to match the circles above
