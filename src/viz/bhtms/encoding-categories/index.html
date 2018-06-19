@@ -30,22 +30,38 @@
 </head>
 <body>
 
-<div class="widget">
-    <h1>Weekend Encoder</h1>
-    <div id="weekendEncoder"></div>
-    <script>
-        $(function() {
-            BHTMS.weekendEncoder("weekendEncoder")
-        });
-    </script>
-</div>
+<!--<div class="widget">-->
+    <!--<h1>Weekend Encoder</h1>-->
+    <!--<div id="weekendEncoder"></div>-->
+    <!--<script>-->
+        <!--$(function() {-->
+            <!--BHTMS.weekendEncoder("weekendEncoder")-->
+        <!--});-->
+    <!--</script>-->
+<!--</div>-->
 
 <div class="widget">
     <h1>Category Encoder (Names)</h1>
-    <div id="nameCategoryEncoder"></div>
+    <div id="categoryEncoder"></div>
     <script>
         $(function() {
-            BHTMS.nameCategoryEncoder("nameCategoryEncoder")
+            BHTMS.categoryEncoder("categoryEncoder", {
+                w: 3,
+                categories: [
+                    'James',
+                    'Mary',
+                    'John',
+                    'Patricia',
+                    'Robert',
+                    'Jennifer',
+                    'Micheal',
+                    'Linda',
+                    'William',
+                    'Elizabeth',
+                    'David',
+                    'Barbara',
+                ],
+            })
         });
     </script>
 </div>

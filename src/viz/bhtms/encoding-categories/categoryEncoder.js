@@ -1,21 +1,21 @@
 let utils = require('../../../lib/utils')
-let html = require('./nameCategoryEncoder.tmpl.html')
+let html = require('./categoryEncoder.tmpl.html')
 let CategoryEncoderDisplay = require('CategoryEncoderDisplay')
 
-module.exports = (elementId) => {
+module.exports = (elementId, opts) => {
 
     utils.loadHtml(html.default, elementId, () => {
-
-        let names = ['Emma', 'Liam', 'Olivia', 'Noah', 'Ava']
+        let $svg = d3.select('#' + elementId + ' svg')
+        let names = opts.categories
 
         let params = {
-            size: 150,
+            size: 500,
             color: 'skyblue',
-            w: 10,
+            w: opts.w,
             categories: names,
         }
 
-        let encoderDisplay = new CategoryEncoderDisplay('dow', params)
+        let encoderDisplay = new CategoryEncoderDisplay($svg, params)
         encoderDisplay.render()
 
         encoderDisplay.jsds.after('set', 'encoding', () => {

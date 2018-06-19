@@ -1,6 +1,5 @@
 let CategoryEncoder = require('CategoryEncoder')
 let JSDS = require('JSDS')
-let utils = require('../utils')
 
 let colors = {
     track: '#CCC',
@@ -44,39 +43,41 @@ class CategoryEncoderDisplay {
         return (this.size / 2) * this.largeCircleRatio
     }
 
+    get center() {
+        return {x: this.size / 2, y: this.size / 2}
+    }
+
     render() {
-        let $svg = this.$svg,
-            size = this.size,
-            half = size / 2;
+        let $svg = this.$svg
+        let size = this.size
 
         // Some aesthetic stuff. The order is important below because of the radius
-        this.largeCircleRatio = 3/4
-        this.medFont = 26
+        this.largeCircleRatio = .7
         this.bigFont = 60
         this.circleStrokeWidth = 2
         if (this.size < 200) {
             this.largeCircleRatio = 8/9
-            this.medFont = 13
             this.bigFont = 28
             this.circleStrokeWidth = 1
         }
 
         let $el = $(this.$svg.node())
         this.$valueDisplay = $el.find('.value-display')
-        this.$nameLabel = $el.find('.name-label')
 
         $svg.attr('width', size)
 
-        let nameLabelY = size * .37
-
-        this.$valueDisplay.attr('font-size', this.bigFont)
-            .attr('x', half - (this.$valueDisplay.get(0).getBBox().width / 2))
-            .attr('y', half + (this.$valueDisplay.get(0).getBBox().height / 4))
-            .html(0)
-
-        this.$nameLabel.attr('font-size', this.medFont)
-            .attr('x', half - (this.$nameLabel.find('tspan').get(0).getBBox().width / 2))
-            .attr('y', nameLabelY - (this.$nameLabel.find('tspan').get(0).getBBox().height / 2))
+        let center = this.center
+        let $valueDisplay = this.$valueDisplay
+        let value = this.jsds.get('value')
+        if (value) {
+            $valueDisplay.html(value)
+        }
+        let valueX = center.x - ($valueDisplay.get(0).getBBox().width / 2)
+        let valueY = center.y + ($valueDisplay.get(0).getBBox().height / 2)
+        $valueDisplay
+            .attr('x', valueX)
+            .attr('y', valueY)
+            .attr('font-size', this.bigFont)
     }
 
     get smallCircleRadius() {
@@ -89,13 +90,10 @@ class CategoryEncoderDisplay {
         let size = this.size
         let value = this.jsds.get('value')
         let encoding = this.jsds.get('encoding') || this.encoder.encode(value)
-        this.$valueDisplay.html(value)
-        let half = this.size / 2
-        this.$valueDisplay
-            .attr('x', half - (this.$valueDisplay.get(0).getBBox().width / 2))
-            .attr('y', half + (this.$valueDisplay.get(0).getBBox().height / 4))
-        this.$svg.attr('height', size)
+        let center = this.center
+        this._updateLabels(value)
         this._updateCircles(encoding)
+        this.$svg.attr('height', size)
     }
 
     _treatCircleBits(circles) {
@@ -113,23 +111,22 @@ class CategoryEncoderDisplay {
     }
 
     _updateCircles(encoding) {
-        let buckets = this.encoder.n,
-            size = this.size,
-            radius = this.radius,
-            $svg = this.$svg,
-            bucketSpread = (2 * Math.PI) / buckets,
-            center = {x: size / 2, y: size / 2}
+        let radius = this.radius
+        let center = this.center
+        let wedge = (2 * Math.PI) / this.encoder.n
+
+        let $svg = this.$svg
+        let $group = $svg.selectAll('g.bits')
 
         let data = encoding.map((bit, i) => {
             // Adding pi starts it at the top of the circle (180 into it)
-            let theta = i * bucketSpread + Math.PI
+            let theta = i * wedge + Math.PI
             return {
                 bit: bit,
                 cx: center.x + radius * Math.sin(theta),
                 cy: center.y + radius * Math.cos(theta)
             }
         })
-        let $group = $svg.selectAll('g.bits')
 
         let circles = $group.selectAll('circle').data(data)
         this._treatCircleBits(circles)
@@ -138,6 +135,57 @@ class CategoryEncoderDisplay {
         this._treatCircleBits(newCircles)
 
         circles.exit().remove()
+    }
+
+    _treatLabels(labels) {
+        labels
+            .attr('class', 'label')
+            .attr('x', (d, i, texts) => {
+                let width = texts[i].getBBox().width
+                return d.x - width/2
+            })
+            .attr('y', (d, i, texts) => {
+                let height = texts[i].getBBox().height
+                return d.y + height/2
+            })
+            .attr('color', 'black')
+            .html(d => d.name)
+    }
+
+    _updateLabels(value) {
+        let $valueDisplay = this.$valueDisplay
+        this.$valueDisplay.html(value)
+        let center = this.center
+        let valueX = center.x - ($valueDisplay.get(0).getBBox().width / 2)
+        let valueY = center.y + ($valueDisplay.get(0).getBBox().height / 2)
+        $valueDisplay
+            .attr('x', valueX)
+            .attr('y', valueY)
+        let categories = this.encoder.categories
+        let radius = this.radius + 3*this.smallCircleRadius
+        let wedge = (2 * Math.PI) / categories.length
+        let data = categories.map((category, index) => {
+            // The + Math.PI rotates the labels 180 degress to match the circles above
+            let theta = index * wedge + Math.PI
+            // Add another half wedge to get to the midpoint
+            theta = theta + wedge/2
+            return {
+                name: category,
+                active: category === value,
+                x: center.x + radius * Math.sin(theta),
+                y: center.y + radius * Math.cos(theta),
+            }
+        })
+
+        let $group = this.$svg.selectAll('g.labels')
+
+        let labels = $group.selectAll('text.label').data(data)
+        this._treatLabels(labels)
+
+        let newLabels = labels.enter().append('text')
+        this._treatLabels(newLabels)
+
+        labels.exit().remove()
     }
 
 }
