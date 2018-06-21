@@ -116,6 +116,7 @@ modules.push({
             // ScalarEncoder: path.join(__dirname, "../simplehtm/src/encoders/scalar"),
             // CyclicEncoder: path.join(__dirname, "../simplehtm/src/encoders/cyclicScalar"),
             ScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/scalar"),
+            BoundedScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/boundedScalar"),
             CyclicEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/cyclicScalar"),
             CyclicEncoderDisplay: path.join(__dirname, "src/lib/displays/cyclicEncoderDisplay"),
         }

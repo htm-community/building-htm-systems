@@ -1,4 +1,4 @@
-let ScalarEncoder = require('ScalarEncoder')
+let BoundedScalarEncoder = require('BoundedScalarEncoder')
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
 let html = require('./streamingScalarWindow.tmpl.html')
@@ -7,19 +7,22 @@ let moment = require('moment')
 let speed = 300
 let timerHandle
 
-const onColor = '#555'
+const onColor = 'skyblue'
 const offColor = 'white'
 
 let encoder
-let scalarBits = 100
-let range = 0.5
+let outputBits = 100
+let w = 10
 let min = -1.25
 let max = 1.25
 
 let timeStep = 60 * 60000 // minutes
-let dataStep = 2 * Math.PI / 24 // radians
+let slicesPerPeriod = 24
+let period = 2 * Math.PI
+let dataStep = period / slicesPerPeriod // radians
 let counter = 0
 let timeMarker = new Date(new Date().setFullYear(new Date().getFullYear() - 1))
+let periods = 0
 
 function nextSemiRandomSineWaveDataPoint() {
     let x = counter
@@ -30,6 +33,11 @@ function nextSemiRandomSineWaveDataPoint() {
     else value -= jitter
     timeMarker = new Date(timeMarker.getTime() + timeStep)
     // I could add artificial temporal patterns here.
+    if (counter > periods * period) periods++
+    // Like this. I'll make every 3rd cycle different
+    if (periods % 3 ===0) {
+        value = Math.abs(value*1.5)
+    }
     return {
         value: value,
         time: timeMarker,
@@ -48,7 +56,7 @@ module.exports = (elementId) => {
     utils.loadHtml(html.default, elementId, () => {
         let $d3El = d3.select('#' + elementId)
 
-        let jsds = JSDS.create(elementId)
+        let jsds = JSDS.create('streamingScalarWindow-' + elementId)
 
         let width = 560,
             height = 140
@@ -197,8 +205,11 @@ module.exports = (elementId) => {
             renderIndex(jsds.get('data'))
         })
 
-        encoder = new ScalarEncoder({
-            w: range, n: scalarBits, min: min, max: max, bounded: true
+        encoder = new BoundedScalarEncoder({
+            w: w,
+            n: outputBits,
+            min: min,
+            max: max,
         })
 
         $streamingScalar.on('mouseenter', () => {
