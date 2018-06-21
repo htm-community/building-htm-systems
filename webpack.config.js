@@ -78,7 +78,7 @@ modules.push({
             ScalarEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/scalar"),
             CyclicEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/cyclicScalar"),
             CategoryEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/category"),
-            WeekendEncoder: path.join(__dirname, "../simplehtm/src/encoders/weekend"),
+            WeekendEncoder: path.join(__dirname, "node_modules/simplehtm/src/encoders/weekend"),
             CyclicEncoderDisplay: path.join(__dirname, "src/lib/displays/cyclicEncoderDisplay"),
             CategoryEncoderDisplay: path.join(__dirname, "src/lib/displays/categoryEncoderDisplay"),
         }
