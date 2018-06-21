@@ -49,9 +49,9 @@ function renderSimpleNumberEncoder(elementId, config) {
     }
 
     utils.loadHtml(html.default, elementId, () => {
-        let $d3El = d3.select('#' + elementId),
-            $jqEl = $('#' + elementId),
-            $datGui = $jqEl.find('.dat-gui')
+        let $d3El = d3.select('#' + elementId)
+        let $jqEl = $('#' + elementId)
+        let $datGui = $jqEl.find('.dat-gui')
 
         let width = 560,
             height = 140
