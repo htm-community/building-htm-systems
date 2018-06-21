@@ -6,7 +6,7 @@ let JSDS = require('JSDS')
 
 function render(elementId) {
 
-    let jsds = JSDS.create('spatial-pooling')
+    let jsds = JSDS.create('potentialPools-' + elementId)
 
     let uiValues = {
         'input bits': 300,

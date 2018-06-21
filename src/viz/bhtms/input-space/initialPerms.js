@@ -1,4 +1,4 @@
-let SdrUtils = require('SdrUtils')
+let dat = require('dat.gui')
 let SdrDrawing = require('SdrDrawing')
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
@@ -6,24 +6,44 @@ let html = require('./initialPerms.tmpl.html')
 
 module.exports = (elementId) => {
 
-    let jsds = JSDS.get('spatial-pooling')
+    let ppds = JSDS.get('potentialPools-potentialPools')
+    let jsds = JSDS.create('initialPerms-' + elementId)
+
+    let uiValues = {
+        'distr. center': 0.5,
+        'distr. spread': 10,
+        'connection threshold': 0.5,
+    }
+
+    function setupDatGui($el, onChange) {
+        let gui = new dat.GUI({
+            autoPlace: false,
+        })
+        gui.add(uiValues, 'distr. center', 0, 1).listen().onChange((v) => {
+            uiValues['distr. center'] = v
+            jsds.set('distr. center', uiValues['distr. center'])
+            onChange()
+        })
+        gui.add(uiValues, 'distr. spread', 0, 50, 1).listen().onChange((v) => {
+            uiValues['distr. spread'] = v
+            jsds.set('distr. spread', uiValues['distr. spread'])
+            onChange()
+        })
+        gui.add(uiValues, 'connection threshold', 0, 1).listen().onChange((v) => {
+            uiValues['connection threshold'] = v
+            jsds.set('connection threshold', uiValues['connection threshold'])
+            onChange()
+        })
+        $el.append(gui.domElement)
+        onChange()
+    }
 
     utils.loadHtml(html.default, elementId, () => {
-        console.log("Running %s JS", elementId)
-        let $receptiveFieldPercSlider = $('#receptiveFieldPercSlider')
-        let $receptiveFieldPercDisplay = $('.receptiveFieldPercDisplay')
-        let $connectionThresholdSlider = $('#connectionThresholdSlider')
-        let $connectionThresholdDisplays = $('.connectionThresholdDisplay')
-        let $independentVariablesSlider = $('#independentVariablesSlider')
-        let $independentVariablesDisplays = $('.independentVariablesDisplay')
-        let $distributionCenterSlider = $('#distributionCenterSlider')
-        let $distributionCenterDisplays = $('.distributionCenterDisplay')
-        let $percConnectedDisplay = $('.percConnectedDisplay')
-        let $percConnectedInFieldDisplay = $('.percConnectedInFieldDisplay')
-        let inputSpaceDimensions = 400
+        let $jqEl = $('#' + elementId)
+        let $datGui = $jqEl.find('.dat-gui')
 
         let currentMousePos = { x: -1, y: -1 };
-        $(document).mousemove(function(event) {
+        $jqEl.mousemove(function(event) {
             currentMousePos.x = event.pageX;
             currentMousePos.y = event.pageY;
         });
@@ -42,10 +62,10 @@ module.exports = (elementId) => {
         }
 
         function getRandomPerms() {
-            let independentVariables = parseInt($independentVariablesSlider.val())
-            let distributionCenter = parseInt($distributionCenterSlider.val()) / 100
-            let selectedMiniColumn = jsds.get('selectedMiniColumn')
-            let potentialPool = jsds.get('potentialPools')[selectedMiniColumn]
+            let independentVariables = uiValues['distr. spread']
+            let distributionCenter = uiValues['distr. center']
+            let selectedMiniColumn = ppds.get('selectedMiniColumn')
+            let potentialPool = ppds.get('potentialPools')[selectedMiniColumn]
             let permanences = d3.range(potentialPool.length)
                 .map(d3.randomBates(independentVariables))
                 .map((val, i) => {
@@ -60,32 +80,21 @@ module.exports = (elementId) => {
 
         function updatePercentConnectedDisplay() {
             let connected = 0
-            let threshold = parseInt($connectionThresholdSlider.val()) / 100
+            let threshold = jsds.get('connection threshold')
             let permanences = jsds.get('permanences')
-            let receptiveFieldSize = SdrUtils.population(permanences)
             permanences.forEach((perm) => {
                 if (perm >= threshold) connected++
             })
-            $percConnectedDisplay.html(Math.round(connected / inputSpaceDimensions * 100))
-            $percConnectedInFieldDisplay.html(Math.round(connected / receptiveFieldSize * 100))
         }
 
 
         function updateDisplays() {
-            let connectionThreshold = parseInt($connectionThresholdSlider.val()) / 100
+            let connectionThreshold = jsds.get('connection threshold') || uiValues['connection threshold']
             let permanences = jsds.get('permanences')
             let sdr = new SdrDrawing(permanences, 'receptiveFieldDemo')
             drawOptions.threshold = connectionThreshold
             sdr.draw(drawOptions)
-            $receptiveFieldPercDisplay.html($receptiveFieldPercSlider.val())
 
-            $connectionThresholdDisplays.html(
-                parseInt($connectionThresholdSlider.val()) / 100
-            )
-            $independentVariablesDisplays.html($independentVariablesSlider.val())
-            $distributionCenterDisplays.html(
-                parseInt($distributionCenterSlider.val()) / 100
-            )
             sdr.onCell('mouseenter', (perm, index) => {
                 let formattedPerm = Math.round(perm * 100) / 100
                 $hoverBox.css({
@@ -96,7 +105,7 @@ module.exports = (elementId) => {
             }).onCell('mouseout', (perm, index) => {
                 $hoverBox.hide()
             })
-            updatePercentConnectedDisplay()
+            // updatePercentConnectedDisplay()
             drawHistogram()
         }
 
@@ -152,7 +161,7 @@ module.exports = (elementId) => {
 
             rects.exit().remove()
 
-            let connectionThreshold = parseInt($connectionThresholdSlider.val()) / 100
+            let connectionThreshold = uiValues['connection threshold']
 
             svg.select('line.threshold')
                 .attr('id', 'connectionThreshold')
@@ -172,18 +181,13 @@ module.exports = (elementId) => {
 
         function redraw() {
             jsds.set('permanences', getRandomPerms())
-            updateDisplays()
         }
 
-        $connectionThresholdSlider.on('input', updateDisplays)
-        $independentVariablesSlider.on('input', redraw)
-        $distributionCenterSlider.on('input', redraw)
+        ppds.after('set', 'potentialPools', redraw)
 
-        jsds.after('set', 'selectedMiniColumn', updateDisplays)
-        jsds.after('set', 'potentialPools', updateDisplays)
         jsds.after('set', 'permanences', updateDisplays)
 
-        redraw()
+        setupDatGui($datGui, redraw)
 
     })
 
