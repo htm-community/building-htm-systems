@@ -104,6 +104,13 @@ modules.push({
             {
                 test: /tmpl\.html$/,
                 loader: "posthtml-loader"
+            },
+            {
+                test: /\.(png|svg|jpg|gif)$/,
+                loader: 'file-loader',
+                options: {
+                    name: 'encoding-time/images/[hash].[ext]'
+                }
             }
         ]
     },

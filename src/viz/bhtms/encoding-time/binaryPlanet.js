@@ -2,6 +2,8 @@ let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
 let html = require('./binaryPlanet.tmpl.html')
 let SdrDrawing = require('SdrDrawing')
+let Stickman = require('./img/stickman.png')
+let Planet = require('./img/planet.png')
 
 function render(elementId) {
 
@@ -38,6 +40,8 @@ function render(elementId) {
             .attr('y', c.y - radius)
             .attr('height', planetSize)
             .attr('width', planetSize)
+            // TODO: I know I'm not doing this right
+            .attr('href', '../../../../docs/' + Planet)
 
         let $stickman = $svg.select('image.stickman')
         let manWidth = 20
@@ -47,6 +51,8 @@ function render(elementId) {
             .attr('height', manHeight)
             .attr('x', c.x - manWidth/2)
             .attr('y', c.y - radius - manHeight + 10)
+            // TODO: I know I'm not doing this right
+            .attr('href', '../../../../docs/' + Stickman)
 
         // TODO: Render the button
 
