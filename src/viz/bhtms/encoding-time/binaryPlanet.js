@@ -24,11 +24,12 @@ function render(elementId) {
         // Static components are rendered once
 
         // render planet
-        let buffer = 90
+        let leftGutter = 60
+        let topGutter = 90
         let radius = 110
         let c = {
-            x: buffer + radius,
-            y: buffer + radius,
+            x: leftGutter + radius,
+            y: topGutter + radius,
             r: radius,
         }
         let planetSize = radius * 2
