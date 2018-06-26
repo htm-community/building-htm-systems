@@ -40,8 +40,8 @@ function render(elementId) {
             .attr('y', c.y - radius)
             .attr('height', planetSize)
             .attr('width', planetSize)
-            // TODO: I know I'm not doing this right
             .attr('href', '../../../../docs/' + Planet)
+        // TODO: ^^ I know I'm not doing this right
 
         let $stickman = $svg.select('image.stickman')
         let manWidth = 20
@@ -51,8 +51,8 @@ function render(elementId) {
             .attr('height', manHeight)
             .attr('x', c.x - manWidth/2)
             .attr('y', c.y - radius - manHeight + 10)
-            // TODO: I know I'm not doing this right
             .attr('href', '../../../../docs/' + Stickman)
+        // TODO: ^^ I know I'm not doing this right
 
         // TODO: Render the button
 
