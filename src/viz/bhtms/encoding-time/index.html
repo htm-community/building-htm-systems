@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-    <meta charset="UTF-8">
+    <meta charset='UTF-8'>
     <title>Number Encoding Widgets</title>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://d3js.org/d3.v5.js"></script>
-    <script src="../../../../wp-content/uploads/encoding-time/bhtms-encoding-time-0.2.14.js"></script>
+    <script src='https://code.jquery.com/jquery-3.3.1.slim.min.js'></script>
+    <script src='https://d3js.org/d3.v5.js'></script>
+    <script src='../../../../wp-content/uploads/encoding-time/bhtms-encoding-time-0.2.14.js'></script>
 
     <style>
         body {
@@ -87,12 +87,25 @@
 </head>
 <body>
 
-<div class="widget">
+<div class='widget'>
     <h1>Binary Planet</h1>
-    <div id="binaryPlanet"></div>
+    <div id='binaryPlanet'></div>
+    <button id='noon'>noon</button>
+    <button id='midnight'>midnight</button>
     <script>
         $(function() {
-            BHTMS.binaryPlanet("binaryPlanet")
+            BHTMS.binaryPlanet('binaryPlanet')
+            let jsds = BHTMS.JSDS.get('binaryPlanet-binaryPlanet')
+            $('button#noon').click(() => {
+                BHTMS.binaryPlanet.pauseAnimation()
+                jsds.set('theta', 0)
+                setTimeout(BHTMS.binaryPlanet.startAnimation, 2000)
+            })
+            $('button#midnight').click(() => {
+                BHTMS.binaryPlanet.pauseAnimation()
+                jsds.set('theta', Math.PI)
+                setTimeout(BHTMS.binaryPlanet.startAnimation, 2000)
+            })
         });
     </script>
 </div>

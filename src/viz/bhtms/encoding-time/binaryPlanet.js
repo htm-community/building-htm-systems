@@ -5,6 +5,29 @@ let SdrDrawing = require('SdrDrawing')
 let Stickman = require('./img/stickman.png')
 let Planet = require('./img/planet.png')
 
+let animationHandle
+let jsds
+
+function startAnimation() {
+    let speed = 50
+    let interval = 2*Math.PI / 180
+    let current = jsds.get('theta') || 0
+
+    // Ignore calls to start if already started
+    if (animationHandle) return
+
+    animationHandle = setInterval(() => {
+        jsds.set('theta', current)
+        current += interval
+        if (current >= 2*Math.PI) current = 0
+    }, speed)
+}
+
+function pauseAnimation() {
+    clearInterval(animationHandle)
+    animationHandle = undefined
+}
+
 function render(elementId) {
 
     utils.loadHtml(html.default, elementId, () => {
@@ -15,8 +38,7 @@ function render(elementId) {
 
         const n = 440
 
-        let jsds = JSDS.create('binaryPlanet-' + elementId)
-
+        jsds = JSDS.create('binaryPlanet-' + elementId)
         let mouse
 
         let $svg = d3.select('#' + elementId + ' svg')
@@ -112,21 +134,20 @@ function render(elementId) {
         }
 
         function encode(value) {
-            let out = new Array(n).fill(0)
-            let min = Math.PI / 2
-            let max = Math.PI * 9/6
-            let mid = (max - min) / 2
-            let start = 0, end = n
-            if (value < mid) end = parseInt(n/2)
-            else start = parseInt(n/2)
-            d3.range(start, end).forEach(i => {
-                out[i] = 1
+            let dayStart = Math.PI / 2
+            let dayEnd = dayStart + Math.PI
+            let isDay = dayStart < value && value < dayEnd
+            return d3.range(0, n).map(i => {
+                let isDayBit = i >= (n/2)
+                if (isDayBit && isDay) return 1
+                if (!isDayBit && !isDay) return 1
+                return 0
             })
-            return out
         }
 
         function onThetaUpdate() {
             let theta = jsds.get('theta')
+            // console.log(theta)
             renderSun(theta)
             throwShade(theta)
             if (mouse) renderCursor()
@@ -137,6 +158,14 @@ function render(elementId) {
         jsds.after('set', 'theta', onThetaUpdate)
         jsds.after('set', 'encoding', renderEncoding)
 
+        $svg.on('mouseenter', () => {
+            pauseAnimation()
+            $svg.select('circle.cursor').style('opacity', 1)
+        })
+        $svg.on('mouseleave', () => {
+            $svg.select('circle.cursor').style('opacity', 0)
+            startAnimation()
+        })
         $svg.on('mousemove', () => {
             mouse = d3.mouse($svg.node())
             let x = mouse[0] - c.x
@@ -145,11 +174,13 @@ function render(elementId) {
             jsds.set('theta', theta)
         })
 
-        // Kick everything off by setting theta to 30 degrees
-        jsds.set('theta', Math.PI * 2 / 12)
+        startAnimation()
 
     })
 
 }
 
+// It's a hack!
+render.startAnimation = startAnimation
+render.pauseAnimation = pauseAnimation
 module.exports = render
