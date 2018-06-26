@@ -1,14 +1,21 @@
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
 let html = require('./binaryPlanet.tmpl.html')
+let SdrDrawing = require('SdrDrawing')
 
 function render(elementId) {
 
     utils.loadHtml(html.default, elementId, () => {
-        let width = 560
-        let height = 400
+
+        const radialOffset = Math.PI / 2
+        const width = 560
+        const height = 400
+
+        const n = 440
+
         let jsds = JSDS.create('binaryPlanet-' + elementId)
 
+        let mouse
 
         let $svg = d3.select('#' + elementId + ' svg')
             .attr('width', width)
@@ -17,7 +24,6 @@ function render(elementId) {
         // Static components are rendered once
 
         // render planet
-        let $planet = $svg.select('g.planet')
         let buffer = 90
         let radius = 110
         let c = {
@@ -26,13 +32,20 @@ function render(elementId) {
             r: radius,
         }
         let planetSize = radius * 2
-        $planet.select('image')
+        $svg.select('image.planet')
             .attr('x', c.x - radius)
             .attr('y', c.y - radius)
             .attr('height', planetSize)
             .attr('width', planetSize)
 
-        // TODO: Render the stick person
+        let $stickman = $svg.select('image.stickman')
+        let manWidth = 20
+        let manHeight = 50
+        $stickman
+            .attr('width', manWidth)
+            .attr('height', manHeight)
+            .attr('x', c.x - manWidth/2)
+            .attr('y', c.y - radius - manHeight + 10)
 
         // TODO: Render the button
 
@@ -40,37 +53,11 @@ function render(elementId) {
         // Dynamic components depend on the value of theta
         // render ray given theta
 
-        function renderRay(theta) {
-            let d1 = radius * 4
-            let d2 = radius + buffer/2
-
-            function getPoint(dist) {
-                return {
-                    x: c.x + dist * Math.sin(theta),
-                    y: c.y - dist * Math.cos(theta),
-                }
-            }
-
-            let p1 = getPoint(d1)
-            let p2 = getPoint(d2)
-
-            let $line = $planet.select('line')
-            $line.attr('stroke', 'white')
-                .attr('stroke-width', '3px')
-                .attr('x1', p1.x)
-                .attr('y1', p1.y)
-                .attr('x2', p2.x)
-                .attr('y2', p2.y)
-
-            // TODO: Make this line into an arrow
-
-        }
-
         function renderSun(theta) {
-            let $sun = $planet.select('circle.sun')
-            let $gradient = $planet.select('defs radialGradient')
+            let $sun = $svg.select('circle.sun')
+            let $gradient = $svg.select('#sunGradient')
             let distance = radius * 12
-            let sunRadius = distance * 1.15
+            let sunRadius = distance * 1.25
             let x = c.x + distance * Math.sin(theta)
             let y = c.y - distance * Math.cos(theta)
             $sun.attr('cx', x)
@@ -81,8 +68,20 @@ function render(elementId) {
                 .attr('r', sunRadius)
         }
 
+        function renderCursor() {
+            let $sun = $svg.select('circle.cursor')
+            let $gradient = $svg.select('#cursorGradient')
+            let cursorRadius = 20
+            $sun.attr('cx', mouse[0])
+                .attr('cy', mouse[1])
+                .attr('r', cursorRadius)
+            $gradient.attr('cx', mouse[0])
+                .attr('cy', mouse[1])
+                .attr('r', cursorRadius)
+        }
+
         function throwShade(theta) {
-            let $shade = $planet.select('path.shade')
+            let $shade = $svg.select('path.shade')
 
             let arc = d3.arc()
                 .innerRadius(0)
@@ -95,23 +94,48 @@ function render(elementId) {
                 .attr('transform', 'translate(' + c.x + ', ' + c.y + ')')
         }
 
+        function renderEncoding() {
+            let width = 200
+            let height = 200
+            let encoding = jsds.get('encoding')
+            let drawing = new SdrDrawing(encoding, 'binary-planet-encoding-out')
+            drawing.draw({
+                width: width,
+                height: height,
+            })
+        }
+
+        function encode(value) {
+            let out = new Array(n).fill(0)
+            let min = Math.PI / 2
+            let max = Math.PI * 9/6
+            let mid = (max - min) / 2
+            let start = 0, end = n
+            if (value < mid) end = parseInt(n/2)
+            else start = parseInt(n/2)
+            d3.range(start, end).forEach(i => {
+                out[i] = 1
+            })
+            return out
+        }
+
         function onThetaUpdate() {
             let theta = jsds.get('theta')
-            // renderRay(theta)
             renderSun(theta)
             throwShade(theta)
+            if (mouse) renderCursor()
+            let encoding = encode(theta)
+            jsds.set('encoding', encoding)
         }
 
         jsds.after('set', 'theta', onThetaUpdate)
-
-
-        let $output = $svg.select('g.output')
+        jsds.after('set', 'encoding', renderEncoding)
 
         $svg.on('mousemove', () => {
-            let mouse = d3.mouse($svg.node())
+            mouse = d3.mouse($svg.node())
             let x = mouse[0] - c.x
             let y = mouse[1] - c.y
-            let theta = Math.atan2(y, x) + Math.PI / 2
+            let theta = Math.atan2(y, x) + radialOffset
             jsds.set('theta', theta)
         })
 
