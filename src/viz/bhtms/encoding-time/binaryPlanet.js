@@ -11,15 +11,15 @@ let jsds
 function startAnimation() {
     let speed = 50
     let interval = 2*Math.PI / 180
-    let current = jsds.get('theta') || 0
+    let current = jsds.get('theta') || 2*Math.PI
 
     // Ignore calls to start if already started
     if (animationHandle) return
 
     animationHandle = setInterval(() => {
         jsds.set('theta', current)
-        current += interval
-        if (current >= 2*Math.PI) current = 0
+        current -= interval
+        if (current < 0) current = 2*Math.PI
     }, speed)
 }
 
