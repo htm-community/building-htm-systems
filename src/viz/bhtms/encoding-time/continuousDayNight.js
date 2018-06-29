@@ -1,9 +1,9 @@
 let JSDS = require('JSDS')
 let utils = require('../../../lib/utils')
 let html = require('./continuousDayNight.tmpl.html')
-let SdrDrawing = require('SdrDrawing')
 let Stickman = require('./img/stickman.png')
 let Planet = require('./img/planet.png')
+let TransparentCyclicEncoderDisplay = require('TransparentCyclicEncoderDisplay')
 
 let animationHandle
 let jsds
@@ -44,40 +44,62 @@ function render(elementId) {
         let $svg = d3.select('#' + elementId + ' svg')
             .attr('width', width)
             .attr('height', height)
+        let $stickman = $svg.select('image.stickman')
 
         // Static components are rendered once
 
         // render planet
-        let leftGutter = 60
-        let topGutter = 90
-        let radius = 110
+        let earthRadius = 110
+        let leftGutter = width / 2 - earthRadius
+        let topGutter = height / 2 - earthRadius + 15
         let c = {
-            x: leftGutter + radius,
-            y: topGutter + radius,
-            r: radius,
+            x: leftGutter + earthRadius,
+            y: topGutter + earthRadius,
+            r: earthRadius,
         }
-        let planetSize = radius * 2
+        let planetSize = earthRadius * 2
         $svg.select('image.planet')
-            .attr('x', c.x - radius)
-            .attr('y', c.y - radius)
+            .attr('x', c.x - earthRadius)
+            .attr('y', c.y - earthRadius)
             .attr('height', planetSize)
             .attr('width', planetSize)
             .attr('href', '' + Planet)
 
-        let $stickman = $svg.select('image.stickman')
         let manWidth = 20
         let manHeight = 50
         $stickman
             .attr('width', manWidth)
             .attr('height', manHeight)
             .attr('x', c.x - manWidth/2)
-            .attr('y', c.y - radius - manHeight + 10)
+            .attr('y', c.y - earthRadius - manHeight + 10)
             .attr('href', '' + Stickman)
+
+        let encoderDisplay = new TransparentCyclicEncoderDisplay($svg.select('g.bits'), {
+            resolution: 10,
+            w: 15,
+            n: 30,
+            radius: earthRadius * 1.6,
+            center: {
+                x: width / 2, y: height / 2,
+            },
+            color: 'skyblue',
+        })
+        encoderDisplay.render()
+        encoderDisplay.$svg.attr('transpose', 'transform()')
+
+        encoderDisplay.jsds.after('set', 'encoding', () => {
+            encoderDisplay.updateDisplay()
+        })
+        encoderDisplay.jsds.after('set', 'value', (value) => {
+            console.log(value)
+            let encoding = encoderDisplay.encoder.encode(value)
+            encoderDisplay.jsds.set('encoding', encoding)
+        })
 
         function renderSun(theta) {
             let $sun = $svg.select('circle.sun')
             let $gradient = $svg.select('#sunGradientContinuous')
-            let distance = radius * 12
+            let distance = earthRadius * 12
             let sunRadius = distance * 1.25
             let x = c.x + distance * Math.sin(theta)
             let y = c.y - distance * Math.cos(theta)
@@ -106,24 +128,13 @@ function render(elementId) {
 
             let arc = d3.arc()
                 .innerRadius(0)
-                .outerRadius(radius)
+                .outerRadius(earthRadius)
                 .startAngle(theta + Math.PI * 1/2)
                 .endAngle(theta + Math.PI * 9/6)
 
             $shade.attr('d', arc())
                 .attr('opacity', 0.5)
                 .attr('transform', 'translate(' + c.x + ', ' + c.y + ')')
-        }
-
-        function renderEncoding() {
-            // let width = 200
-            // let height = 200
-            // let encoding = jsds.get('encoding')
-            // let drawing = new SdrDrawing(encoding, 'binary-planet-encoding-out')
-            // drawing.draw({
-            //     width: width,
-            //     height: height,
-            // })
         }
 
         function encode(value) {
@@ -148,8 +159,13 @@ function render(elementId) {
             jsds.set('encoding', encoding)
         }
 
-        jsds.after('set', 'theta', onThetaUpdate)
-        jsds.after('set', 'encoding', renderEncoding)
+        jsds.after('set', 'theta', (theta) => {
+            onThetaUpdate()
+            encoderDisplay.jsds.set('value', theta)
+        })
+        // jsds.after('set', 'encoding', (encoding) => {
+        //     encoderDisplay.jsds.set('encoding', encoding)
+        // })
 
         $svg.on('mouseenter', () => {
             pauseAnimation()
