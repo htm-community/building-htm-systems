@@ -38,7 +38,7 @@ function render(elementId) {
 
         const n = 440
 
-        jsds = JSDS.create('binaryPlanet-' + elementId)
+        jsds = JSDS.create('discreteDayNight-' + elementId)
         let mouse
 
         let $svg = d3.select('#' + elementId + ' svg')
@@ -76,7 +76,7 @@ function render(elementId) {
 
         function renderSun(theta) {
             let $sun = $svg.select('circle.sun')
-            let $gradient = $svg.select('#sunGradient')
+            let $gradient = $svg.select('#sunGradientDiscrete')
             let distance = radius * 12
             let sunRadius = distance * 1.25
             let x = c.x + distance * Math.sin(theta)
@@ -91,7 +91,7 @@ function render(elementId) {
 
         function renderCursor() {
             let $sun = $svg.select('circle.cursor')
-            let $gradient = $svg.select('#cursorGradient')
+            let $gradient = $svg.select('#cursorGradientDiscrete')
             let cursorRadius = 20
             $sun.attr('cx', mouse[0])
                 .attr('cy', mouse[1])
