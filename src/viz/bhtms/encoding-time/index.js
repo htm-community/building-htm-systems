@@ -1,4 +1,5 @@
 window.BHTMS = {
-    binaryPlanet: require('./binaryPlanet'),
+    discreteDayNight: require('./discreteDayNight'),
+    continuousDayNight: require('./continuousDayNight'),
     JSDS: require('JSDS'),
 }
