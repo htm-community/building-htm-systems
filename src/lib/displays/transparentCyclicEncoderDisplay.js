@@ -24,7 +24,8 @@ class TransparentCyclicEncoderDisplay {
         this.id = id
         this.radius = opts.radius
         this.center = opts.center
-        this.color = opts.color
+        this.onColor = opts.onColor
+        this.offColor = opts.offColor
 
         try {
             this.jsds = JSDS.create('TransparentCyclicEncoderDisplay-' + this.id)
@@ -75,14 +76,14 @@ class TransparentCyclicEncoderDisplay {
     }
 
     _treatCircleBits(circles) {
-        let color = this.color
+        let me = this
         circles
             .attr('cx', d => d.cx)
             .attr('cy', d => d.cy)
             .attr('r', this.smallCircleRadius)
             .attr('fill', d => {
-                if (d.bit) return color
-                else return colors.bitOff
+                if (d.bit) return me.offColor
+                else return me.onColor
             })
             .attr('stroke', colors.bitStroke)
             .attr('stroke-width', this.circleStrokeWidth)

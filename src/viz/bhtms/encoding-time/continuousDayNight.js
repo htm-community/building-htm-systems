@@ -32,7 +32,7 @@ function render(elementId) {
 
     utils.loadHtml(html.default, elementId, () => {
 
-        const radialOffset = Math.PI / 2
+        const radialOffset = Math.PI
         const width = 560
         const height = 400
 
@@ -82,7 +82,8 @@ function render(elementId) {
             center: {
                 x: width / 2, y: height / 2,
             },
-            color: 'skyblue',
+            onColor: '#333',
+            offColor: '#ffff5e',
         })
         encoderDisplay.render()
         encoderDisplay.$svg.attr('transpose', 'transform()')
@@ -101,8 +102,9 @@ function render(elementId) {
             let $gradient = $svg.select('#sunGradientContinuous')
             let distance = earthRadius * 12
             let sunRadius = distance * 1.25
-            let x = c.x + distance * Math.sin(theta)
-            let y = c.y - distance * Math.cos(theta)
+            let offset = - Math.PI / 2
+            let x = c.x + distance * Math.sin(theta + offset)
+            let y = c.y - distance * Math.cos(theta + offset)
             $sun.attr('cx', x)
                 .attr('cy', y)
                 .attr('r', sunRadius)
@@ -126,11 +128,12 @@ function render(elementId) {
         function throwShade(theta) {
             let $shade = $svg.select('path.shade')
 
+            let offset = - Math.PI / 2
             let arc = d3.arc()
                 .innerRadius(0)
                 .outerRadius(earthRadius)
-                .startAngle(theta + Math.PI * 1/2)
-                .endAngle(theta + Math.PI * 9/6)
+                .startAngle(theta + offset + Math.PI * 1/2)
+                .endAngle(theta + offset + Math.PI * 9/6)
 
             $shade.attr('d', arc())
                 .attr('opacity', 0.5)

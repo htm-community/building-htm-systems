@@ -123,6 +123,7 @@ function render(elementId) {
             drawing.draw({
                 width: width,
                 height: height,
+                onColor: '#ffff5e',
             })
         }
 
