@@ -92,7 +92,6 @@ function render(elementId) {
             encoderDisplay.updateDisplay()
         })
         encoderDisplay.jsds.after('set', 'value', (value) => {
-            console.log(value)
             let encoding = encoderDisplay.encoder.encode(value)
             encoderDisplay.jsds.set('encoding', encoding)
         })
@@ -166,9 +165,6 @@ function render(elementId) {
             onThetaUpdate()
             encoderDisplay.jsds.set('value', theta)
         })
-        // jsds.after('set', 'encoding', (encoding) => {
-        //     encoderDisplay.jsds.set('encoding', encoding)
-        // })
 
         $svg.on('mouseenter', () => {
             pauseAnimation()
