@@ -15,7 +15,7 @@ let modules = []
 modules.push({
     mode: mode,
     entry: [
-        './src/viz/bhtms/encoding-time/index.js',
+        './src/widgets/bhtms/encoding-time/index.js',
     ],
     module: {
         rules: [
@@ -58,7 +58,7 @@ modules.push({
 modules.push({
     mode: mode,
     entry: [
-        './src/viz/bhtms/encoding-numbers/index.js',
+        './src/widgets/bhtms/encoding-numbers/index.js',
     ],
     module: {
         rules: [
@@ -98,7 +98,7 @@ modules.push({
 modules.push({
     mode: mode,
     entry: [
-        './src/viz/bhtms/encoding-categories/index.js',
+        './src/widgets/bhtms/encoding-categories/index.js',
     ],
     module: {
         rules: [
@@ -138,7 +138,7 @@ modules.push({
 modules.push({
     mode: mode,
     entry: [
-        './src/viz/bhtms/input-space/index.js',
+        './src/widgets/bhtms/input-space/index.js',
     ],
     module: {
         rules: [
@@ -178,7 +178,7 @@ modules.push({
 // modules.push({
 //     mode: mode,
 //     entry: [
-//         './src/viz/blogs/how-grid-cells-map-space/index.js',
+//         './src/widgets/blogs/how-grid-cells-map-space/index.js',
 //     ],
 //     module: {
 //         rules: [
