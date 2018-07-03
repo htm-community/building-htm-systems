@@ -30,3 +30,15 @@ Webpack is currently configured to deploy to the `wp-content` folder with the sa
 ## Demo / Test
 
 See [widgets.html](./widgets.html) for examples.
+
+## JSDS
+
+If you are poking around inside the widgets you will probably notice something called [JSDS](https://github.com/rhyolight/JavaScript-Data-Store) being used as a data store. This a small observable data cache written almost a decade ago that demonstrates many of the desired attributes of reactive programming. Basically, each data store is observable, so for each widget we create one and load it with data. Then the visualization code simple observes the JSDS instance for changes to data and renders appropriately. This allows for granular UI updates and prevents unecessary repaints. 
+
+#### JSDS for inter-widget communication
+
+Deployment targets for this project are pages, which can contain many widgets. These widgets may be data-dependent on each other. At the page level, we can create widgets that update as dependent widgets update by using the observable nature of JSDS. Just have one widget observe a value of a previous widget's data store and it can update in response.
+
+#### JSDS for HTML interaction
+
+JSDS also allows access at the global page level so we can program specific interactions to occur as the user interacts with an HTML page.
