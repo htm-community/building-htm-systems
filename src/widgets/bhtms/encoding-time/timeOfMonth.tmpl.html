@@ -1,14 +1,14 @@
 <svg style="border:solid black 3px;background-color:black">
 
     <defs>
-        <radialGradient id="sunGradientContinuous"
+        <radialGradient id="sunGradientTimeOfMonth"
                         gradientUnits="userSpaceOnUse">
             <stop offset="0%" stop-color="white" />
             <stop offset="33%" stop-color="yellow" />
             <stop offset="66%" stop-color="orange" />
             <stop offset="100%" stop-color="black" />
         </radialGradient>
-        <radialGradient id="cursorGradientContinuous"
+        <radialGradient id="cursorGradientTimeOfMonth"
                         gradientUnits="userSpaceOnUse">
             <stop offset="0%" stop-color="white" stop-opacity="1"/>
             <stop offset="100%" stop-color="white"  stop-opacity="0"/>
@@ -17,16 +17,14 @@
 
     </defs>
 
-    <circle class="sun" fill="url(#sunGradientContinuous)"></circle>
+    <circle class="sun" fill="url(#sunGradientTimeOfMonth)"></circle>
 
     <image class="planet"></image>
 
-    <path class="shade"></path>
-
-    <image class="stickman"></image>
+    <image class="moon"></image>
 
     <g class="bits"></g>
 
-    <circle class="cursor" fill="url(#cursorGradientContinuous)"></circle>
+    <circle class="cursor" fill="url(#cursorGradientTimeOfMonth)" style="opacity:0"></circle>
 
 </svg>
