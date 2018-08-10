@@ -39,7 +39,7 @@ const offColor = 'white'
 
 module.exports = (elementId, dataProviderId) => {
 
-    let provider = JSDS.get(dataProviderId)
+    let provider = JSDS.get(dataProviderId + '-' + dataProviderId)
 
     utils.loadHtml(html.default, elementId, () => {
         let $d3El = d3.select('#' + elementId)
@@ -87,13 +87,16 @@ module.exports = (elementId, dataProviderId) => {
             })
             timeEncoderNames.forEach(k => {
                 // Each encoder has a specific jsds instance
-                let encoding = JSDS.get('cyclic-category-encoder-cyclicTimeEncodings-' + k).get('encoding')
-                encoding.forEach(bit => {
-                    combinedEncoding.push({
-                        bit: bit,
-                        encoder: k,
+                let store = JSDS.get('CyclicEncoderDisplay-cyclicTimeEncodings-' + k)
+                let encoding = store.get('encoding')
+                if (encoding) {
+                    encoding.forEach(bit => {
+                        combinedEncoding.push({
+                            bit: bit,
+                            encoder: k,
+                        })
                     })
-                })
+                }
             })
 
             let $rects = $combinedEncoding.selectAll('rect.combined')

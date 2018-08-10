@@ -49,7 +49,7 @@ module.exports = (elementId, dataProviderId) => {
     utils.loadHtml(html.default, elementId, () => {
 
         let size = 135
-        let provider = JSDS.get(dataProviderId)
+        let provider = JSDS.get(dataProviderId + '-' + dataProviderId)
 
         function renderTimeCycles() {
             timeEncoderNames.forEach((name, i) => {
