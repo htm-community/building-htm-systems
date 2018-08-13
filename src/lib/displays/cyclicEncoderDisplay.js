@@ -27,12 +27,7 @@ class CyclicEncoderDisplay {
         this.onColor = opts.onColor
         this.offColor = opts.offColor
 
-        try {
-            this.jsds = JSDS.create('CyclicEncoderDisplay-' + this.id)
-        } catch (e) {
-            this.jsds = JSDS.get('CyclicEncoderDisplay-' + this.id)
-            if (! this.jsds) throw new Error('Cannot get JSDS!')
-        }
+        this.jsds = JSDS.create()
         this.jsds.set('resolution', opts.resolution)
         this.jsds.set('w', opts.w)
         this.jsds.set('n', opts.n)
