@@ -162,7 +162,7 @@ function render(elementId) {
             // console.log(theta)
             renderSun(theta)
             throwShade(theta)
-            renderRay(theta)
+            // renderRay(theta)
             renderEncoding(theta)
             if (mouse) renderCursor()
         }

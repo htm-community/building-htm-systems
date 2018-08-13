@@ -36,8 +36,6 @@ function render(elementId) {
         const width = 560
         const height = 400
 
-        const n = 440
-
         jsds = JSDS.create('timeOfMonth-' + elementId)
         let mouse
 
@@ -64,7 +62,7 @@ function render(elementId) {
             .attr('href', '' + Planet)
 
         // Render moon
-        let moonRadius = earthRadius / 4
+        let moonRadius = earthRadius * 3/8
         let $moon = $svg.select('image.moon')
             .attr('width', moonRadius * 2)
             .attr('height', moonRadius * 2)
@@ -79,7 +77,7 @@ function render(elementId) {
                 x: width / 2, y: height / 2,
             },
             onColor: '#333',
-            offColor: '#ffff5e',
+            offColor: '#F5F3CE',
         })
         encoderDisplay.render()
         encoderDisplay.$svg.attr('transpose', 'transform()')
@@ -121,41 +119,27 @@ function render(elementId) {
         }
 
         function renderMoon(theta) {
-            let distance = earthRadius * 3
+            let distance = earthRadius * 3.5
             let offset = - Math.PI / 2
-            let x = c.x + distance * Math.sin(theta + offset)
-            let y = c.y - distance * Math.cos(theta + offset)
+            let x = (c.x - moonRadius) + distance * Math.sin(theta + offset)
+            let y = (c.y - moonRadius) - distance * Math.cos(theta + offset)
             $moon.attr('x', x)
                 .attr('y', y)
         }
 
-        function encode(value) {
-            let dayStart = Math.PI / 2
-            let dayEnd = dayStart + Math.PI
-            let isDay = dayStart < value && value < dayEnd
-            return d3.range(0, n).map(i => {
-                let isDayBit = i >= (n/2)
-                if (isDayBit && isDay) return 1
-                if (!isDayBit && !isDay) return 1
-                return 0
-            })
-        }
-
         function onThetaUpdate() {
             let theta = jsds.get('theta')
-            // console.log(theta)
-            // renderSun(theta)
-            // throwShade(theta)
             renderMoon(theta)
             if (mouse) renderCursor()
-            let encoding = encode(theta)
-            jsds.set('encoding', encoding)
+            let lazyAdjustment = 1.3
+            let adjustedTheta = theta - lazyAdjustment
+            if (adjustedTheta < 0) {
+                adjustedTheta += 2*Math.PI
+            }
+            encoderDisplay.jsds.set('value', adjustedTheta)
         }
 
-        jsds.after('set', 'theta', (theta) => {
-            onThetaUpdate()
-            encoderDisplay.jsds.set('value', theta)
-        })
+        jsds.after('set', 'theta', onThetaUpdate)
 
         $svg.on('mouseenter', () => {
             pauseAnimation()
