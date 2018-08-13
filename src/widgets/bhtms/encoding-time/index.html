@@ -87,28 +87,28 @@
 </head>
 <body>
 
-<div class='widget'>
-    <h1>Discrete Day / Night</h1>
-    <div id='discreteDayNight'></div>
-    <button id='noon1'>noon</button>
-    <button id='midnight1'>midnight</button>
-    <script>
-        $(function() {
-            BHTMS.discreteDayNight('discreteDayNight')
-            let jsds = BHTMS.JSDS.get('discreteDayNight-discreteDayNight')
-            $('button#noon1').click(() => {
-                BHTMS.discreteDayNight.pauseAnimation()
-                jsds.set('theta', 0)
-                setTimeout(BHTMS.discreteDayNight.startAnimation, 2000)
-            })
-            $('button#midnight1').click(() => {
-                BHTMS.discreteDayNight.pauseAnimation()
-                jsds.set('theta', Math.PI)
-                setTimeout(BHTMS.discreteDayNight.startAnimation, 2000)
-            })
-        });
-    </script>
-</div>
+<!--<div class='widget'>-->
+    <!--<h1>Discrete Day / Night</h1>-->
+    <!--<div id='discreteDayNight'></div>-->
+    <!--<button id='noon1'>noon</button>-->
+    <!--<button id='midnight1'>midnight</button>-->
+    <!--<script>-->
+        <!--$(function() {-->
+            <!--BHTMS.discreteDayNight('discreteDayNight')-->
+            <!--let jsds = BHTMS.JSDS.get('discreteDayNight-discreteDayNight')-->
+            <!--$('button#noon1').click(() => {-->
+                <!--BHTMS.discreteDayNight.pauseAnimation()-->
+                <!--jsds.set('theta', 0)-->
+                <!--setTimeout(BHTMS.discreteDayNight.startAnimation, 2000)-->
+            <!--})-->
+            <!--$('button#midnight1').click(() => {-->
+                <!--BHTMS.discreteDayNight.pauseAnimation()-->
+                <!--jsds.set('theta', Math.PI)-->
+                <!--setTimeout(BHTMS.discreteDayNight.startAnimation, 2000)-->
+            <!--})-->
+        <!--});-->
+    <!--</script>-->
+<!--</div>-->
 
 
 <div class='widget'>
@@ -134,15 +134,15 @@
     </script>
 </div>
 
-<div class='widget'>
-    <h1>Time Of Month</h1>
-    <div id='timeOfMonth'></div>
-    <script>
-        $(function() {
-            BHTMS.timeOfMonth('timeOfMonth')
-        });
-    </script>
-</div>
+<!--<div class='widget'>-->
+    <!--<h1>Time Of Month</h1>-->
+    <!--<div id='timeOfMonth'></div>-->
+    <!--<script>-->
+        <!--$(function() {-->
+            <!--BHTMS.timeOfMonth('timeOfMonth')-->
+        <!--});-->
+    <!--</script>-->
+<!--</div>-->
 
 
 </body>

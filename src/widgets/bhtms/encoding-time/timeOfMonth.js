@@ -3,7 +3,7 @@ let utils = require('../../../lib/utils')
 let html = require('./timeOfMonth.tmpl.html')
 let Planet = require('./img/planet.png')
 let Moon = require('./img/moon.png')
-let TransparentCyclicEncoderDisplay = require('TransparentCyclicEncoderDisplay')
+let CyclicEncoderDisplay = require('CyclicEncoderDisplay')
 
 let animationHandle
 let jsds
@@ -70,28 +70,27 @@ function render(elementId) {
             .attr('height', moonRadius * 2)
             .attr('href', '' + Moon)
 
+        let encoderDisplay = new CyclicEncoderDisplay($svg.select('g.timeOfMonth-bits'), {
+            resolution: 10,
+            w: 5,
+            n: 30,
+            radius: earthRadius * 2.6,
+            center: {
+                x: width / 2, y: height / 2,
+            },
+            onColor: '#333',
+            offColor: '#ffff5e',
+        })
+        encoderDisplay.render()
+        encoderDisplay.$svg.attr('transpose', 'transform()')
 
-        // let encoderDisplay = new TransparentCyclicEncoderDisplay($svg.select('g.bits'), {
-        //     resolution: 10,
-        //     w: 15,
-        //     n: 30,
-        //     radius: earthRadius * 1.6,
-        //     center: {
-        //         x: width / 2, y: height / 2,
-        //     },
-        //     onColor: '#333',
-        //     offColor: '#ffff5e',
-        // })
-        // encoderDisplay.render()
-        // encoderDisplay.$svg.attr('transpose', 'transform()')
-        //
-        // encoderDisplay.jsds.after('set', 'encoding', () => {
-        //     encoderDisplay.updateDisplay()
-        // })
-        // encoderDisplay.jsds.after('set', 'value', (value) => {
-        //     let encoding = encoderDisplay.encoder.encode(value)
-        //     encoderDisplay.jsds.set('encoding', encoding)
-        // })
+        encoderDisplay.jsds.after('set', 'encoding', () => {
+            encoderDisplay.updateDisplay()
+        })
+        encoderDisplay.jsds.after('set', 'value', (value) => {
+            let encoding = encoderDisplay.encoder.encode(value)
+            encoderDisplay.jsds.set('encoding', encoding)
+        })
 
         function renderSun(theta) {
             let $sun = $svg.select('circle.sun')
@@ -155,7 +154,7 @@ function render(elementId) {
 
         jsds.after('set', 'theta', (theta) => {
             onThetaUpdate()
-            // encoderDisplay.jsds.set('value', theta)
+            encoderDisplay.jsds.set('value', theta)
         })
 
         $svg.on('mouseenter', () => {

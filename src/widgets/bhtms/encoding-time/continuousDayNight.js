@@ -3,7 +3,7 @@ let utils = require('../../../lib/utils')
 let html = require('./continuousDayNight.tmpl.html')
 let Stickman = require('./img/stickman.png')
 let Planet = require('./img/planet.png')
-let TransparentCyclicEncoderDisplay = require('TransparentCyclicEncoderDisplay')
+let CyclicEncoderDisplay = require('CyclicEncoderDisplay')
 
 let animationHandle
 let jsds
@@ -74,10 +74,10 @@ function render(elementId) {
             .attr('y', c.y - earthRadius - manHeight + 10)
             .attr('href', '' + Stickman)
 
-        let encoderDisplay = new TransparentCyclicEncoderDisplay($svg.select('g.bits'), {
+        let encoderDisplay = new CyclicEncoderDisplay($svg.select('g.continuousDayNight-bits'), {
             resolution: 10,
-            w: 15,
-            n: 30,
+            w: 21,
+            n: 40,
             radius: earthRadius * 1.6,
             center: {
                 x: width / 2, y: height / 2,
@@ -112,6 +112,20 @@ function render(elementId) {
                 .attr('r', sunRadius)
         }
 
+        function renderRay(theta) {
+            let $line = $svg.select('line.ray')
+            let distance = earthRadius * 2
+            let offset = - Math.PI / 2
+            let x = c.x + distance * Math.sin(theta + offset)
+            let y = c.y - distance * Math.cos(theta + offset)
+            $line.attr('x1', c.x)
+                 .attr('y1', c.y)
+                 .attr('x2', x)
+                 .attr('y2', y)
+                 .attr('stroke', 'black')
+                 .attr('stroke-width', 5)
+        }
+
         function renderCursor() {
             let $sun = $svg.select('circle.cursor')
             let $gradient = $svg.select('#cursorGradientContinuous')
@@ -139,16 +153,8 @@ function render(elementId) {
                 .attr('transform', 'translate(' + c.x + ', ' + c.y + ')')
         }
 
-        function encode(value) {
-            let dayStart = Math.PI / 2
-            let dayEnd = dayStart + Math.PI
-            let isDay = dayStart < value && value < dayEnd
-            return d3.range(0, n).map(i => {
-                let isDayBit = i >= (n/2)
-                if (isDayBit && isDay) return 1
-                if (!isDayBit && !isDay) return 1
-                return 0
-            })
+        function renderEncoding(theta) {
+            encoderDisplay.jsds.set('value', theta)
         }
 
         function onThetaUpdate() {
@@ -156,15 +162,12 @@ function render(elementId) {
             // console.log(theta)
             renderSun(theta)
             throwShade(theta)
+            renderRay(theta)
+            renderEncoding(theta)
             if (mouse) renderCursor()
-            let encoding = encode(theta)
-            jsds.set('encoding', encoding)
         }
 
-        jsds.after('set', 'theta', (theta) => {
-            onThetaUpdate()
-            encoderDisplay.jsds.set('value', theta)
-        })
+        jsds.after('set', 'theta', onThetaUpdate)
 
         $svg.on('mouseenter', () => {
             pauseAnimation()
