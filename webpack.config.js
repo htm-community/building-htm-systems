@@ -44,7 +44,7 @@ modules.push({
             JSDS: path.join(__dirname, 'node_modules/javascript-data-store/src/jsds'),
             SdrDrawing: path.join(__dirname, 'node_modules/cell-viz/src/SdrDrawing'),
             CyclicEncoder: path.join(__dirname, 'node_modules/simplehtm/src/encoders/cyclicScalar'),
-            TransparentCyclicEncoderDisplay: path.join(__dirname, 'src/lib/displays/transparentCyclicEncoderDisplay'),
+            CyclicEncoderDisplay: path.join(__dirname, 'src/lib/displays/CyclicEncoderDisplay'),
         }
     },
     output: {
