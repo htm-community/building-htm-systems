@@ -8,14 +8,14 @@ let colors = {
 }
 
 // Majic stuph
-let maxCircleRadius = 40
-let minCircleRadius = 10
+let maxCircleRadius = 100
+let minCircleRadius = 4
 
 class CyclicEncoderDisplay {
 
     constructor(id, opts) {
         if (typeof id === 'string') {
-            this.$svg = d3.select('#' + id)
+            this.$svg = d3.select('#' + id + ' .bits')
         } else {
             this.$svg = id
             id = '?'
@@ -27,7 +27,10 @@ class CyclicEncoderDisplay {
         this.onColor = opts.onColor
         this.offColor = opts.offColor
 
-        this.jsds = JSDS.create()
+        if (id)
+            this.jsds = JSDS.create(id)
+        else
+            this.jsds = JSDS.create()
         this.jsds.set('resolution', opts.resolution)
         this.jsds.set('w', opts.w)
         this.jsds.set('n', opts.n)
@@ -38,6 +41,11 @@ class CyclicEncoderDisplay {
             n: opts.n,
             w: opts.w,
         })
+
+        let me = this
+        this.jsds.after('set', 'value', () => {
+            me.updateDisplay()
+        })
     }
 
     render() {
@@ -46,8 +54,8 @@ class CyclicEncoderDisplay {
 
         // Some aesthetic stuff. The order is important below because of the radius
         this.largeCircleRatio = 1
-        this.circleStrokeWidth = 2
-        if (this.size < 200) {
+        this.circleStrokeWidth = 1
+        if (this.size < 50) {
             this.largeCircleRatio = 8/9
             this.circleStrokeWidth = 1
         }

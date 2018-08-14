@@ -147,7 +147,7 @@ module.exports = (elementId, config) => {
                 resolution: uiValues.resolution,
                 display: uiValues.display,
             }, opts)
-            encoderDisplay = new FancyCyclicEncoderDisplay($bitsSvg, params)
+            return new FancyCyclicEncoderDisplay($bitsSvg, params)
         }
 
         function render() {
@@ -173,7 +173,7 @@ module.exports = (elementId, config) => {
             encoderDisplay.jsds.set('encoding', encoding)
         })
 
-        createEncoder()
+        encoderDisplay = createEncoder()
         encoderDisplay.render()
         render()
 

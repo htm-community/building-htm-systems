@@ -15,25 +15,33 @@ let timeEncoderParams = [{
     values: 31,
     range: 9,
     buckets: 21,
-    color: '#DF0024',
+    onColor: '#DF0024',
+    n: 100,
+    w: 11,
 }, {
     // weekend
     values: 2,
     range: 11,
     buckets: 21,
-    color: '#00AC9F',
+    onColor: '#00AC9F',
+    n: 50,
+    w: 5,
 }, {
     // day of week
     values: 7,
     range: 3,
     buckets: 21,
-    color: '#F3C300',
+    onColor: '#F3C300',
+    n: 70,
+    w: 9,
 }, {
     // time of day
     values: 24,
     range: 9,
     buckets: 21,
-    color: '#2E6DB4',
+    onColor: '#2E6DB4',
+    n: 100,
+    w: 21,
 }]
 
 let encoder
@@ -55,8 +63,10 @@ module.exports = (elementId, dataProviderId) => {
             timeEncoderNames.forEach((name, i) => {
                 let prms = timeEncoderParams[i]
                 // Each one has same size and center
-                prms.center = {x: 0, y: 0}
+                prms.center = {x: size/2, y: size/2}
                 prms.size = size
+                prms.radius = size * .4
+                prms.offColor = '#303240'
                 let encoderDisplay = new CyclicEncoderDisplay(elementId + '-' + name, prms)
                 encoderDisplay.render()
                 timeEncoders[name] = encoderDisplay
