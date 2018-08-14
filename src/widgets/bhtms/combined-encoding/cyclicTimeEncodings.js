@@ -54,6 +54,8 @@ module.exports = (elementId, dataProviderId) => {
         function renderTimeCycles() {
             timeEncoderNames.forEach((name, i) => {
                 let prms = timeEncoderParams[i]
+                // Each one has same size and center
+                prms.center = {x: 0, y: 0}
                 prms.size = size
                 let encoderDisplay = new CyclicEncoderDisplay(elementId + '-' + name, prms)
                 encoderDisplay.render()

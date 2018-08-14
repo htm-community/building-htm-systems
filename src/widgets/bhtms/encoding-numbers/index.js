@@ -4,5 +4,6 @@ window.BHTMS = {
     cyclicEncoder: require('./cyclicEncoder'),
     continuousOverlap: require('./continuousOverlap'),
     discreteEncoding: require('./discreteEncoding'),
+    FancyCyclicEncoderDisplay: require('FancyCyclicEncoderDisplay'),
     JSDS: require('JSDS'),
 }

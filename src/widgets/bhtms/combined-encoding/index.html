@@ -6,7 +6,7 @@
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src='../../../../wp-content/uploads/input-space/bhtms-input-space-0.2.15.js'></script>
+    <script src='../../../../wp-content/uploads/combined-encoding/bhtms-combined-encoding-0.2.15.js'></script>
 
     <style>
         body {
@@ -51,30 +51,44 @@
 </head>
 <body>
 
+
 <div class="widget">
 
-    <div id="potentialPools"></div>
+    <div id="streamingScalarWindow"></div>
 
     <script>
         $(function() {
-            BHTMS.potentialPools("potentialPools")
+            BHTMS.streamingScalarWindow("streamingScalarWindow")
         });
     </script>
 
 </div>
 
 
-<div class="widget">
+<!--<div class="widget">-->
 
-    <div id="initialPerms"></div>
+    <!--<div id="cyclicTimeEncodings"></div>-->
 
-    <script>
-        $(function() {
-            BHTMS.initialPerms("initialPerms")
-        });
-    </script>
+    <!--<script>-->
+        <!--$(function() {-->
+            <!--BHTMS.cyclicTimeEncodings("cyclicTimeEncodings", "streamingScalarWindow")-->
+        <!--});-->
+    <!--</script>-->
 
-</div>
+<!--</div>-->
+
+
+<!--<div class="widget">-->
+
+    <!--<div id="combinedEncoding"></div>-->
+
+    <!--<script>-->
+        <!--$(function() {-->
+            <!--BHTMS.combinedEncoding("combinedEncoding", "streamingScalarWindow")-->
+        <!--});-->
+    <!--</script>-->
+
+<!--</div>-->
 
 </body>
 </html>

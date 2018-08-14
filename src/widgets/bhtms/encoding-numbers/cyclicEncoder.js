@@ -1,7 +1,7 @@
 let utils = require('../../../lib/utils')
 let html = require('./cyclicEncoder.tmpl.html')
 let dat = require('dat.gui')
-let CyclicEncoderDisplay = require('CyclicEncoderDisplay')
+let FancyCyclicEncoderDisplay = require('FancyCyclicEncoderDisplay')
 
 module.exports = (elementId, config) => {
 
@@ -147,7 +147,7 @@ module.exports = (elementId, config) => {
                 resolution: uiValues.resolution,
                 display: uiValues.display,
             }, opts)
-            encoderDisplay = new CyclicEncoderDisplay($bitsSvg, params)
+            encoderDisplay = new FancyCyclicEncoderDisplay($bitsSvg, params)
         }
 
         function render() {
