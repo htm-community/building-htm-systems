@@ -12,27 +12,34 @@ let maxCircleRadius = 100
 let minCircleRadius = 4
 let absentCircleRadius = 1
 
-let min = 2 * Math.PI
-let max = 0
+let circleMin = 2 * Math.PI
+let circleMax = 0
 
 class CyclicEncoderDisplay {
 
     constructor(id, opts) {
         if (typeof id === 'string') {
-            this.$svg = d3.select('#' + id + ' .bits')
+            this.$svg = d3.select('#' + id)
         } else {
             this.$svg = id
             id = '?'
         }
+        this.$group = this.$svg.selectAll('.bits')
 
         this.id = id
-        this.radius = opts.radius
         this.center = opts.center
+        this.radius = opts.radius || this.size / 2
+
         this.onColor = opts.onColor
         this.offColor = opts.offColor
+
         this.size = opts.size
-        this.radius = opts.radius || this.size / 2
         this.pointSize = opts.pointSize
+
+        this.width = this.size
+        this.height = this.size
+        this.$svg.attr('width', this.width)
+                 .attr('height', this.size)
 
         if (id)
             this.jsds = JSDS.create(id)
@@ -43,35 +50,16 @@ class CyclicEncoderDisplay {
         this.jsds.set('n', opts.n)
 
         this.encoder = new CyclicEncoder({
-            min: min,
-            max: max,
+            min: opts.min,
+            max: opts.max,
             n: opts.n,
             w: opts.w,
         })
-
-        this.scale = d3.scaleLinear()
-            .domain([opts.min, opts.max])
-            .range([min, max])
 
         let me = this
         this.jsds.after('set', 'value', () => {
             me.updateDisplay()
         })
-    }
-
-    render() {
-        let $svg = this.$svg
-        let size = this.size
-
-        // Some aesthetic stuff. The order is important below because of the radius
-        this.largeCircleRatio = 1
-        this.circleStrokeWidth = 1
-        if (this.size < 50) {
-            this.largeCircleRatio = 8/9
-            this.circleStrokeWidth = 1
-        }
-        $svg.attr('width', size)
-            .attr('height', size)
     }
 
     get smallCircleRadius() {
@@ -80,8 +68,7 @@ class CyclicEncoderDisplay {
 
     updateDisplay() {
         let providerValue = this.jsds.get('value');
-        let scaledValue = this.scale(providerValue)
-        let encoding = this.jsds.get('encoding') || this.encoder.encode(scaledValue)
+        let encoding = this.jsds.get('encoding') || this.encoder.encode(providerValue)
         this._updateCircles(encoding)
     }
 
@@ -114,7 +101,7 @@ class CyclicEncoderDisplay {
             }
         })
 
-        let circles = this.$svg.selectAll('circle').data(data)
+        let circles = this.$group.selectAll('circle').data(data)
         this._treatCircleBits(circles)
 
         let newCircles = circles.enter().append('circle')
