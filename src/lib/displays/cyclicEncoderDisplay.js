@@ -10,6 +10,10 @@ let colors = {
 // Majic stuph
 let maxCircleRadius = 100
 let minCircleRadius = 4
+let absentCircleRadius = 1
+
+let min = 2 * Math.PI
+let max = 0
 
 class CyclicEncoderDisplay {
 
@@ -28,6 +32,7 @@ class CyclicEncoderDisplay {
         this.offColor = opts.offColor
         this.size = opts.size
         this.radius = opts.radius || this.size / 2
+        this.pointSize = opts.pointSize
 
         if (id)
             this.jsds = JSDS.create(id)
@@ -38,11 +43,15 @@ class CyclicEncoderDisplay {
         this.jsds.set('n', opts.n)
 
         this.encoder = new CyclicEncoder({
-            min: 2 * Math.PI,
-            max: 0,
+            min: min,
+            max: max,
             n: opts.n,
             w: opts.w,
         })
+
+        this.scale = d3.scaleLinear()
+            .domain([opts.min, opts.max])
+            .range([min, max])
 
         let me = this
         this.jsds.after('set', 'value', () => {
@@ -66,16 +75,13 @@ class CyclicEncoderDisplay {
     }
 
     get smallCircleRadius() {
-        let buckets = this.encoder.n
-        let circumference = 2 * Math.PI * this.radius
-        let out = Math.min(circumference / buckets / 2, maxCircleRadius)
-        out = Math.max(out, minCircleRadius)
-        return out
+        return this.pointSize
     }
 
     updateDisplay() {
-        let value = this.jsds.get('value')
-        let encoding = this.jsds.get('encoding') || this.encoder.encode(value)
+        let providerValue = this.jsds.get('value');
+        let scaledValue = this.scale(providerValue)
+        let encoding = this.jsds.get('encoding') || this.encoder.encode(scaledValue)
         this._updateCircles(encoding)
     }
 
@@ -84,11 +90,11 @@ class CyclicEncoderDisplay {
         circles
             .attr('cx', d => d.cx)
             .attr('cy', d => d.cy)
-            .attr('r', this.smallCircleRadius)
-            .attr('fill', d => {
-                if (d.bit) return me.offColor
-                else return me.onColor
+            .attr('r', (d) => {
+                if (d.bit === 0) return absentCircleRadius
+                else return me.smallCircleRadius
             })
+            .attr('fill', me.onColor)
             .attr('stroke', colors.bitStroke)
             .attr('stroke-width', this.circleStrokeWidth)
     }

@@ -57,6 +57,8 @@ module.exports = (elementId) => {
         let $d3El = d3.select('#' + elementId)
 
         let jsds = JSDS.create('streamingScalarWindow-' + elementId)
+        jsds.set('min', min)
+        jsds.set('max', max)
 
         let width = 560,
             height = 140

@@ -88,7 +88,6 @@ module.exports = (elementId, dataProviderId) => {
             timeEncoderNames.forEach(k => {
                 // Each encoder has a specific jsds instance
                 let store = JSDS.get('cyclicTimeEncodings-' + k)
-                store.set('value', provider.get('value'))
                 let encoding = store.get('encoding')
                 if (encoding) {
                     encoding.forEach(bit => {
