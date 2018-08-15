@@ -26,6 +26,8 @@ class CyclicEncoderDisplay {
         this.center = opts.center
         this.onColor = opts.onColor
         this.offColor = opts.offColor
+        this.size = opts.size
+        this.radius = opts.radius || this.size / 2
 
         if (id)
             this.jsds = JSDS.create(id)
@@ -60,6 +62,7 @@ class CyclicEncoderDisplay {
             this.circleStrokeWidth = 1
         }
         $svg.attr('width', size)
+            .attr('height', size)
     }
 
     get smallCircleRadius() {
@@ -71,11 +74,9 @@ class CyclicEncoderDisplay {
     }
 
     updateDisplay() {
-        let size = this.size
         let value = this.jsds.get('value')
         let encoding = this.jsds.get('encoding') || this.encoder.encode(value)
         this._updateCircles(encoding)
-        this.$svg.attr('height', size)
     }
 
     _treatCircleBits(circles) {
@@ -103,7 +104,7 @@ class CyclicEncoderDisplay {
             return {
                 bit: bit,
                 cx: center.x + radius * Math.sin(theta),
-                cy: center.y + radius * Math.cos(theta)
+                cy: center.y + radius * Math.cos(theta),
             }
         })
 

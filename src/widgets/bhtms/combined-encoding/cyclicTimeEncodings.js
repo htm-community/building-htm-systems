@@ -56,17 +56,19 @@ module.exports = (elementId, dataProviderId) => {
 
     utils.loadHtml(html.default, elementId, () => {
 
-        let size = 135
+        let width = 560
+        let size = width / 2
         let provider = JSDS.get(dataProviderId + '-' + dataProviderId)
 
         function renderTimeCycles() {
             timeEncoderNames.forEach((name, i) => {
                 let prms = timeEncoderParams[i]
-                // Each one has same size and center
+
+                // Each one has same stuff below
                 prms.center = {x: size/2, y: size/2}
                 prms.size = size
-                prms.radius = size * .4
                 prms.offColor = '#303240'
+
                 let encoderDisplay = new CyclicEncoderDisplay(elementId + '-' + name, prms)
                 encoderDisplay.render()
                 timeEncoders[name] = encoderDisplay
