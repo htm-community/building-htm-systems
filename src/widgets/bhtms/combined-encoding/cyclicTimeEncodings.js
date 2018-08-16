@@ -8,7 +8,7 @@ let timeEncoderNames = [
     'day-of-month',
     'weekend',
     'day-of-week',
-    'time-of-day',
+    'hour-of-day',
 ]
 let timeEncoderParams = [{
     // day of month
@@ -72,7 +72,7 @@ module.exports = (elementId, dataProviderId) => {
 
                 let encoderDisplay = new CyclicEncoderDisplay(elementId + '-' + name, prms)
                 timeEncoders[name] = encoderDisplay
-                encoderDisplay.jsds.set('text.value', 0)
+                encoderDisplay.jsds.set('value', 0)
                 encoderDisplay.$svg.select('text.label').html(name)
             })
         }
@@ -101,26 +101,23 @@ module.exports = (elementId, dataProviderId) => {
             encoderDisplay.$svg.select('.value').html(dayOfWeek)
         }
 
+        function updateTimeOfDay(time) {
+            let hourOfDay = time.getHours()
+            let encoderDisplay = timeEncoders['hour-of-day']
+            encoderDisplay.jsds.set('value', hourOfDay)
+            encoderDisplay.$svg.select('.value').html(hourOfDay)
+
+        }
+
         function updateTimeEncoders() {
             let value = provider.get('value');
             let time = value.time
 
-            updateDayOfMonthEncoder(time)
+            // updateDayOfMonthEncoder(time)
             updateWeekendEncoder(time)
-            updateDayOfWeekEncoder(time)
+            // updateDayOfWeekEncoder(time)
+            // updateTimeOfDay(time)
 
-            // let dayOfMonth = time.getDate() - 1
-            // let dayOfWeek = time.getDay()
-            // let isWeekend = 0
-            // let hourOfDay = time.getHours()
-            // if ((dayOfWeek === 6) || (dayOfWeek === 0)) {
-            //     isWeekend = 1
-            // }
-            //
-            // timeEncoders['day-of-month'].jsds.set('value', dayOfMonth)
-            // timeEncoders['weekend'].jsds.set('value', isWeekend)
-            // timeEncoders['day-of-week'].jsds.set('value', dayOfWeek)
-            // timeEncoders['time-of-day'].jsds.set('value', hourOfDay)
         }
 
         encoder = new ScalarEncoder({

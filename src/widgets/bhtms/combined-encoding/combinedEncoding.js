@@ -11,26 +11,18 @@ let timeEncoderNames = [
 let timeEncoderParams = [{
     // day of month
     values: 31,
-    range: 9,
-    buckets: 21,
     color: '#DF0024',
 }, {
     // weekend
     values: 2,
-    range: 11,
-    buckets: 21,
     color: '#00AC9F',
 }, {
     // day of week
     values: 7,
-    range: 3,
-    buckets: 21,
     color: '#F3C300',
 }, {
     // time of day
     values: 24,
-    range: 9,
-    buckets: 21,
     color: '#2E6DB4',
 }]
 
@@ -88,6 +80,7 @@ module.exports = (elementId, dataProviderId) => {
             timeEncoderNames.forEach(k => {
                 // Each encoder has a specific jsds instance
                 let store = JSDS.get('cyclicTimeEncodings-' + k)
+                if (!store) return
                 let encoding = store.get('encoding')
                 if (encoding) {
                     encoding.forEach(bit => {
