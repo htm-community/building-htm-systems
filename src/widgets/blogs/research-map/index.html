@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Numenta Research Map</title>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="../../../../blogs/research-map-0.2.15.js"></script>
+
+  <style>
+    .widget {
+      width: 560px;
+      border: 1px black;
+      margin: 20px 0;
+    }
+
+    #research-map {
+      display: table;
+      table-layout: fixed;
+
+      width:100%;
+      height:200px;
+      background-color:Gray;
+    }
+    #research-map div {
+      display: table-cell;
+      height:100px;
+    }
+
+    #research-map li.selected {
+      background-color: orchid;
+    }
+
+    #research-map ul li {
+      list-style: none;
+    }
+
+    .left {
+      background-color:lightgrey;
+    }
+    .right {
+      background-color:lightsteelblue;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="widget">
+
+  <div id="research-map">
+
+  </div>
+
+  <script>
+      $(function() {
+          BHTMS.researchMap("research-map")
+      });
+  </script>
+
+</div>
+
+
+
+</body>
+
+</html>
