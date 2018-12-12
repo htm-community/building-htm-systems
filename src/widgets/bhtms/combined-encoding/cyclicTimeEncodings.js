@@ -58,7 +58,7 @@ module.exports = (elementId, dataProviderId) => {
 
                 let size = width / 2
                 let xOffset = -50
-                let yOffset = 0
+                let yOffset = -30
                 let radius = size/2 * .7
 
                 // Each one has same stuff below
@@ -113,10 +113,10 @@ module.exports = (elementId, dataProviderId) => {
             let value = provider.get('value');
             let time = value.time
 
-            // updateDayOfMonthEncoder(time)
+            updateDayOfMonthEncoder(time)
             updateWeekendEncoder(time)
-            // updateDayOfWeekEncoder(time)
-            // updateTimeOfDay(time)
+            updateDayOfWeekEncoder(time)
+            updateTimeOfDay(time)
 
         }
 

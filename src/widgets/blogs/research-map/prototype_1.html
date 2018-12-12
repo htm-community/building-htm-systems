@@ -4,14 +4,22 @@
   <meta charset="UTF-8">
   <title>Numenta Research Map</title>
 
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="../../../../blogs/research-map-0.2.15.js"></script>
 
   <style>
     .widget {
-      width: 560px;
+      width: 800px;
       border: 1px black;
       margin: 20px 0;
+    }
+
+    #research-map {
+      font-family: 'Verdana', serif;
+    }
+
+    #research-map div, ul, li {
+      /*border: solid red 1px;*/
     }
 
     #research-map {
@@ -31,8 +39,19 @@
       background-color: orchid;
     }
 
+    #research-map ul.topics {
+      padding: 0;
+      margin: 0;
+    }
+
     #research-map ul.topics li {
       list-style: none;
+      padding: 20px;
+      font-size: 20px;
+    }
+
+    li.up {
+      background-color: coral;
     }
 
     .left {

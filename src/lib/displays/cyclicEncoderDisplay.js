@@ -7,13 +7,7 @@ let colors = {
     bitStroke: 'black',
 }
 
-// Majic stuph
-let maxCircleRadius = 100
-let minCircleRadius = 4
 let absentCircleRadius = 1
-
-let circleMin = 2 * Math.PI
-let circleMax = 0
 
 class CyclicEncoderDisplay {
 
@@ -39,7 +33,7 @@ class CyclicEncoderDisplay {
         this.width = this.size
         this.height = this.size
         this.$svg.attr('width', this.width)
-                 .attr('height', this.size)
+                 .attr('height', this.size * .78)
 
         if (id)
             this.jsds = JSDS.create(id)

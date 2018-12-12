@@ -221,42 +221,74 @@ let modules = []
  * GRID CELL BLOG
  *******************************/
 
-// How Grid Cells Map Space
-modules.push({
-    mode: mode,
-    entry: [
-        './src/widgets/blogs/how-grid-cells-map-space/index.js',
-    ],
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                loader: 'babel-loader'
-            },
-            {
-                test: /tmpl\.html$/,
-                loader: 'posthtml-loader'
-            }
-        ]
-    },
-    resolve: {
-        alias: {
-            JSDS: path.join(__dirname, 'node_modules/javascript-data-store/src/jsds'),
-            SdrDrawing: path.join(__dirname, 'node_modules/cell-viz/src/SdrDrawing'),
-            HexagonGridCellModule: path.join(__dirname, 'src/lib/gridCells/hex-gcm'),
-        }
-    },
-    output: {
-        path: __dirname + '/blogs',
-        filename: `bhtms-how-grid-cells-map-space-${version}.js`
-    }
-})
+// // How Grid Cells Map Space
+// modules.push({
+//     mode: mode,
+//     entry: [
+//         './src/widgets/blogs/how-grid-cells-map-space/index.js',
+//     ],
+//     module: {
+//         rules: [
+//             {
+//                 test: /\.js$/,
+//                 loader: 'babel-loader'
+//             },
+//             {
+//                 test: /tmpl\.html$/,
+//                 loader: 'posthtml-loader'
+//             }
+//         ]
+//     },
+//     resolve: {
+//         alias: {
+//             JSDS: path.join(__dirname, 'node_modules/javascript-data-store/src/jsds'),
+//             SdrDrawing: path.join(__dirname, 'node_modules/cell-viz/src/SdrDrawing'),
+//             HexagonGridCellModule: path.join(__dirname, 'src/lib/gridCells/hex-gcm'),
+//         }
+//     },
+//     output: {
+//         path: __dirname + '/blogs',
+//         filename: `bhtms-how-grid-cells-map-space-${version}.js`
+//     }
+// })
 
-// Research Map
+// // Research Map Prototype 1
+// modules.push({
+//     mode: mode,
+//     entry: [
+//         './src/widgets/blogs/research-map/prototype_1.js',
+//     ],
+//     module: {
+//         rules: [
+//             {
+//                 test: /\.js$/,
+//                 loader: 'babel-loader'
+//             },
+//             {
+//                 test: /tmpl\.html$/,
+//                 loader: 'posthtml-loader'
+//             }
+//         ]
+//     },
+//     node: {
+//         fs: 'empty'
+//     },
+//     resolve: {
+//         alias: {
+//             JSDS: path.join(__dirname, 'node_modules/javascript-data-store/src/jsds'),
+//         }
+//     },
+//     output: {
+//         path: __dirname + '/blogs',
+//         filename: `research-map-${version}.js`
+//     }
+// })
+
+// Research Map Prototype 2
 modules.push({
     mode: mode,
     entry: [
-        './src/widgets/blogs/research-map/index.js',
+        './src/widgets/blogs/research-map/prototype_2.js',
     ],
     module: {
         rules: [
@@ -283,6 +315,5 @@ modules.push({
         filename: `research-map-${version}.js`
     }
 })
-
 
 module.exports = modules
