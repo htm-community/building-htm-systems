@@ -1,15 +1,29 @@
-%Numenta Research Map
 ---
 
-Description: A network map of research areas and how they are related, meant to be used for dynamic visualizations.
-
 1000 Brains:
-  desc: 1000 Brains Summary Text
+
+  desc: >
+    <p>
+    This should be a summary of the <em>Thousand Brains Theory</em>.
+    You can add HTML here, too.
+    </p>
+
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras bibendum lacus erat, accumsan fringilla leo vulputate et. Duis a semper quam. Aliquam gravida interdum eros at tincidunt. Ut pulvinar mauris in dolor suscipit, sit amet efficitur nisi feugiat. Donec tincidunt sapien sed nisl tincidunt, tincidunt porttitor turpis ornare.
+    </p>
+
+    <p>
+    Donec malesuada, metus ac volutpat ullamcorper, urna sapien condimentum sapien, sed fringilla felis elit ac nisi. Curabitur ac erat a arcu placerat venenatis ac sit amet diam. Nunc convallis mattis erat id dictum. Duis sed accumsan erat, quis dapibus justo. Phasellus eros ante, aliquet quis est at, dapibus tempus risus.
+    </p>
 
   children:
 
     Local Computations\nParallel Voting:
-      desc: Local Computations / Parallel Voting Summary Text
+      desc: >
+        <p>
+        The neocortex is massively parallel. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras bibendum lacus erat, accumsan fringilla leo vulputate et. Duis a semper quam. Aliquam gravida interdum eros at tincidunt. Ut pulvinar mauris in dolor suscipit, sit amet efficitur nisi feugiat. Donec tincidunt sapien sed nisl tincidunt, tincidunt porttitor turpis ornare. Duis iaculis interdum felis, ut tristique sem sodales sit amet. Proin leo elit, ullamcorper at pellentesque a, mattis quis arcu. Morbi in sodales sem. Suspendisse eleifend massa massa, nec fringilla mi tristique vitae.
+        </p>
+
       resources:
         A Theory of How Columns in the Neocortex Enable Learning the Structure of the World: https://numenta.com/neuroscience-research/research-publications/papers/a-theory-of-how-columns-in-the-neocortex-enable-learning-the-structure-of-the-world/
         A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/
@@ -24,7 +38,7 @@ Description: A network map of research areas and how they are related, meant to 
           desc: Layers Summary Text
           resources:
             A Theory of How Columns in the Neocortex Enable Learning the Structure of the World: https://numenta.com/neuroscience-research/research-publications/papers/a-theory-of-how-columns-in-the-neocortex-enable-learning-the-structure-of-the-world/
-            "Locations in the Neocortex: A Theory of Sensorimotor Object Recognition Using Cortical Grid Cells": https://numenta.com/neuroscience-research/research-publications/papers/locations-in-the-neocortex-a-theory-of-sensorimotor-object-recognition-using-cortical-grid-cells/
+            Locations in the Neocortex, A Theory of Sensorimotor Object Recognition Using Cortical Grid Cells": https://numenta.com/neuroscience-research/research-publications/papers/locations-in-the-neocortex-a-theory-of-sensorimotor-object-recognition-using-cortical-grid-cells/
 
         Connections Between Layers:
           desc: Connections Between Layers Summary Text
@@ -61,13 +75,13 @@ Description: A network map of research areas and how they are related, meant to 
         Grid Cells:
           desc: Introduction to Grid Cells
           resources:
-            "Locations in the Neocortex: A Theory of Sensorimotor Object Recognition Using Cortical Grid Cells": https://numenta.com/neuroscience-research/research-publications/papers/locations-in-the-neocortex-a-theory-of-sensorimotor-object-recognition-using-cortical-grid-cells/
+            Locations in the Neocortex, A Theory of Sensorimotor Object Recognition Using Cortical Grid Cells": https://numenta.com/neuroscience-research/research-publications/papers/locations-in-the-neocortex-a-theory-of-sensorimotor-object-recognition-using-cortical-grid-cells/
             Grid Cells HTM School: https://www.youtube.com/watch?v=mP7neeymcUY
             How Grid Cells Map Space: https://numenta.com/blog/2018/05/25/how-grid-cells-map-space/
 
         Displacement Cells:
           resources:
-            "Locations in the Neocortex: A Theory of Sensorimotor Object Recognition Using Cortical Grid Cells": https://numenta.com/neuroscience-research/research-publications/papers/locations-in-the-neocortex-a-theory-of-sensorimotor-object-recognition-using-cortical-grid-cells/
+            Locations in the Neocortex, A Theory of Sensorimotor Object Recognition Using Cortical Grid Cells": https://numenta.com/neuroscience-research/research-publications/papers/locations-in-the-neocortex-a-theory-of-sensorimotor-object-recognition-using-cortical-grid-cells/
             A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/
             Companion paper to A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/thousand-brains-theory-of-intelligence-companion-paper/
           requires:

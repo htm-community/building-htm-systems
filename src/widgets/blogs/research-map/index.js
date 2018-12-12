@@ -1,6 +1,7 @@
 let utils = require('../../../lib/utils')
 let html = require('./researchMap.tmpl.html')
-let rawMap = require('./researchMap.json')['Research Map']
+let YAML = require('yamljs')
+let rawMap = YAML.load('./research-map.yaml')
 let selected = '1000 Brains'
 let $el, $ul, $content
 

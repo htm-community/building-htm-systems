@@ -18,10 +18,12 @@
     "cell-viz": "^1.4.9",
     "dat.gui": "^0.7.2",
     "javascript-data-store": "^1.0.3",
+    "json-loader": "^0.5.7",
     "moment": "^2.22.2",
     "npm": "^6.3.0",
     "simplehtm": "0.0.15",
-    "webpack": "^4.5.0"
+    "webpack": "^4.5.0",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "file-loader": "^1.1.11",

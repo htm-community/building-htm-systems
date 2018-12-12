@@ -270,6 +270,9 @@ modules.push({
             }
         ]
     },
+    node: {
+        fs: 'empty'
+    },
     resolve: {
         alias: {
             JSDS: path.join(__dirname, 'node_modules/javascript-data-store/src/jsds'),
