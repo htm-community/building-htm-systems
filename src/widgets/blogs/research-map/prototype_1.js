@@ -1,5 +1,5 @@
 let utils = require('../../../lib/utils')
-let html = require('./researchMap.tmpl.html')
+let html = require('./prototype_1.tmpl.html')
 let YAML = require('yamljs')
 let rawMap = YAML.load('./research-map.yaml')
 let selected
