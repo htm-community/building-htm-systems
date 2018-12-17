@@ -4,9 +4,12 @@
   <meta charset="UTF-8">
   <title>Numenta Research Map</title>
 
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="../../../lib/jquery-ui-1.12.1.custom/external/jquery/jquery.js"></script>
+  <script src="../../../lib/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
   <script src="https://d3js.org/d3.v5.min.js"></script>
   <script src="../../../../blogs/research-map-0.2.15.js"></script>
+
+  <link rel="stylesheet" href="../../../lib/jquery-ui-1.12.1.custom/jquery-ui.css">
 
   <style>
 
@@ -15,24 +18,15 @@
       border: solid black 1px;
     }
 
-    .node rect {
-      cursor: pointer;
-      fill: #fff;
-      fill-opacity: 0.5;
-      stroke: #3182bd;
-      stroke-width: 1.5px;
+    .widget h3 {
+      margin: 0;
+      padding: 0;
     }
 
-    .node text {
-      font-size: 14px;
-      font-family: Verdana, sans-serif;
-      pointer-events: none;
+    .accordion{
     }
 
-    .link {
-      fill: none;
-      stroke: #9ecae1;
-      stroke-width: 1.5px;
+    ul.accordion > li{
     }
 
   </style>

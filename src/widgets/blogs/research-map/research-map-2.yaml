@@ -4,24 +4,23 @@ root:
 
   name: 1000 Brains
 
+  summary: >
+    <p>
+    The 1000 Brains Model of Intelligence suggests we need to rethink how the entire neocortex processes information. In the classic view, the cortex receives input from a sensory organ and processes it in a series of hierarchical steps. Sensory input ascends from region to region, and at each level, cells respond to larger areas and more complex features of a sensory array. It’s commonly assumed that complete objects can only be recognized at a high enough level in the hierarchy where cells can take in the entire sensory array.
+    </p>
+
   resources:
     Intro to Thousand Brains Model of Intelligence: https://numenta.com/blog/2018/03/19/thousand-brains-model-of-intelligence/
 
   children:
 
-    - name: summary
-      text: >
+    - name: Local Computations / Parallel Voting
+      summary: >
         <p>
-        The 1000 Brains Model of Intelligence suggests we need to rethink how the entire neocortex processes information. In the classic view, the cortex receives input from a sensory organ and processes it in a series of hierarchical steps. Sensory input ascends from region to region, and at each level, cells respond to larger areas and more complex features of a sensory array. It’s commonly assumed that complete objects can only be recognized at a high enough level in the hierarchy where cells can take in the entire sensory array.
+        Local Computations / Parallel Voting
         </p>
 
-    - name: Local Computations / Parallel Voting
       children:
-        - name: summary
-          text: >
-            <p>
-            Local Computations / Parallel Voting
-            </p>
         - name: resources
           children:
             - name: A Theory of How Columns in the Neocortex Enable Learning the Structure of the World
