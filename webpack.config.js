@@ -288,7 +288,7 @@ let modules = []
 modules.push({
     mode: mode,
     entry: [
-        './src/widgets/blogs/research-map/prototype_2.js',
+        './src/widgets/blogs/research-map/index.js',
     ],
     module: {
         rules: [
