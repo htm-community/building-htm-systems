@@ -192,7 +192,7 @@ function htmlNodeLoader(node, $el, _name) {
                     $li.append($link)
                     $res.append($li)
                 })
-                $content.append('<h4>Other Resources')
+                $content.append('<h4>Required Reading')
                 $content.append($res)
             }
         }
