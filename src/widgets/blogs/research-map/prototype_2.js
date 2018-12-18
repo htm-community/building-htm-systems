@@ -8,7 +8,7 @@ function isChildMap(node) {
 }
 
 function toDomId(str) {
-    return str.replace(/\s+/, '_')
+    return str.replace(/\s+/g, '_')
 }
 
 function htmlNodeLoader(node, $el, _name) {
@@ -21,7 +21,10 @@ function htmlNodeLoader(node, $el, _name) {
     let nodeName = (node.name || _name) || 'root'
     let id = toDomId(nodeName)
 
+    console.log(id)
+
     if (isChildMap(node)) {
+        console.log('loading %s accordion', id)
         let childNames = Object.keys(node)
         let $ul = $('<ul id="' + id + '" class="accordion">')
         childNames.forEach(name => {
@@ -30,33 +33,51 @@ function htmlNodeLoader(node, $el, _name) {
         $content.append($ul)
     } else {
 
+        if (nodeName && node.desc) {
 
-        if (node.desc) {
-            $content.append(node.desc)
+            $content.attr('id', id)
+            if (node.desc) {
+                $content.append(node.desc)
+            }
+
+            if (node.resources) {
+                let $res = $('<ul>')
+                Object.keys(node.resources).forEach(resource => {
+                    let url = node.resources[resource]
+                    let $link = $('<a href="' + url + '" target="_blank">')
+                    $link.html(resource)
+                    let $li = $('<li>')
+                    $li.append($link)
+                    $res.append($li)
+                })
+                $content.append('<h4>Other Resources')
+                $content.append($res)
+            }
+
+            if (node.requires) {
+                let $res = $('<ul>')
+                node.requires.forEach(req => {
+                    let $link = $('<a class="requires" href="#">')
+                    $link.html(req)
+                    let $li = $('<li>')
+                    $li.append($link)
+                    $res.append($li)
+                })
+                $content.append('<h4>Other Resources')
+                $content.append($res)
+            }
+
+            $content.append('<hr>')
         }
 
         if (node.children) {
+            console.log('%s has children', id)
             htmlNodeLoader(node.children, $content, nodeName)
         }
 
-        if (node.resources) {
-            let $res = $('<ul>')
-            Object.keys(node.resources).forEach(resource => {
-                let url = node.resources[resource]
-                let $link = $('<a href="' + url + '" target="_blank">')
-                $link.html(resource)
-                let $li = $('<li>')
-                $li.append($link)
-                $res.append($li)
-            })
-            $content.append('<h4>Other Resources')
-            $content.append($res)
-        }
-
-        if (nodeName !== 'root')
+        if (nodeName !== 'root') {
             $header.html(nodeName)
-
-
+        }
     }
 
     $el.append([$header, $content])
@@ -81,6 +102,16 @@ function render(elId) {
         collapsible: false,
         active: true,
         heightStyle: "content"
+    })
+
+    $el.find('.requires').click(evt => {
+        // have to get the parent id here, not the child
+        let id = toDomId($(evt.target).html())
+        evt.stopPropagation()
+        evt.preventDefault()
+        // let $parentAccordion = $el.find('#' + id)
+        // let childIndex = getChildIndex(parent, child)
+        // $parentAccordion.accordion('option', 'active', childIndex)
     })
 }
 
