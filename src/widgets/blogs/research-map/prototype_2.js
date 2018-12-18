@@ -2,7 +2,14 @@ let utils = require('../../../lib/utils')
 let html = require('./prototype_2.tmpl.html')
 let YAML = require('yamljs')
 let rawMap = YAML.load('./research-map.yaml')
-let firstRendered = true
+
+function isChildMap(node) {
+    return !node.resources && !node.requires && !node.desc && !node.children
+}
+
+function toDomId(str) {
+    return str.replace(/\s+/, '_')
+}
 
 function htmlNodeLoader(node, $el, _name) {
     // Read through hierarchy and create the HTML we need
@@ -11,47 +18,49 @@ function htmlNodeLoader(node, $el, _name) {
     let $header = $('<h3>')
     let $content = $('<div>')
 
-    let nodeName = (_name || node.name)
+    let nodeName = (node.name || _name) || 'root'
+    let id = toDomId(nodeName)
 
-    if (node.desc) {
-        $content.append('<p class="desc">' + node.desc)
-    }
-
-    if (! nodeName) {
+    if (isChildMap(node)) {
         let childNames = Object.keys(node)
-        let clazz = "accordion "
-        if (firstRendered) {
-            clazz += "top"
-            firstRendered = false
-        } else {
-            clazz += "below"
-        }
-        let $ul = $('<ul class="' + clazz + '">')
-        childNames.forEach((name, i) => {
+        let $ul = $('<ul id="' + id + '" class="accordion">')
+        childNames.forEach(name => {
             $ul.append(htmlNodeLoader(node[name], $('<li>'), name))
         })
         $content.append($ul)
-    } else if (node.children) {
-        $content.append(htmlNodeLoader(node.children, $content))
-    }
+    } else {
 
-    if (node.resources) {
-        let $res = $('<ul>')
-        Object.keys(node.resources).forEach(resource => {
-            let url = node.resources[resource]
-            let $link = $('<a href="' + url + '" target="_blank">')
-            $link.html(resource)
-            let $li = $('<li>')
-            $li.append($link)
-            $res.append($li)
-        })
-        $content.append('<h4>Other Resources')
-        $content.append($res)
-    }
 
-    $header.html(nodeName)
+        if (node.desc) {
+            $content.append(node.desc)
+        }
+
+        if (node.children) {
+            htmlNodeLoader(node.children, $content, nodeName)
+        }
+
+        if (node.resources) {
+            let $res = $('<ul>')
+            Object.keys(node.resources).forEach(resource => {
+                let url = node.resources[resource]
+                let $link = $('<a href="' + url + '" target="_blank">')
+                $link.html(resource)
+                let $li = $('<li>')
+                $li.append($link)
+                $res.append($li)
+            })
+            $content.append('<h4>Other Resources')
+            $content.append($res)
+        }
+
+        if (nodeName !== 'root')
+            $header.html(nodeName)
+
+
+    }
 
     $el.append([$header, $content])
+
     return $el
 }
 
@@ -61,13 +70,14 @@ function loadAccordionHtml(elId) {
 
 function render(elId) {
     let $el = loadAccordionHtml(elId)
-    $el.find("ul.accordion.below").accordion({
+
+    $el.find("ul.accordion").accordion({
         collapsible: true,
         active: false,
         heightStyle: "content"
     });
 
-    $el.find("ul.accordion.first").accordion({
+    $el.find("#" + toDomId("root")).accordion({
         collapsible: false,
         active: true,
         heightStyle: "content"
