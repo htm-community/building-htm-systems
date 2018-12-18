@@ -40,14 +40,24 @@
     Common Cortical Circuit:
       desc: >
         <img src="img/cortical-circuit.png"/>
-        <p>Introduction to Common Cortical Circuit</p>
+        <ol>
+          <li>
+            All areas of the neocortex look the same because they perform the same basic function.
+          </li>
+          <li>
+            What makes one region visual and another auditory is what it is connected to.
+          </li>
+          <li>
+          A small area of cortex, a 1mm2 “cortical column”, is the unit of replication and contains the common cortical algorithm.
+          </li>
+        </ol>
 
       children:
 
         Layers:
           desc: >
             <img src="img/layers.png"/>
-            <p>Layers Summary Text</p>
+            <p>Cortical Columns have layers. These layers are like compute modules within the Common Cortical Circuit.</p>
 
           resources:
             A Theory of How Columns in the Neocortex Enable Learning the Structure of the World: https://numenta.com/neuroscience-research/research-publications/papers/a-theory-of-how-columns-in-the-neocortex-enable-learning-the-structure-of-the-world/
@@ -78,7 +88,7 @@
         Minicolumns:
           desc: >
 
-            <p>Minicolumns summary</p>
+            <p>Minicolumns are groups of pyramidal neurons that share the same proximal receptive field. Once a set of minicolumns is activated by feed-forward input, individual cells within them can represent spatial input within different contexts.</p>
 
           requires:
             - HTM Neuron
