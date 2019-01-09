@@ -1,0 +1,125 @@
+{
+  "Thousand Brains": {
+    "desc": "<p> The Thousand Brains Model of Intelligence suggests we need to rethink how the entire neocortex processes information. </p> <img src=\"img/classic-hierarchy-vs-proposed-model.png\"/> <p> In the classic view, the cortex receives input from a sensory organ and processes it in a series of hierarchical steps. Sensory input ascends from region to region, and at each level, cells respond to larger areas and more complex features of a sensory array. It’s commonly assumed that complete objects can only be recognized at a high enough level in the hierarchy where cells can take in the entire sensory array. </p>\n",
+    "resources": {
+      "Intro to Thousand Brains Model of Intelligence": "https://numenta.com/blog/2018/03/19/thousand-brains-model-of-intelligence/"
+    },
+    "children": {
+      "Local Computations / Parallel Voting": {
+        "desc": "<img src=\"img/parallel-voting.jpg\"/> <p> In the Thousand Brains Model of Intelligence, each column creates complete models of its world, based on what it can sense as its associated sensor moves. Connections in the cortex, both hierarchical connections and connections between adjacent columns, allow columns to work together to quickly identify objects. </p>\n",
+        "resources": {
+          "A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex": "https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/",
+          "Companion paper to A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex": "https://numenta.com/neuroscience-research/research-publications/papers/thousand-brains-theory-of-intelligence-companion-paper/",
+          "A Theory of How Columns in the Neocortex Enable Learning the Structure of the World": "https://numenta.com/neuroscience-research/research-publications/papers/a-theory-of-how-columns-in-the-neocortex-enable-learning-the-structure-of-the-world/"
+        }
+      },
+      "Common Cortical Circuit": {
+        "desc": "<img src=\"img/cortical-circuit.png\"/> <ol>  <li>\n    All areas of the neocortex look the same because they perform the same basic function.\n  </li>\n  <li>\n    What makes one region visual and another auditory is what it is connected to.\n  </li>\n  <li>\n  A small area of cortex, a 1mm2 “cortical column”, is the unit of replication and contains the common cortical algorithm.\n  </li>\n</ol>\n",
+        "children": {
+          "Layers": {
+            "desc": "<img src=\"img/layers.png\"/> <p>Cortical Columns have layers. These layers are like compute modules within the Common Cortical Circuit.</p>\n",
+            "resources": {
+              "A Theory of How Columns in the Neocortex Enable Learning the Structure of the World": "https://numenta.com/neuroscience-research/research-publications/papers/a-theory-of-how-columns-in-the-neocortex-enable-learning-the-structure-of-the-world/",
+              "Locations in the Neocortex, A Theory of Sensorimotor Object Recognition Using Cortical Grid Cells\"": "https://numenta.com/neuroscience-research/research-publications/papers/locations-in-the-neocortex-a-theory-of-sensorimotor-object-recognition-using-cortical-grid-cells/"
+            }
+          },
+          "Connections Between Layers": {
+            "desc": "\n<p>Connections Between Layers Summary Text</p>\n",
+            "dependencies": [
+              "Layers"
+            ],
+            "resources": {
+              "Thalamus Snubbed": "https://numenta.com/blog/2018/08/29/thalamus-snubbed/"
+            }
+          },
+          "HTM Neuron": {
+            "desc": "<img src=\"img/pyramidal-neuron.jpg\"/> <p> Pyramidal neurons represent the majority of excitatory neurons in the neocortex. Each pyramidal neuron receives input from thousands of excitatory synapses that are segregated onto dendritic branches. The dendrites themselves are segregated into apical, basal, and proximal integration zones, which have different properties. </p> <img src=\"img/htm-neuron.jpg\"/>\n",
+            "resources": {
+              "Why Neurons Have Thousands of Synapses, A Theory of Sequence Memory in Neocortex": "https://numenta.com/neuroscience-research/research-publications/papers/why-neurons-have-thousands-of-synapses-theory-of-sequence-memory-in-neocortex/"
+            }
+          },
+          "Minicolumns": {
+            "desc": "\n<p>Minicolumns are groups of pyramidal neurons that share the same proximal receptive field. Once a set of minicolumns is activated by feed-forward input, individual cells within them can represent spatial input within different contexts.</p>\n",
+            "dependencies": [
+              "HTM Neuron"
+            ],
+            "resources": {
+              "Why Neurons Have Thousands of Synapses, A Theory of Sequence Memory in Neocortex": "https://numenta.com/neuroscience-research/research-publications/papers/why-neurons-have-thousands-of-synapses-theory-of-sequence-memory-in-neocortex/",
+              "HTM School Spatial Pooling Part 1": "https://www.youtube.com/watch?v=R5UoFNtv5AU",
+              "HTM School Spatial Pooling Part 2": "https://www.youtube.com/watch?v=rHvjykCIrZM"
+            }
+          },
+          "Sequence Memory": {
+            "desc": "\n<p>Summary of sequence memory</p>\n",
+            "dependencies": [
+              "Minicolumns",
+              "HTM Neuron"
+            ],
+            "resources": {
+              "Why Neurons Have Thousands of Synapses, A Theory of Sequence Memory in Neocortex": "https://numenta.com/neuroscience-research/research-publications/papers/why-neurons-have-thousands-of-synapses-theory-of-sequence-memory-in-neocortex/",
+              "HTM School Temporal Memory Part 1": "https://www.youtube.com/watch?v=UBzemKcUoOk",
+              "HTM School Temporal Memory Part 2": "https://www.youtube.com/watch?v=1OhY_u3NjdM"
+            }
+          }
+        }
+      },
+      "Complete Object Modeling": {
+        "desc": "\n<p>every CC models a complete object</p>\n",
+        "children": {
+          "Locations": {
+            "desc": "\n<p>Why we need to model location spaces around objects.</p>\n"
+          },
+          "Grid Cells": {
+            "desc": "<img src=\"img/grid-cells.png\"/> <p>Introduction to Grid Cells</p>\n",
+            "resources": {
+              "Locations in the Neocortex, A Theory of Sensorimotor Object Recognition Using Cortical Grid Cells\"": "https://numenta.com/neuroscience-research/research-publications/papers/locations-in-the-neocortex-a-theory-of-sensorimotor-object-recognition-using-cortical-grid-cells/",
+              "Grid Cells HTM School": "https://www.youtube.com/watch?v=mP7neeymcUY",
+              "How Grid Cells Map Space": "https://numenta.com/blog/2018/05/25/how-grid-cells-map-space/"
+            }
+          },
+          "Displacement Cells": {
+            "desc": "<img src=\"img/displacement-cells.png\"/> <p>Introduction to Displacement Cells</p>\n",
+            "resources": {
+              "Locations in the Neocortex, A Theory of Sensorimotor Object Recognition Using Cortical Grid Cells\"": "https://numenta.com/neuroscience-research/research-publications/papers/locations-in-the-neocortex-a-theory-of-sensorimotor-object-recognition-using-cortical-grid-cells/",
+              "A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex": "https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/",
+              "Companion paper to A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex": "https://numenta.com/neuroscience-research/research-publications/papers/thousand-brains-theory-of-intelligence-companion-paper/"
+            },
+            "dependencies": [
+              "Grid Cells"
+            ]
+          },
+          "Composite Objects": {
+            "desc": "\n<p>Introduction to Composite Objects</p>\n",
+            "resources": {
+              "A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex": "https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/",
+              "Companion paper to A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex": "https://numenta.com/neuroscience-research/research-publications/papers/thousand-brains-theory-of-intelligence-companion-paper/"
+            },
+            "dependencies": [
+              "Grid Cells",
+              "Displacement Cells"
+            ]
+          },
+          "Object Behavior": {
+            "desc": "\n<p>Introduction to Object Behavior</p>\n",
+            "resources": {
+              "A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex": "https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/",
+              "Companion paper to A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex": "https://numenta.com/neuroscience-research/research-publications/papers/thousand-brains-theory-of-intelligence-companion-paper/"
+            },
+            "dependencies": [
+              "Grid Cells",
+              "Displacement Cells",
+              "Composite Objects"
+            ]
+          }
+        }
+      },
+      "Abstract Objects": {
+        "desc": "\n<p>Introduction to Abstract Objects</p>\n",
+        "resources": {
+          "A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex": "https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/",
+          "Companion paper to A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex": "https://numenta.com/neuroscience-research/research-publications/papers/thousand-brains-theory-of-intelligence-companion-paper/"
+        }
+      }
+    }
+  }
+}

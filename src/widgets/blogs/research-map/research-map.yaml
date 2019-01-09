@@ -5,7 +5,7 @@
 # to be a part of a blog post.
 ---
 
-1000 Brains:
+Thousand Brains:
 
   desc: >
     <p>
@@ -68,7 +68,7 @@
 
             <p>Connections Between Layers Summary Text</p>
 
-          requires:
+          dependencies:
             - Layers
 
           resources:
@@ -90,7 +90,7 @@
 
             <p>Minicolumns are groups of pyramidal neurons that share the same proximal receptive field. Once a set of minicolumns is activated by feed-forward input, individual cells within them can represent spatial input within different contexts.</p>
 
-          requires:
+          dependencies:
             - HTM Neuron
 
           resources:
@@ -103,7 +103,7 @@
 
             <p>Summary of sequence memory</p>
 
-          requires:
+          dependencies:
             - Minicolumns
             - HTM Neuron
 
@@ -143,7 +143,7 @@
             Locations in the Neocortex, A Theory of Sensorimotor Object Recognition Using Cortical Grid Cells": https://numenta.com/neuroscience-research/research-publications/papers/locations-in-the-neocortex-a-theory-of-sensorimotor-object-recognition-using-cortical-grid-cells/
             A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/
             Companion paper to A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/thousand-brains-theory-of-intelligence-companion-paper/
-          requires:
+          dependencies:
           - Grid Cells
 
         Composite Objects:
@@ -154,7 +154,7 @@
           resources:
             A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/
             Companion paper to A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/thousand-brains-theory-of-intelligence-companion-paper/
-          requires:
+          dependencies:
           - Grid Cells
           - Displacement Cells
 
@@ -166,7 +166,7 @@
           resources:
             A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/
             Companion paper to A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/thousand-brains-theory-of-intelligence-companion-paper/
-          requires:
+          dependencies:
           - Grid Cells
           - Displacement Cells
           - Composite Objects
