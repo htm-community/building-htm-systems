@@ -1,7 +1,8 @@
 let utils = require('../../../lib/utils')
 let html = require('./index.tmpl.html')
 let researchMap = require('./research-map.json')
-
+// list of ids for open topics at any time, used to close topics during nav.
+let open = []
 
 function isChildMap(node) {
     return !node.resources && !node.dependencies && !node.desc && !node.children
@@ -130,32 +131,52 @@ function loadOverlay(selectedName) {
 function getMapAncestors(m, target, _crumbs, _name) {
     let out = []
     let crumbs = _crumbs || []
-    if (target === currentNodeName) {
-        out.concat(crumbs)
-    }
-    if (m.children) {
-        crumbs.push(_name)
-        out.concat(
-            getMapAncestors(
-                m.children,
-                target,
-                crumbs
-            )
-        )
-    } else if (m.desc) {
-        // leaf node
-        
+    if (target === _name) {
+        out = out.concat(crumbs)
+        out.push(_name)
     } else {
-        // root map of children
-        Object.keys(m).forEach(childName => {
-            out.concat(getMapAncestors(
-                m[childName], target, crumbs, childName
-            ))
-        })
+        if (m.children) {
+            crumbs.push(_name)
+            out = out.concat(
+                getMapAncestors(
+                    m.children,
+                    target,
+                    crumbs
+                )
+            )
+        } else if (m.desc) {
+            // ignore leaf node
+        } else {
+            // root map of children
+            let ancestors = Object.keys(m).map(childName => {
+                return getMapAncestors(
+                    m[childName], target, crumbs, childName
+                )
+            })
+            ancestors = [].concat.apply([], ancestors);
+            out = out.concat(ancestors)
+        }
     }
     return out
 }
 
+function isAccordionOpen($a) {
+    return $a.hasClass('ui-state-active')
+}
+
+function closeAccordion($a) {
+    if (isAccordionOpen($a)) {
+        $a.click()
+    }
+}
+
+function closeAllOpen() {
+    open.reverse().forEach(id => {
+        let $a = $('#' + id + '_accordion')
+        closeAccordion($a)
+    })
+    open = []
+}
 
 function render($topEl) {
     let $el = loadAccordionHtml($topEl.find('.accordion-map'))
@@ -180,9 +201,12 @@ function render($topEl) {
             let targetName = $target.data('triggers')
             evt.stopPropagation()
             evt.preventDefault()
+            closeAllOpen()
             let ancestors = getMapAncestors(researchMap, targetName)
-            ancestors.forEach(ancestor => {
-                $('#' + ancestor + '_accordion').click()
+            let ancestorIds = ancestors.map(toDomId)
+            ancestorIds.forEach(id => {
+                $('#' + id + '_accordion').click()
+                open.push(id)
             })
         }
         // If overlay trigger
