@@ -88,6 +88,17 @@
 							"Grid Cells"
 						]
 					},
+					"Composite Objects": {
+						"desc": "<p>Introduction to Composite Objects</p>\n",
+						"resources": {
+							"A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex": "https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/",
+							"Companion paper to A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex": "https://numenta.com/neuroscience-research/research-publications/papers/thousand-brains-theory-of-intelligence-companion-paper/"
+						},
+						"dependencies": [
+							"Grid Cells",
+							"Displacement Cells"
+						]
+					},
 					"Object Behavior": {
 						"desc": "\n<p>We propose that learning an object’s behavior is learning a sequence of displacements, meaning a sequence of how the relative positions of two locations change over time.</p>\n",
 						"resources": {

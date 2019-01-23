@@ -120,17 +120,16 @@ Thousand Brains Theory of Intelligence:
           dependencies:
           - Grid Cells
 
-        # Composite Objects:
-        #   desc: >
-        #
-        #     <p>Introduction to Composite Objects</p>
-        #
-        #   resources:
-        #     A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/
-        #     Companion paper to A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/thousand-brains-theory-of-intelligence-companion-paper/
-        #   dependencies:
-        #   - Grid Cells
-        #   - Displacement Cells
+        Composite Objects:
+          desc: >
+            <p>Introduction to Composite Objects</p>
+
+          resources:
+            A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/
+            Companion paper to A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/thousand-brains-theory-of-intelligence-companion-paper/
+          dependencies:
+          - Grid Cells
+          - Displacement Cells
 
         Object Behavior:
           desc: >
