@@ -5,15 +5,11 @@
 # to be a part of a blog post.
 ---
 
-Thousand Brains:
+Thousand Brains Theory of Intelligence:
 
   desc: >
-    <p>
-    The Thousand Brains Model of Intelligence suggests we need to rethink how the entire neocortex processes information.
-    </p>
-    <img src="img/classic-hierarchy-vs-proposed-model.png"/>
-    <p>
-    In the classic view, the cortex receives input from a sensory organ and processes it in a series of hierarchical steps. Sensory input ascends from region to region, and at each level, cells respond to larger areas and more complex features of a sensory array. It’s commonly assumed that complete objects can only be recognized at a high enough level in the hierarchy where cells can take in the entire sensory array.
+    <p>The <strong>Thousand Brains Theory of Intelligence</strong> proposes that rather than learning one model of an object or concept, the brain builds many models of the same thing. Each model is built in a different way – with different types of inputs from different senses or from different parts of the same sensors. The models vote together to reach a consensus on what they are sensing, and the consensus vote is what we perceive. It’s as if your brain is thousands of brains working simultaneously.    </p>
+    <p>The Thousand Brains Theory suggests we need to rethink how the cortex processes information.  Rather than extracting sensory features in a series of processing steps, where objects are recognized as you ascend the hierarchy, our theory suggests a more distributed model.
     </p>
 
   resources:
@@ -23,13 +19,7 @@ Thousand Brains:
 
     Local Computations / Parallel Voting:
       desc: >
-        <img src="img/parallel-voting.jpg"/>
-        <p>
-        In the Thousand Brains Model of Intelligence, each column creates complete
-        models of its world, based on what it can sense as its associated sensor
-        moves. Connections in the cortex, both hierarchical connections and
-        connections between adjacent columns, allow columns to work together to
-        quickly identify objects.
+        <p>In the Thousand Brains Theory, each cortical column creates complete models of its world, based on what it can sense as its associated sensor moves. Columns combine sensory input with a grid cell-derived location, and then integrate those “sensory features at locations” over movements. Long-range connections in the cortex allow columns to vote and this parallel voting leads to a consensus of what they the columns are sensing
         </p>
 
       resources:
@@ -39,25 +29,15 @@ Thousand Brains:
 
     Common Cortical Circuit:
       desc: >
-        <img src="img/cortical-circuit.png"/>
-        <ol>
-          <li>
-            All areas of the neocortex look the same because they perform the same basic function.
-          </li>
-          <li>
-            What makes one region visual and another auditory is what it is connected to.
-          </li>
-          <li>
-          A small area of cortex, a 1mm2 “cortical column”, is the unit of replication and contains the common cortical algorithm.
-          </li>
-        </ol>
+        <p>The neocortex is complex. It contains dozens of cell types, numerous layers, and intricate connectivity patterns. The connections between cells suggest a columnar flow of information across layers as well as a laminar flow within some layers. Fortunately, this complex circuitry is remarkably preserved in all regions. Vernon Mountcastle was the first to propose that a canonical circuit consisting of cortical columns underlies everything the neocortex does. The way we see, feel, hear, move, and even do high level planning runs on this same common cortical circuit.</p>
+
+        <p>If we can understand how this <strong>common cortical circuit</strong> works, we will have a framework for understanding how the entire neocortex works. Understanding the function of cortical columns is a central goal of our research program.</p>
 
       children:
 
         Layers:
           desc: >
-            <img src="img/layers.png"/>
-            <p>Cortical Columns have layers. These layers are like compute modules within the Common Cortical Circuit.</p>
+            <p>While neuroscience textbooks generally list 6 <strong>layers</strong> in the neocortex, scientists now believe there are more, with dozens of different cells types.  Our work involves figuring out what each layer is doing and how it fits into the common cortical circuit.</p>
 
           resources:
             A Theory of How Columns in the Neocortex Enable Learning the Structure of the World: https://numenta.com/neuroscience-research/research-publications/papers/a-theory-of-how-columns-in-the-neocortex-enable-learning-the-structure-of-the-world/
@@ -66,7 +46,7 @@ Thousand Brains:
         Connections Between Layers:
           desc: >
 
-            <p>Connections Between Layers Summary Text</p>
+            <p>As part of the common cortical circuit, the layers relate to each other in specific ways. Through our research, we are mapping out these connections.</p>
 
           dependencies:
             - Layers
@@ -76,11 +56,7 @@ Thousand Brains:
 
         HTM Neuron:
           desc: >
-            <img src="img/pyramidal-neuron.jpg"/>
-            <p>
-            Pyramidal neurons represent the majority of excitatory neurons in the neocortex. Each pyramidal neuron receives input from thousands of excitatory synapses that are segregated onto dendritic branches. The dendrites themselves are segregated into apical, basal, and proximal integration zones, which have different properties.
-            </p>
-            <img src="img/htm-neuron.jpg"/>
+            <p>Much of our research focuses around one fundamental observation: that the neocortex is constantly predicting its inputs. The <strong>HTM neuron</strong> is based on the idea that every pyramidal cell is a prediction machine. A single pyramidal neuron with active dendrites can recognize hundreds of unique patterns and contexts in which it can predict its input.</p>
 
           resources:
             Why Neurons Have Thousands of Synapses, A Theory of Sequence Memory in Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/why-neurons-have-thousands-of-synapses-theory-of-sequence-memory-in-neocortex/
@@ -88,7 +64,7 @@ Thousand Brains:
         Minicolumns:
           desc: >
 
-            <p>Minicolumns are groups of pyramidal neurons that share the same proximal receptive field. Once a set of minicolumns is activated by feed-forward input, individual cells within them can represent spatial input within different contexts.</p>
+            <p>Minicolumns, also sometimes referred to as cortical columns, are the most basic unit of neural organization.  It is the building block of essential elements for cortical processing.</p>
 
           dependencies:
             - HTM Neuron
@@ -101,7 +77,7 @@ Thousand Brains:
         Sequence Memory:
           desc: >
 
-            <p>Summary of sequence memory</p>
+            <p>A network incorporating such neurons can learn complex sequences in a surprisingly robust and flexible manner. The model learns in a completely unsupervised fashion and, as a continuously learning system, adapts rapidly to changes in its input.</p>
 
           dependencies:
             - Minicolumns
@@ -115,19 +91,18 @@ Thousand Brains:
     Complete Object Modeling:
       desc: >
 
-        <p>every CC models a complete object</p>
+        <p></p>
 
       children:
 
         Locations:
           desc: >
 
-            <p>Why we need to model location spaces around objects.</p>
+            <p>Columns combine sensory input with a grid cell-derived location, and integrate those “sensory features at locations” over movements.  Every sensation we perceive is processed relative to its <strong>location</strong> on an object, not relative to you.</p>
 
         Grid Cells:
           desc: >
-            <img src="img/grid-cells.png"/>
-            <p>Introduction to Grid Cells</p>
+            <p>A <strong>grid cell</strong> is a type of neuron that exists in the entorhinal cortex and is responsible for navigation and knowing where you are in the world. Recent experimental evidence suggests that grid cells also are present in the neocortex. We propose that the neocortex uses “<strong>cortical grid cells</strong>” to learn complete models of objects in the same way that the entorhinal cortex uses <strong>grid cells</strong> to learn the structure of environments.</p>
 
           resources:
             Locations in the Neocortex, A Theory of Sensorimotor Object Recognition Using Cortical Grid Cells": https://numenta.com/neuroscience-research/research-publications/papers/locations-in-the-neocortex-a-theory-of-sensorimotor-object-recognition-using-cortical-grid-cells/
@@ -136,8 +111,7 @@ Thousand Brains:
 
         Displacement Cells:
           desc: >
-            <img src="img/displacement-cells.png"/>
-            <p>Introduction to Displacement Cells</p>
+            <p>We propose the existence of a new type of neuron that is an extension of grid cells, called <strong>displacement cells</strong>. Displacement cells enable us to learn how objects are composed of other objects, also known as object compositionality.</p>
 
           resources:
             Locations in the Neocortex, A Theory of Sensorimotor Object Recognition Using Cortical Grid Cells": https://numenta.com/neuroscience-research/research-publications/papers/locations-in-the-neocortex-a-theory-of-sensorimotor-object-recognition-using-cortical-grid-cells/
@@ -146,22 +120,22 @@ Thousand Brains:
           dependencies:
           - Grid Cells
 
-        Composite Objects:
-          desc: >
-
-            <p>Introduction to Composite Objects</p>
-
-          resources:
-            A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/
-            Companion paper to A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/thousand-brains-theory-of-intelligence-companion-paper/
-          dependencies:
-          - Grid Cells
-          - Displacement Cells
+        # Composite Objects:
+        #   desc: >
+        #
+        #     <p>Introduction to Composite Objects</p>
+        #
+        #   resources:
+        #     A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/
+        #     Companion paper to A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/thousand-brains-theory-of-intelligence-companion-paper/
+        #   dependencies:
+        #   - Grid Cells
+        #   - Displacement Cells
 
         Object Behavior:
           desc: >
 
-            <p>Introduction to Object Behavior</p>
+            <p>We propose that learning an object’s behavior is learning a sequence of displacements, meaning a sequence of how the relative positions of two locations change over time.</p>
 
           resources:
             A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/
@@ -171,10 +145,12 @@ Thousand Brains:
           - Displacement Cells
           - Composite Objects
 
-    Abstract Objects:
+    Abstract Objects and Concepts:
       desc: >
 
-        <p>Introduction to Abstract Objects</p>
+        <p>Mountcastle proposed that all regions of the neocortex have the same complex circuitry and therefore they must be doing the same thing. If the regions of the neocortex that process sensory input use grid cells and locations to learn objects, then the evidence strongly suggests that the regions of the neocortex that learn <strong>abstract objects and concepts</strong> like language or mathematics also use grid cells and locations to perform these functions.</p>
+
+        <p>We don’t fully understand how high-level concepts and abstract objects are represented in the brain, and are exploring this area further.</p>
 
       resources:
         A Framework for Intelligence and Cortical Function Based on Grid Cells in the Neocortex: https://numenta.com/neuroscience-research/research-publications/papers/a-framework-for-intelligence-and-cortical-function-based-on-grid-cells-in-the-neocortex/
