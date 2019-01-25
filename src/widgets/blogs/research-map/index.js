@@ -4,6 +4,19 @@ let researchMap = require('./research-map.json')
 // list of ids for open topics at any time, used to close topics during nav.
 let open = []
 
+let $overlay
+
+function getOffset( el ) {
+    var _x = 0;
+    var _y = 0;
+    while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
+        _x += el.offsetLeft - el.scrollLeft;
+        _y += el.offsetTop - el.scrollTop;
+        el = el.offsetParent;
+    }
+    return { top: _y, left: _x };
+}
+
 function isChildMap(node) {
     return !node.resources && !node.dependencies && !node.desc && !node.children
 }
@@ -67,7 +80,7 @@ function htmlAccordionNodeLoader(node, $el, _name) {
         $content.append($ul)
     } else {
 
-        $content.append($('<a class="overlay-trigger" href="#">where am I?</a>'))
+        $content.append($('<a class="overlay-trigger" href="#">Navigate</a>'))
 
         $content.attr('id', id)
         if (node.desc) {
@@ -124,7 +137,7 @@ function loadAccordionHtml($el) {
 }
 
 function loadOverlay(selectedName) {
-    let $overlay = htmlOverlayNodeLoader(researchMap, $('.overlay-map'), selectedName)
+    let $overlay = htmlOverlayNodeLoader(researchMap, $('#overlay-map'), selectedName)
     return $overlay
 }
 
@@ -178,8 +191,27 @@ function closeAllOpen() {
     open = []
 }
 
+function showOverlay($trigger) {
+    let $accordion = $('.accordion-map')
+    // Get position of accordion and place overlay over top of it.
+    let topLeft = getOffset($accordion.get(0))
+    let parentWidth = $accordion.width()
+    let padPercent = .05
+    let width = parentWidth * (1.0 - padPercent)
+    let padding = (parentWidth - width) / 2
+    $overlay.width(width)
+    $overlay.css({
+      left: topLeft.left + padding,
+      top: getOffset($trigger.get(0)).top,
+    })
+    $overlay.show('fast')
+    $accordion.fadeTo('fast', 0.5)
+}
+
 function render($topEl) {
     let $el = loadAccordionHtml($topEl.find('.accordion-map'))
+
+    $overlay = loadOverlay()
 
     $el.find("ul.accordion").accordion({
         collapsible: true,
@@ -196,7 +228,9 @@ function render($topEl) {
 
     $topEl.click(evt => {
         let $target = $(evt.target)
-        // If manual accordion click
+        // If navigation click
+        $('#overlay-map').hide('fast')
+        $('.accordion-map').fadeTo('fast', 1.0)
         if ($target.hasClass('trigger')) {
             let targetName = $target.data('triggers')
             evt.stopPropagation()
@@ -208,10 +242,15 @@ function render($topEl) {
                 $('#' + id + '_accordion').click()
                 open.push(id)
             })
+            $([document.documentElement, document.body]).animate({
+                scrollTop: $('#' + toDomId(targetName)).offset().top
+            }, 1000);
         }
         // If overlay trigger
         if ($target.hasClass('overlay-trigger')) {
-            loadOverlay()
+            evt.stopPropagation()
+            evt.preventDefault()
+            showOverlay($target)
         }
     })
 
