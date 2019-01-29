@@ -5,6 +5,7 @@ let researchMap = require('./research-map.json')
 let open = []
 
 let $overlay
+let selectedTopicId
 
 function getOffset( el ) {
     var _x = 0;
@@ -34,6 +35,8 @@ function htmlOverlayNodeLoader(node, $el, selectedName, _name) {
     let $header = $('<h3>')
     let $content = $('<div>')
     let id = toDomId(nodeName)
+
+    $header.attr('id', id)
 
     if (isChildMap(node)) {
         let childNames = Object.keys(node)
@@ -136,8 +139,8 @@ function loadAccordionHtml($el) {
     return htmlAccordionNodeLoader(researchMap, $el)
 }
 
-function loadOverlay(selectedName) {
-    let $overlay = htmlOverlayNodeLoader(researchMap, $('#overlay-map'), selectedName)
+function loadOverlay() {
+    let $overlay = htmlOverlayNodeLoader(researchMap, $('#overlay-map'))
     return $overlay
 }
 
@@ -199,6 +202,9 @@ function showOverlay($trigger) {
     let padPercent = .05
     let width = parentWidth * (1.0 - padPercent)
     let padding = (parentWidth - width) / 2
+    // Highlight the current location in the overlay
+    $overlay.find('.selected').removeClass('selected')
+    $overlay.find('#' + selectedTopicId).addClass('selected')
     $overlay.width(width)
     $overlay.css({
       left: topLeft.left + padding,
@@ -233,6 +239,9 @@ function render($topEl) {
         $('.accordion-map').fadeTo('fast', 1.0)
         if ($target.hasClass('trigger')) {
             let targetName = $target.data('triggers')
+            let targetId = toDomId(targetName)
+            // Set this global state
+            selectedTopicId = targetId
             evt.stopPropagation()
             evt.preventDefault()
             closeAllOpen()
@@ -243,7 +252,7 @@ function render($topEl) {
                 open.push(id)
             })
             $([document.documentElement, document.body]).animate({
-                scrollTop: $('#' + toDomId(targetName)).offset().top
+                scrollTop: $('#' + targetId).offset().top
             }, 1000);
         }
         // If overlay trigger
