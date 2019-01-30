@@ -5,6 +5,7 @@ let researchMap = require('./research-map.json')
 let open = []
 
 let $overlay
+let selectedTopicId
 
 function getOffset( el ) {
     var _x = 0;
@@ -35,6 +36,8 @@ function htmlOverlayNodeLoader(node, $el, selectedName, _name) {
     let $content = $('<div>')
     let id = toDomId(nodeName)
 
+    $header.attr('id', id)
+
     if (isChildMap(node)) {
         let childNames = Object.keys(node)
         let $ul = $('<ul id="' + id + '" class="accordion">')
@@ -60,6 +63,21 @@ function htmlOverlayNodeLoader(node, $el, selectedName, _name) {
     $el.append([$header, $content])
 
     return $el
+}
+
+function updateImageSizes($el) {
+    $el.find('img').each((i, img) => {
+        let $img = $(img)
+        let h = $img.height()
+        let w = $img.width()
+        if (h > 0 && w > 0) {
+            console.log('found image: %s', $img.attr('src'))
+        }
+        if (h > w) {
+            $img.addClass('half')
+        }
+        $img.show()
+    })
 }
 
 function htmlAccordionNodeLoader(node, $el, _name) {
@@ -132,15 +150,6 @@ function htmlAccordionNodeLoader(node, $el, _name) {
     return $el
 }
 
-function loadAccordionHtml($el) {
-    return htmlAccordionNodeLoader(researchMap, $el)
-}
-
-function loadOverlay(selectedName) {
-    let $overlay = htmlOverlayNodeLoader(researchMap, $('#overlay-map'), selectedName)
-    return $overlay
-}
-
 function getMapAncestors(m, target, _crumbs, _name) {
     let out = []
     let crumbs = _crumbs || []
@@ -199,6 +208,9 @@ function showOverlay($trigger) {
     let padPercent = .05
     let width = parentWidth * (1.0 - padPercent)
     let padding = (parentWidth - width) / 2
+    // Highlight the current location in the overlay
+    $overlay.find('.selected').removeClass('selected')
+    $overlay.find('#' + selectedTopicId).addClass('selected')
     $overlay.width(width)
     $overlay.css({
       left: topLeft.left + padding,
@@ -209,21 +221,30 @@ function showOverlay($trigger) {
 }
 
 function render($topEl) {
-    let $el = loadAccordionHtml($topEl.find('.accordion-map'))
+    let $accordion = htmlAccordionNodeLoader(
+        researchMap, $topEl.find('.accordion-map')
+    )
 
-    $overlay = loadOverlay()
+    $overlay = htmlOverlayNodeLoader(
+        researchMap, $('#overlay-map')
+    )
 
-    $el.find("ul.accordion").accordion({
+    let updateImages = function() {
+        updateImageSizes($accordion)
+    }
+
+    $accordion.find("ul.accordion").accordion({
         collapsible: true,
         active: false,
-        heightStyle: "content"
+        heightStyle: "content",
+        activate: updateImages,
     });
 
     // This opens the main accordion
-    $el.find("#" + toDomId("root")).accordion({
+    $accordion.find("#" + toDomId("root")).accordion({
         collapsible: false,
         active: true,
-        heightStyle: "content"
+        heightStyle: "content",
     })
 
     $topEl.click(evt => {
@@ -233,6 +254,9 @@ function render($topEl) {
         $('.accordion-map').fadeTo('fast', 1.0)
         if ($target.hasClass('trigger')) {
             let targetName = $target.data('triggers')
+            let targetId = toDomId(targetName)
+            // Set this global state
+            selectedTopicId = targetId
             evt.stopPropagation()
             evt.preventDefault()
             closeAllOpen()
@@ -243,7 +267,7 @@ function render($topEl) {
                 open.push(id)
             })
             $([document.documentElement, document.body]).animate({
-                scrollTop: $('#' + toDomId(targetName)).offset().top
+                scrollTop: $('#' + targetId).offset().top
             }, 1000);
         }
         // If overlay trigger
@@ -253,7 +277,6 @@ function render($topEl) {
             showOverlay($target)
         }
     })
-
 }
 
 function processRequest(elId) {
