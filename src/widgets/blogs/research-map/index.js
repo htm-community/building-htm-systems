@@ -135,15 +135,6 @@ function htmlAccordionNodeLoader(node, $el, _name) {
     return $el
 }
 
-function loadAccordionHtml($el) {
-    return htmlAccordionNodeLoader(researchMap, $el)
-}
-
-function loadOverlay() {
-    let $overlay = htmlOverlayNodeLoader(researchMap, $('#overlay-map'))
-    return $overlay
-}
-
 function getMapAncestors(m, target, _crumbs, _name) {
     let out = []
     let crumbs = _crumbs || []
@@ -215,18 +206,22 @@ function showOverlay($trigger) {
 }
 
 function render($topEl) {
-    let $el = loadAccordionHtml($topEl.find('.accordion-map'))
+    let $accordion = htmlAccordionNodeLoader(
+        researchMap, $topEl.find('.accordion-map')
+    )
 
-    $overlay = loadOverlay()
+    $overlay = htmlOverlayNodeLoader(
+        researchMap, $('#overlay-map')
+    )
 
-    $el.find("ul.accordion").accordion({
+    $accordion.find("ul.accordion").accordion({
         collapsible: true,
         active: false,
         heightStyle: "content"
     });
 
     // This opens the main accordion
-    $el.find("#" + toDomId("root")).accordion({
+    $accordion.find("#" + toDomId("root")).accordion({
         collapsible: false,
         active: true,
         heightStyle: "content"
