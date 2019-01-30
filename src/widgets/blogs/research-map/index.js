@@ -65,6 +65,21 @@ function htmlOverlayNodeLoader(node, $el, selectedName, _name) {
     return $el
 }
 
+function updateImageSizes($el) {
+    $el.find('img').each((i, img) => {
+        let $img = $(img)
+        let h = $img.height()
+        let w = $img.width()
+        if (h > 0 && w > 0) {
+            console.log('found image: %s', $img.attr('src'))
+        }
+        if (h > w) {
+            $img.addClass('half')
+        }
+        $img.show()
+    })
+}
+
 function htmlAccordionNodeLoader(node, $el, _name) {
     // Read through hierarchy and create the HTML we need
     // to support the nested accordions
@@ -214,17 +229,22 @@ function render($topEl) {
         researchMap, $('#overlay-map')
     )
 
+    let updateImages = function() {
+        updateImageSizes($accordion)
+    }
+
     $accordion.find("ul.accordion").accordion({
         collapsible: true,
         active: false,
-        heightStyle: "content"
+        heightStyle: "content",
+        activate: updateImages,
     });
 
     // This opens the main accordion
     $accordion.find("#" + toDomId("root")).accordion({
         collapsible: false,
         active: true,
-        heightStyle: "content"
+        heightStyle: "content",
     })
 
     $topEl.click(evt => {
@@ -257,7 +277,6 @@ function render($topEl) {
             showOverlay($target)
         }
     })
-
 }
 
 function processRequest(elId) {
