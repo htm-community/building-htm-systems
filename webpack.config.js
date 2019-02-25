@@ -90,50 +90,50 @@ let modules = []
 //         filename: `bhtms-encoding-categories-${version}.js`
 //     }
 // })
-//
-// // encoding-time/
-// // This is bundled to be hosted with images
-// modules.push({
-//     mode: mode,
-//     entry: [
-//         './src/widgets/bhtms/encoding-time/index.js',
-//     ],
-//     module: {
-//         rules: [
-//             {
-//                 test: /\.js$/,
-//                 loader: 'babel-loader'
-//             },
-//             {
-//                 test: /tmpl\.html$/,
-//                 loader: 'posthtml-loader'
-//             },
-//             {
-//                 test: /\.(png|svg|jpg|gif)$/,
-//                 loader: 'file-loader',
-//                 options: {
-//                     name: '[name].[ext]',
-//                     outputPath: 'images',
-//                     publicPath: '../../../../wp-content/uploads/encoding-time/images/',
-//                 }
-//             }
-//         ]
-//     },
-//     resolve: {
-//         alias: {
-//             moment: path.join(__dirname, 'node_modules/moment/min/moment.min'),
-//             JSDS: path.join(__dirname, 'node_modules/javascript-data-store/src/jsds'),
-//             SdrDrawing: path.join(__dirname, 'node_modules/cell-viz/src/SdrDrawing'),
-//             CyclicEncoder: path.join(__dirname, 'node_modules/simplehtm/src/encoders/cyclicScalar'),
-//             CyclicEncoderDisplay: path.join(__dirname, 'src/lib/displays/CyclicEncoderDisplay'),
-//         }
-//     },
-//     output: {
-//         path: __dirname + '/wp-content/uploads/encoding-time',
-//         filename: `bhtms-encoding-time-${version}.js`
-//     }
-// })
-//
+
+// encoding-time/
+// This is bundled to be hosted with images
+modules.push({
+    mode: mode,
+    entry: [
+        './src/widgets/bhtms/encoding-time/index.js',
+    ],
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                loader: 'babel-loader'
+            },
+            {
+                test: /tmpl\.html$/,
+                loader: 'posthtml-loader'
+            },
+            {
+                test: /\.(png|svg|jpg|gif)$/,
+                loader: 'file-loader',
+                options: {
+                    name: '[name].[ext]',
+                    outputPath: 'images',
+                    publicPath: '../../../../wp-content/uploads/encoding-time/images/',
+                }
+            }
+        ]
+    },
+    resolve: {
+        alias: {
+            moment: path.join(__dirname, 'node_modules/moment/min/moment.min'),
+            JSDS: path.join(__dirname, 'node_modules/javascript-data-store/src/jsds'),
+            SdrDrawing: path.join(__dirname, 'node_modules/cell-viz/src/SdrDrawing'),
+            CyclicEncoder: path.join(__dirname, 'node_modules/simplehtm/src/encoders/cyclicScalar'),
+            CyclicEncoderDisplay: path.join(__dirname, 'src/lib/displays/CyclicEncoderDisplay'),
+        }
+    },
+    output: {
+        path: __dirname + '/wp-content/uploads/encoding-time',
+        filename: `bhtms-encoding-time-${version}.js`
+    }
+})
+
 // // combined-encoding/
 // modules.push({
 //     mode: mode,
@@ -252,11 +252,11 @@ let modules = []
 //     }
 // })
 
-// // Research Map Prototype 1
+// Research Map Prototype
 // modules.push({
 //     mode: mode,
 //     entry: [
-//         './src/widgets/blogs/research-map/prototype_1.js',
+//         './src/widgets/blogs/research-map/index.js',
 //     ],
 //     module: {
 //         rules: [
@@ -283,37 +283,5 @@ let modules = []
 //         filename: `research-map-${version}.js`
 //     }
 // })
-
-// Research Map Prototype 2
-modules.push({
-    mode: mode,
-    entry: [
-        './src/widgets/blogs/research-map/index.js',
-    ],
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                loader: 'babel-loader'
-            },
-            {
-                test: /tmpl\.html$/,
-                loader: 'posthtml-loader'
-            }
-        ]
-    },
-    node: {
-        fs: 'empty'
-    },
-    resolve: {
-        alias: {
-            JSDS: path.join(__dirname, 'node_modules/javascript-data-store/src/jsds'),
-        }
-    },
-    output: {
-        path: __dirname + '/blogs',
-        filename: `research-map-${version}.js`
-    }
-})
 
 module.exports = modules

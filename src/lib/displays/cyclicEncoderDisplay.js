@@ -16,7 +16,6 @@ class CyclicEncoderDisplay {
             this.$svg = d3.select('#' + id)
         } else {
             this.$svg = id
-            id = '?'
         }
         this.$group = this.$svg.selectAll('.bits')
 
@@ -35,7 +34,7 @@ class CyclicEncoderDisplay {
         this.$svg.attr('width', this.width)
                  .attr('height', this.size * .78)
 
-        if (id)
+        if (typeof id === 'string')
             this.jsds = JSDS.create(id)
         else
             this.jsds = JSDS.create()
@@ -58,6 +57,10 @@ class CyclicEncoderDisplay {
 
     get smallCircleRadius() {
         return this.pointSize
+    }
+
+    render() {
+        this.updateDisplay()
     }
 
     updateDisplay() {
