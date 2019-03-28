@@ -229,15 +229,28 @@ function render($topEl) {
         researchMap, $('#overlay-map')
     )
 
-    let updateImages = function() {
+    let accordionOpened = function(evt) {
         updateImageSizes($accordion)
+        let targetId = evt.target.id
+        console.log(`accordion opened: ${targetId}`)
+
+        if (selectedTopicId === targetId) {
+            console.log(`scrolling to ${selectedTopicId}...`)
+            $([document.documentElement, document.body]).animate({
+                scrollTop: $('#' + selectedTopicId).offset().top - 40
+            }, 1000, () => {
+                console.log(`done scrolling, deleting ${selectedTopicId}...`)
+                selectedTopicId = undefined
+            });
+        }
+
     }
 
     $accordion.find("ul.accordion").accordion({
         collapsible: true,
         active: false,
         heightStyle: "content",
-        activate: updateImages,
+        activate: accordionOpened,
     });
 
     // This opens the main accordion
@@ -252,7 +265,12 @@ function render($topEl) {
         // If navigation click
         $('#overlay-map').hide('fast')
         $('.accordion-map').fadeTo('fast', 1.0)
+
+        console.log($target)
+
         if ($target.hasClass('trigger')) {
+            // This applies only to the navigation overlay.
+            // Navigation happens here on clicks.
             let targetName = $target.data('triggers')
             let targetId = toDomId(targetName)
             // Set this global state
@@ -266,25 +284,33 @@ function render($topEl) {
                 $('#' + id + '_accordion').click()
                 open.push(id)
             })
-            $([document.documentElement, document.body]).animate({
-                scrollTop: $('#' + targetId).offset().top
-            }, 1000);
+        } else {
+            // This applies to manual clicking anywhere over the accordion space
+            if ($target.hasClass('ui-accordion-header')) {
+                let parts = $target.attr('id').split('_')
+                let id = parts.slice(0, parts.length - 1).join('_')
+                // Set this global state
+                selectedTopicId = id
+            }
         }
+
         // If overlay trigger
         if ($target.hasClass('overlay-trigger')) {
             evt.stopPropagation()
             evt.preventDefault()
             showOverlay($target)
         }
+
+        console.log(`selectedTopic: ${selectedTopicId}`)
     })
 }
 
-function processRequest(elId) {
+function renderResearchMap(elId) {
     utils.loadHtml(html.default, elId, () => {
         render($('#' + elId))
     })
 }
 
 window.BHTMS = {
-    researchMap: processRequest
+    researchMap: renderResearchMap
 }
