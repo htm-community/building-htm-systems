@@ -18,6 +18,8 @@ THIS REPO IS ABOUT TO BE RE-HAULED LIVE ON TWITCH, TUNE TO https://www.twitch.tv
 
 DON'T TRUST ANY OF THIS STUFF BELOW, IT WON'T WORK FOR LONG...
 
+The plan is [taking shape here](https://trello.com/b/iOG0iEnT/building-htm-systems).
+
 * * *
 
 
