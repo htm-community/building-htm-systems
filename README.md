@@ -10,6 +10,17 @@ This uses `webpack` to deploy custom visualization libraries for displaying HTM 
 
 The HTM system running these visualization is called [simplehtm](https://github.com/htm-community/simplehtm).
 
+* * *
+
+# ❗️WARNING❗️
+
+THIS REPO IS ABOUT TO BE RE-HAULED LIVE ON TWITCH, TUNE TO https://www.twitch.tv/rhyolight_ THURSDAYS 9AM PDT.
+
+DON'T TRUST ANY OF THIS STUFF BELOW, IT WON'T WORK FOR LONG...
+
+* * *
+
+
 ## Widgets
 
 These are used in the website as interactive examples. They are separated by URL/folder. Each folder has one page of
