@@ -4,11 +4,13 @@
 
 This is the JavaScript source code for [buildinghtm.systems](http://buildinghtm.systems).
 
-This uses `webpack` to deploy custom visualization libraries for displaying HTM systems.
-
 ## HTM Reference Implementation
 
 The HTM system running these visualization is called [simplehtm](https://github.com/htm-community/simplehtm).
+
+## Running
+
+    npm run dev
 
 * * *
 
@@ -46,7 +48,7 @@ See [widgets.html](./widgets.html) for examples.
 
 ## JSDS
 
-If you are poking around inside the widgets you will probably notice something called [JSDS](https://github.com/rhyolight/JavaScript-Data-Store) being used as a data store. This a small observable data cache written almost a decade ago that demonstrates many of the desired attributes of reactive programming. Basically, each data store is observable, so for each widget we create one and load it with data. Then the visualization code simple observes the JSDS instance for changes to data and renders appropriately. This allows for granular UI updates and prevents unecessary repaints. 
+If you are poking around inside the widgets you will probably notice something called [JSDS](https://github.com/rhyolight/JavaScript-Data-Store) being used as a data store. This a small observable data cache written almost a decade ago that demonstrates many of the desired attributes of reactive programming. Basically, each data store is observable, so for each widget we create one and load it with data. Then the visualization code simple observes the JSDS instance for changes to data and renders appropriately. This allows for granular UI updates and prevents unecessary repaints.
 
 #### JSDS for inter-widget communication
 

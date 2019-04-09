@@ -3,32 +3,21 @@
   "version": "0.2.15",
   "description": "Supporting code for Building HTM Systems document.",
   "scripts": {
-    "prod": "./node_modules/.bin/webpack -p",
-    "build": "npm run convert; ./node_modules/.bin/webpack",
-    "convert": "./node_modules/.bin/yaml2json src/widgets/blogs/research-map/research-map.yaml -s",
-    "clean": "rm -rf dist/* wp-content/*",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run clean; npm run build"
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
   },
   "author": "matt@numenta.org",
   "license": "AGPL-3.0",
   "dependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.4",
-    "babel-preset-env": "^1.6.1",
     "cell-viz": "^1.4.9",
     "dat.gui": "^0.7.2",
-    "javascript-data-store": "^1.0.3",
     "moment": "^2.22.2",
-    "npm": "^6.3.0",
-    "simplehtm": "0.0.15",
-    "webpack": "^4.5.0"
+    "next": "^8.0.4",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "simplehtm": "0.0.15"
   },
   "devDependencies": {
-    "file-loader": "^1.1.11",
-    "html-loader": "^0.5.5",
-    "posthtml-loader": "^1.0.1",
-    "webpack-cli": "^3.2.1",
-    "yamljs": "^0.3.0"
   }
 }
