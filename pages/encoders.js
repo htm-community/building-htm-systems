@@ -1,5 +1,9 @@
 import Layout from '../components/Layout'
 
+let listStyle = {
+  listStyleType: "none"
+}
+
 export default function Encoders() {
   return (
     <div>
@@ -18,8 +22,8 @@ export default function Encoders() {
 
         <p>The encoding process is analogous to the functions of sensory organs of humans and other animals. The cochlea, for instance, is a specialized structure that converts the frequencies and amplitudes of sounds in the environment into a sparse set of active neurons (Webster et al, 1992; Schuknecht, 1974). The basic mechanism for this process (Fig. 1) comprises a set of inner hair cells organized in a row that are sensitive to different frequencies. When an appropriate frequency of sound occurs, the hair cells stimulate neurons that send the signal into the brain. The set of neurons that are triggered in this manner comprise the encoding of the sound as a Sparse Distributed Representation.</p>
 
-        <div class="figure">
-          <img class="aligncenter " src="https://buildinghtm.systems/wp-content/uploads/2018/04/Screen-Shot-2018-04-13-at-12.53.53-PM.png" alt="Screen Shot 2018-04-13 at 12.53.53 PM" width="1162" height="646" />
+        <div className="figure">
+          <img className="aligncenter " src="https://buildinghtm.systems/wp-content/uploads/2018/04/Screen-Shot-2018-04-13-at-12.53.53-PM.png" alt="" width="500" />
           <blockquote><strong>Figure 1</strong>: Cochlear hair cells stimulate a set of neurons based on the frequency of the sound.</blockquote>
         </div>
 
@@ -47,7 +51,7 @@ export default function Encoders() {
 
         <p>The encoder should create representations that overlap for inputs that are similar in one or more of the characteristics of the data that were chosen. So for weekend encoders, dates that fall on Saturdays and Sundays should overlap with each other, but not as much or at all with dates that fall on weekdays.</p>
 
-        <div class="aside">
+        <div className="aside">
 
           <h4>Preserving Semantics: A Formal Description</h4>
 
@@ -55,11 +59,11 @@ export default function Encoders() {
 
           <p>Let $A$ be an arbitrary input space and let $S(n,k)$ be the set of SDRs of length $n$ with $k$ ON bits. An encoder $f$ is simply a function $f$ ∶ $A \rightarrow S(n,k)$. A distance score $d_A$ over space $A$ is a function $d_A$ ∶ $A \times A \rightarrow R$ that satisfies three conditions:</p>
 
-          <ol>
-            <li>$\forall x,y \in A,d_A (x,y) ≥ 0$</li>
+          <ul style={listStyle}>
+            <li>1. $\forall x,y \in A,d_A (x,y) ≥ 0$</li>
             <li>2. $\forall x,y \in A,d_A (x,y) = d_A (y,x)$</li>
             <li>3. $\forall x \in A,d_A (x,x) = 0$</li>
-          </ol>
+          </ul>
 
           <p>Equation 1 requires the semantic similarity metric give a distance value of zero or greater. Equation 2 requires the distance metric to be symmetric. And Equation 3 requires that the distance between two identical values be zero.</p>
 
@@ -67,7 +71,9 @@ export default function Encoders() {
 
           <p>For SDRs $s$ and $t$ with the same length, let $O(s,t)$ be the number of overlapping bits (i.e. the number of ON bits in $s$ & $t$). Then for an encoder $f$∶ $A \rightarrow S(n,k)$ and $\forall w,x,y,z \in A$,</p>
 
-          4. $O(f(w),f(x)) ≥ O(f(y),f(z)) \Leftrightarrow d_A (w,x) ≤ d_A (y,z)$
+          <ul style={listStyle}>
+            <li>4. $O(f(w),f(x)) ≥ O(f(y),f(z)) \Leftrightarrow d_A (w,x) ≤ d_A (y,z)$</li>
+          </ul>
 
           <p>Equation 4 states that encodings with more overlapping one bits means the values have greater semantic similarity  and, inversely, that values with greater semantic similarity will have encodings with more overlapping one bits. It is  not always possible to create an encoder that satisfies this, but the equation can be used as a heuristic to evaluate  the quality of an encoder.</p>
 
