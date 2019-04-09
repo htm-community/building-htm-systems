@@ -1,10 +1,11 @@
-import Header from '../components/Header'
+import Layout from '../components/Layout'
 
 export default function EncodingTime() {
   return (
     <div>
-      <Header />
-      <h2>Encoding Time</h2>
+      <Layout>
+        <h2>Encoding Time</h2>
+      </Layout>
     </div>
   )
 }

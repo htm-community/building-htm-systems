@@ -1,10 +1,11 @@
-import Header from '../components/Header'
+import Layout from '../components/Layout'
 
 export default function EncodingCategories() {
   return (
     <div>
-      <Header />
-      <h2>Encoding Categories</h2>
+      <Layout>
+        <h2>Encoding Categories</h2>
+      </Layout>
     </div>
   )
 }

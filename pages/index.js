@@ -1,10 +1,11 @@
-import Header from '../components/Header'
+import Layout from '../components/Layout.js'
 
 
 const Index = () => (
   <div>
-    <Header />
-    <h1>Building HTM Systems</h1>
+    <Layout>
+      <h1>Building HTM Systems</h1>
+    </Layout>
   </div>
 )
 
