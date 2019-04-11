@@ -41,6 +41,8 @@ export default function Encoders() {
         subsampling.</li>
         </ol>
 
+        
+
         <p>In following sections we will examine each of these characteristics in detail and then describe how you can encode several different types of data. Note that several SDR encoders exist already and most people will not need to create their own. Those who do should carefully consider the above criteria.</p>
 
         <h4>1) Semantically similar data should result in SDRs with overlapping active bits</h4>
