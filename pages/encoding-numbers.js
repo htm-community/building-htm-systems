@@ -8,7 +8,11 @@ export default function EncodingNumbers() {
         
         <SimpleScalarEncoder 
           id="sse"
-          min="0" max="55" val="27.5"
+          min={0} 
+          max={55}
+          val={27.5}
+          bits={50}
+          width={500}
         />
 
       </Layout>
