@@ -1,3 +1,4 @@
+import Latex from 'react-latex'
 import Layout from '../components/Layout'
 
 let listStyle = {
@@ -59,22 +60,23 @@ export default function Encoders() {
 
           <p>Here we formalize the encoding process by defining a set of rules that relate the semantic similarity of two inputs  with the number of overlapping one9bits in the corresponding encoded SDRs.</p>
 
-          <p>Let $A$ be an arbitrary input space and let $S(n,k)$ be the set of SDRs of length $n$ with $k$ ON bits. An encoder $f$ is simply a function $f$ ∶ $A \rightarrow S(n,k)$. A distance score $d_A$ over space $A$ is a function $d_A$ ∶ $A \times A \rightarrow R$ that satisfies three conditions:</p>
-
+          <p><Latex>Let $A$ be an arbitrary input space and let $S(n,k)$ be the set of SDRs of length $n$ with $k$ ON bits. An encoder $f$ is simply a function $f$ ∶ $A \rightarrow S(n,k)$. A distance score $d_A$ over space $A$ is a function $d_A$ ∶ $A \times A \rightarrow R$ that satisfies three conditions:</Latex></p>
+          
           <ul style={listStyle}>
-            <li>1. $\forall x,y \in A,d_A (x,y) ≥ 0$</li>
-            <li>2. $\forall x,y \in A,d_A (x,y) = d_A (y,x)$</li>
-            <li>3. $\forall x \in A,d_A (x,x) = 0$</li>
+            <li><Latex>1. $\forall x,y \in A,d_A (x,y) ≥ 0$</Latex></li>
+            <li><Latex>2. $\forall x,y \in A,d_A (x,y) = d_A (y,x)$</Latex></li>
+            <li><Latex>3. $\forall x \in A,d_A (x,x) = 0$</Latex></li>
           </ul>
+          
 
           <p>Equation 1 requires the semantic similarity metric give a distance value of zero or greater. Equation 2 requires the distance metric to be symmetric. And Equation 3 requires that the distance between two identical values be zero.</p>
 
           <p>Given an input space and a distance score, we can evaluate an encoder by comparing the distance scores of pairs of inputs with the overlaps of their encodings. Two inputs that have low distance scores should have SDRs with high overlap, and vice versa. Moreover, if two SDRs have higher overlap than two other SDRs, then the former’s pre-encoding distance score should be lower than the latter’s. We state this formally below.</p>
 
-          <p>For SDRs $s$ and $t$ with the same length, let $O(s,t)$ be the number of overlapping bits (i.e. the number of ON bits in $s$ & $t$). Then for an encoder $f$∶ $A \rightarrow S(n,k)$ and $\forall w,x,y,z \in A$,</p>
+          <p><Latex>For SDRs $s$ and $t$ with the same length, let $O(s,t)$ be the number of overlapping bits (i.e. the number of ON bits in $s$ & $t$). Then for an encoder $f$∶ $A \rightarrow S(n,k)$ and $\forall w,x,y,z \in A$,</Latex></p>
 
           <ul style={listStyle}>
-            <li>4. $O(f(w),f(x)) ≥ O(f(y),f(z)) \Leftrightarrow d_A (w,x) ≤ d_A (y,z)$</li>
+            <li><Latex>4. $O(f(w),f(x)) ≥ O(f(y),f(z)) \Leftrightarrow d_A (w,x) ≤ d_A (y,z)$</Latex></li>
           </ul>
 
           <p>Equation 4 states that encodings with more overlapping one bits means the values have greater semantic similarity  and, inversely, that values with greater semantic similarity will have encodings with more overlapping one bits. It is  not always possible to create an encoder that satisfies this, but the equation can be used as a heuristic to evaluate  the quality of an encoder.</p>
@@ -94,7 +96,7 @@ export default function Encoders() {
 
         The fraction of total ON bits in an encoder can vary from around 1% to 35%, but the sparsity should be relatively fixed for a given application of an encoder. While keeping the sparsity the same should be the rule, small variations in sparsity will not have a negative effect.
         Additionally, there must be enough one-bits to handle noise and subsampling. A general rule of thumb is to have at least 20-25 one bits. Encoders that produce representations with fewer than 20 one bits do not work well in HTM systems since they may become extremely susceptible to errors due to small amounts of noise or non-determinism.
-
+        
       </Layout>
     </div>
   )
