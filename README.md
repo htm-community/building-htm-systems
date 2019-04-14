@@ -2,6 +2,8 @@
 
 # Building HTM Systems
 
+[![Build Status](https://travis-ci.org/htm-community/building-htm-systems.svg?branch=master)](https://travis-ci.org/htm-community/building-htm-systems)
+
 This is the JavaScript source code for [buildinghtm.systems](http://buildinghtm.systems).
 
 ## HTM Reference Implementation
