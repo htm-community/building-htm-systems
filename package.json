@@ -17,6 +17,6 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-latex": "^1.2.0",
-    "simplehtm": "0.0.15"
+    "simplehtm": "0.1.1"
   }
 }
