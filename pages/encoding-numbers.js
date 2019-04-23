@@ -13,6 +13,7 @@ export default function EncodingNumbers() {
           val={27.5}
           bits={50}
           width={500}
+          // no data source needed (behind the scenes)
         />
 
       </Layout>
