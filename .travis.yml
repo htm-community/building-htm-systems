@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+- '10'
+script: npm run-script build
+deploy:
+  provider: heroku
+  app: building-htm-systems
+  api_key:
+    secure: n9mOHgcSldNQtH3xhEkYabDJ6ONg6Y3Ms2LbCffuEeSO0F7zl4RCi5R0adWJv4sxTuhsORlf90ybKwWBrvhG6b97PxS13t/6r0IX8I2QTqE/KumNNZhwnBSdX01+aV1OzdjBR7we7tKScGv5pDWD51SeSXojQl4h1PTQyq01WX2ACmd7OB+MiHj2pIyUm71fTLyZjEltqCBI7RzoECyv8QfhwpYjLEgwJzPwD8/aoELQxqwdnYPdYIKphlxC1pP7a/iPclUe1vng7VJUPgAsguGuJg1oeAP4y2z4EfQWAdF/7J4L0/dFRAflxYC4coCs9/mhIMk+xWc9w3ihyxyUNRqn9LM1HXr/YlDkIscH3liMDOkb9wsEbmVbcCNiaCm42+tP/S8SRkxo/AqnDHVbcRRmXJO7CWFLqE0mv748I7S2IwOYzoTExlmiTunfu8SEg/gZWSd6tCN+Xj/O4Fu3M6EtU9XIdOLLGvLzECkNxUgoq5NUIJvA2zkxgrM8D8pgTVWiex7M+kzGAE+j4be1g44sU8l13vTjlGTXpdqqCH2MCJyHggu1UiQRpjeEB3nkoFo3p0z0dSdrWi5KT+S/p+nfiJhorU71y+AvX8iazmKuKz18N9PORPutzgIftxQ2OQexJv4Nj114kHLFrcDK7AULCCv9uKE2PvpgOHENQlY=
