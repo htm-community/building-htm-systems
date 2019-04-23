@@ -13,6 +13,7 @@ const Index = () => (
         <li><a href="https://github.com/htm-community/building-htm-systems">github</a></li>
         <li><a href="https://github.com/htm-community/simplehtm">simplehtm</a></li>
         <li><a href="https://trello.com/b/iOG0iEnT/building-htm-systems ">trello</a></li>
+        <li><a href="https://travis-ci.org/htm-community/building-htm-systems">travis</a></li>
       </ul>
     </Layout>
   </div>
