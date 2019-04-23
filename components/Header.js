@@ -21,6 +21,9 @@ const Header = () => (
     <Link href="/encoding-time">
       <a style={linkStyle}>Encoding Time</a>
     </Link>
+    <Link href="/components-showcase">
+      <a style={linkStyle}>Components Showcase</a>
+    </Link>
   </div>
 )
 
