@@ -16,7 +16,7 @@
     "next": "^8.0.4",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "simplehtm": "0.1.0"
-  },
-  "devDependencies": {}
+    "react-latex": "^1.2.0",
+    "simplehtm": "0.1.1"
+  }
 }
