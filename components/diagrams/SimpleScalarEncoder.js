@@ -2,6 +2,8 @@ import * as d3 from "d3"
 import PropTypes from 'prop-types'
 import simplehtm from 'simplehtm'
 
+const ScalarEncoder = simplehtm.encoders.ScalarEncoder
+
 const onColor = 'skyblue'
 const offColor = 'white'
 
@@ -12,7 +14,7 @@ class SimpleScalarEncoder extends React.Component {
   constructor(props) {
     super(props)
     this.state = Object.assign({}, props)
-    this.encoder = new simplehtm.encoders.ScalarEncoder({
+    this.encoder = new ScalarEncoder({
       min: props.min, max: props.max,
       w: 10, n: 100
     })
