@@ -10,6 +10,12 @@ const offColor = 'white'
 
 const sideGutter = 10
 const topGutter = 40
+const outputCellsTopMargin = 120
+
+let lineFunction = d3.line()
+  .x(function(d) { return d.x; })
+  .y(function(d) { return d.y; })
+  .curve(d3.curveCatmullRom.alpha(0.5));
 
 // FIXME: Add a utils library.
 function precisionRound(number, precision) {
@@ -36,13 +42,6 @@ class SimpleScalarEncoder extends React.Component {
     })
 
     this.encoding = this.encode(this.val)
-
-    this.valToScreen = d3.scaleLinear()
-        .domain([this.min, this.max])
-        .range([sideGutter, this.width - sideGutter])
-    this.screenToVal = d3.scaleLinear()
-        .domain([sideGutter, this.width - sideGutter])
-        .range([this.min, this.max])
   }
 
   // Use the internal encoder to turn bits into
@@ -54,6 +53,19 @@ class SimpleScalarEncoder extends React.Component {
 
   // https://reactjs.org/docs/react-component.html#componentdidmount
   componentDidMount() {
+    // Create D3 scales
+    this.valToScreen = d3.scaleLinear()
+        .domain([this.min, this.max])
+        .range([sideGutter, this.width - sideGutter])
+    this.screenToVal = d3.scaleLinear()
+        .domain([sideGutter, this.width - sideGutter])
+        .range([this.min, this.max])
+    this.bitsToOutputDisplay = d3.scaleLinear()
+        .domain([0, this.bits])
+        .range([0 + sideGutter, this.width - sideGutter])
+    this.displayToBitRange = d3.scaleLinear()
+        .domain([0 + sideGutter, this.width - sideGutter])
+        .range([0, this.bits])
     // Sets up the d3 diagram
     this.parent = d3.select("#" + this.id)
         .attr("width", this.width)
@@ -99,15 +111,11 @@ class SimpleScalarEncoder extends React.Component {
 
   renderOutputCells() {
     let g = this.parent.select(".output-cells")
-    // FIXME: Use group translations OR margins, not both
-    let topMargin = 120
     let bits = this.bits
     let width = this.width
-    let bitsToOutputDisplay = d3.scaleLinear()
-        .domain([0, bits])
-        .range([0 + sideGutter, width - sideGutter])
     let cellWidth = Math.floor(width / bits)
     let cellHeight = 30
+    let bitsToOutputDisplay = this.bitsToOutputDisplay
 
     function treatCellRects(r) {
       // FIXME: standardize some styles for diagrams
@@ -122,7 +130,7 @@ class SimpleScalarEncoder extends React.Component {
         .attr('x', function(d, i) {
           return bitsToOutputDisplay(i)
         })
-        .attr('y', topMargin)
+        .attr('y', outputCellsTopMargin)
         .attr('width', cellWidth)
         .attr('height', cellHeight)
     }
@@ -138,6 +146,95 @@ class SimpleScalarEncoder extends React.Component {
   }
 
   handleSvgMouseOver(e) {
+    if (e.target.className.animVal === 'bit') {
+      this.handleOutputCellHover(e)
+    } else {
+      this.handleNumberLineHover(e)
+    }
+  }
+
+  getRangeFromBitIndex(i, encoder) {
+    let v = encoder.reverseScale(i),
+        w = encoder.w,
+        res = encoder.resolution,
+        min = encoder.min,
+        max = encoder.max,
+        radius = w * res / 2,
+        left = Math.max(min, v - radius),
+        right = Math.min(max, v + radius)
+    // Keeps the bucket from changing size at min/max values
+    if (encoder.bounded) {
+        if (left < (min + radius)) left = min
+        if (right > (max - radius)) right = max
+    }
+    return [left, right]
+}
+
+  handleOutputCellHover(e) {
+    let $hoverGroup = this.parent.select('g.range')
+    let cellWidth = Math.floor(this.width / this.bits)
+    
+    // FIXME: WTF does this 40 come from?
+    let lineX = e.pageX - sideGutter - 40
+    let index = Math.floor(this.displayToBitRange(lineX))
+    console.log(index)
+    let cx = this.bitsToOutputDisplay(index) + (cellWidth / 2)
+    let cy = outputCellsTopMargin
+    $hoverGroup.select('g.range circle')
+        .attr('r', cellWidth / 2)
+        .attr('cx', cx)
+        .attr('cy', cy)
+        .attr('fill', 'royalblue')
+
+    let encoder = this.encoder
+    let valueRange = this.getRangeFromBitIndex(index, encoder)
+    let leftValueBound = Math.max(encoder.min, valueRange[0]),
+        rightValueBound = Math.min(encoder.max, valueRange[1])
+    let leftLineData = []
+    let rightLineData = []
+    leftLineData.push({x: cx, y: cy})
+    rightLineData.push({x: cx, y: cy})
+    let nearX = this.valToScreen(leftValueBound)
+    let farX = this.valToScreen(rightValueBound)
+    // Intermediary points for curving
+    leftLineData.push({
+        x: cx - 10,
+        y: cy - 20,
+    })
+    leftLineData.push({
+        x: nearX,
+        y: topGutter + 20
+    })
+    rightLineData.push({
+        x: cx + 10,
+        y: cy - 20,
+    })
+    rightLineData.push({
+        x: farX,
+        y: topGutter + 20
+    })
+
+    // Point on value line
+    leftLineData.push({
+        x: nearX,
+        y: topGutter
+    })
+    rightLineData.push({
+        x: farX,
+        y: topGutter
+    })
+    $hoverGroup.select('path.left')
+        .attr('d', lineFunction(leftLineData))
+        .attr('stroke', 'black')
+        .attr('fill', 'none')
+    $hoverGroup.select('path.right')
+        .attr('d', lineFunction(rightLineData))
+        .attr('stroke', 'black')
+        .attr('fill', 'none')
+    $hoverGroup.attr('visibility', 'visible')
+  }
+
+  handleNumberLineHover(e) {
     // FIXME: WTF does this 40 come from?
     let lineX = e.pageX - sideGutter - 40
     let value = this.screenToVal(lineX)
@@ -150,7 +247,6 @@ class SimpleScalarEncoder extends React.Component {
       this.renderOutputCells()
     }
   }
-
 
   render() {
     let debugStyle = {
@@ -172,6 +268,11 @@ class SimpleScalarEncoder extends React.Component {
         <text x="10" y="80" fontSize="10pt">encoding</text>
         <g className="output-cells"></g>
 
+        <g className="range" visibility="hidden">
+          <circle></circle>
+          <path className="left"></path>
+          <path className="right"></path>
+        </g>
       </svg>
     )
   }
