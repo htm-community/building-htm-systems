@@ -57,19 +57,18 @@ class SimpleScalarEncoder extends React.Component {
     // Sets up the d3 diagram
     this.parent = d3.select("#" + this.id)
         .attr("width", this.width)
-    // Created once here
-    this.addNumberLine(this.parent.select(".number-line"))
-    this.addOutputCells(this.parent.select(".output-cells"))
-    // Already in markup, but update
-    this.setValueMarker(this.val)
+    this.renderNumberLine()
+    this.renderOutputCells()
+    this.renderValueMarker(this.val)
   }
 
-  addNumberLine(g) {
+  renderNumberLine() {
+    let g = this.parent.select(".number-line")
     let xAxis = d3.axisBottom(this.valToScreen)
     g.attr("transform", `translate(0,${topGutter})`).call(xAxis)
   }
 
-  setValueMarker(value) {
+  renderValueMarker(value) {
     let g = this.parent.select(".value-marker")
     g.attr("transform", `translate(0,${topGutter})`)
 
@@ -98,7 +97,8 @@ class SimpleScalarEncoder extends React.Component {
         .attr("y", y)
   }
 
-  addOutputCells(g) {
+  renderOutputCells() {
+    let g = this.parent.select(".output-cells")
     // FIXME: Use group translations OR margins, not both
     let topMargin = 120
     let bits = this.bits
@@ -145,7 +145,9 @@ class SimpleScalarEncoder extends React.Component {
     if (value < this.min || value > this.max) {
       return
     } else {
-      this.setValueMarker(value)
+      this.renderValueMarker(value)
+      this.encoding = this.encoder.encode(value)
+      this.renderOutputCells()
     }
   }
 
