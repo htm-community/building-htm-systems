@@ -19,3 +19,7 @@ This project is being developed mostly live on Twitch with the help of the [HTM 
 TUNE TO https://www.twitch.tv/rhyolight_ THURSDAYS 9AM PDT. See the [archive of live-streams here](https://www.youtube.com/watch?v=vRSh3ceP6xE&list=PL3yXMgtrZmDr6hlnTDmsG4GFMv2htzArt).
 
 Issues are tracked in [trello](https://trello.com/b/iOG0iEnT/building-htm-systems).
+
+### Deployment
+
+Temporary deployment to [heroku](https://building-htm-systems.herokuapp.com/) for development. Will eventually be released to https://buildinghtm.systems/.
