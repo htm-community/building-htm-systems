@@ -8,7 +8,14 @@ const ScalarEncoder = simplehtm.encoders.ScalarEncoder
 const onColor = 'skyblue'
 const offColor = 'white'
 
-const gutter = 10
+const sideGutter = 10
+const topGutter = 40
+
+// FIXME: Add a utils library.
+function precisionRound(number, precision) {
+  let factor = Math.pow(10, precision);
+  return Math.round(number * factor) / factor;
+}
 
 class SimpleScalarEncoder extends React.Component {
 
@@ -32,13 +39,10 @@ class SimpleScalarEncoder extends React.Component {
 
     this.valToScreen = d3.scaleLinear()
         .domain([this.min, this.max])
-        .range([0 + gutter, this.width - gutter])
+        .range([sideGutter, this.width - sideGutter])
     this.screenToVal = d3.scaleLinear()
-        .domain([0 + gutter, this.width - gutter])
+        .domain([sideGutter, this.width - sideGutter])
         .range([this.min, this.max])
-    
-    // This binding is necessary to make `this` work in the callback
-    this.handleNumberLineHover = this.handleNumberLineHover.bind(this);
   }
 
   // Use the internal encoder to turn bits into
@@ -53,33 +57,39 @@ class SimpleScalarEncoder extends React.Component {
     // Sets up the d3 diagram
     this.parent = d3.select("#" + this.id)
         .attr("width", this.width)
+    // Created once here
     this.addNumberLine(this.parent.select(".number-line"))
-    this.addValueMarker(this.parent.select(".number-line"))
     this.addOutputCells(this.parent.select(".output-cells"))
+    // Already in markup, but update
+    this.setValueMarker(this.val)
   }
 
   addNumberLine(g) {
     let xAxis = d3.axisBottom(this.valToScreen)
-    g.attr("transform", "translate(0,40)").call(xAxis)
+    g.attr("transform", `translate(0,${topGutter})`).call(xAxis)
   }
 
-  addValueMarker(g) {
-    let markerWidth = 1
-    let markerHeight = 40
+  setValueMarker(value) {
+    let g = this.parent.select(".value-marker")
+    g.attr("transform", `translate(0,${topGutter})`)
 
-    let x = this.valToScreen(this.val) - (markerWidth / 2)
+    let markerWidth = 1
+    let markerHeight = 20
+
+    let x = this.valToScreen(value) - (markerWidth / 2)
     let y = 0 - (markerHeight / 2)
 
+    let text = g.select("text")
+    let mark = g.select("rect")
+
     // FIXME: standardize some styles for diagrams
-    let text = g.append("text")
-        .attr("x", x)
+    text.attr("x", x)
         .attr("y", y)
         .attr("font-family", "sans-serif")
         .attr("font-size", "10pt")
-        .text(this.val)
+        .text(value)
 
-    let mark = g.append("rect")
-        .attr("stroke", "red")
+    mark.attr("stroke", "red")
         .attr("stroke-width", 1.5)
         .attr("fill", "none")
         .attr("width", markerWidth)
@@ -89,12 +99,13 @@ class SimpleScalarEncoder extends React.Component {
   }
 
   addOutputCells(g) {
+    // FIXME: Use group translations OR margins, not both
     let topMargin = 120
     let bits = this.bits
     let width = this.width
     let bitsToOutputDisplay = d3.scaleLinear()
         .domain([0, bits])
-        .range([0 + gutter, width - gutter])
+        .range([0 + sideGutter, width - sideGutter])
     let cellWidth = Math.floor(width / bits)
     let cellHeight = 30
 
@@ -126,15 +137,16 @@ class SimpleScalarEncoder extends React.Component {
     rects.exit().remove()
   }
 
-  handleNumberLineHover(e) {
-    // console.log(this.parent.node())
-    console.log(`${e.pageX}`)
-
-    // if (mouse[1] > 80) return
-    // let mouseX = mouse[0] - valueScaleSideMargins
-    // mouseX = Math.min(maxWidth - (valueScaleSideMargins * 2), mouseX)
-    // mouseX = Math.max(0, mouseX)
-    // value = utils.precisionRound(xToValue(mouseX), 1)
+  handleSvgMouseOver(e) {
+    // FIXME: WTF does this 40 come from?
+    let lineX = e.pageX - sideGutter - 40
+    let value = this.screenToVal(lineX)
+    value = precisionRound(value, 1)
+    if (value < this.min || value > this.max) {
+      return
+    } else {
+      this.setValueMarker(value)
+    }
   }
 
 
@@ -143,10 +155,17 @@ class SimpleScalarEncoder extends React.Component {
       border: "solid red 1px"
     }
     return (
-      <svg id={this.id} style={debugStyle}>
+      <svg id={this.id} 
+        style={debugStyle} 
+        onMouseMove={this.handleSvgMouseOver.bind(this)}>
 
         <text x="10" y="20" fontSize="10pt">scalar value</text>
-        <g className="number-line" onMouseMove={this.handleNumberLineHover}></g>
+        <g className="number-line"></g>
+
+        <g className="value-marker">
+          <text></text>
+          <rect></rect>
+        </g>
 
         <text x="10" y="80" fontSize="10pt">encoding</text>
         <g className="output-cells"></g>
