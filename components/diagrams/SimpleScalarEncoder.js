@@ -2,6 +2,7 @@ import * as d3 from "d3"
 import PropTypes from 'prop-types'
 import simplehtm from 'simplehtm'
 
+
 const ScalarEncoder = simplehtm.encoders.ScalarEncoder
 
 const onColor = 'skyblue'
@@ -13,35 +14,45 @@ class SimpleScalarEncoder extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = Object.assign({}, props)
+
+    this.id = props.id
+    this.min = props.min
+    this.max = props.max
+    this.val = props.val
+    this.bits = props.bits
+    this.width = props.width
+    
     this.encoder = new ScalarEncoder({
-      min: props.min, max: props.max,
-      w: 10, n: 100
+      min: this.min, max: this.max,
+      w: 18, n: this.bits,
+      bounded: false,
     })
-    this.encode()
+
+    this.encoding = this.encode(this.val)
+
     this.valToScreen = d3.scaleLinear()
-        .domain([props.min, props.max])
-        .range([0 + gutter, props.width - gutter])
+        .domain([this.min, this.max])
+        .range([0 + gutter, this.width - gutter])
     this.screenToVal = d3.scaleLinear()
-        .domain([0 + gutter, props.width - gutter])
-        .range([props.min, props.max])
+        .domain([0 + gutter, this.width - gutter])
+        .range([this.min, this.max])
+    
     // This binding is necessary to make `this` work in the callback
     this.handleNumberLineHover = this.handleNumberLineHover.bind(this);
   }
 
-  encode() {
-    let encoding = this.encoder.encode(this.state.bits)
-    console.log(`Encoding ${this.state.bits} into ${encoding}`)
-    this.state.encoding = encoding
+  // Use the internal encoder to turn bits into
+  encode(value) {
+    let encoding = this.encoder.encode(value)
+    console.log(`Encoding ${value} into ${encoding}`)
+    return encoding
   }
 
+  // https://reactjs.org/docs/react-component.html#componentdidmount
   componentDidMount() {
-    this.setupDiagram()
-  }
-
-  setupDiagram() {
-    this.parent = d3.select("#" + this.state.id)
-        .attr("width", this.state.width)
+    // Sets up the d3 diagram
+    this.parent = d3.select("#" + this.id)
+        .attr("width", this.width)
     this.addNumberLine(this.parent.select(".number-line"))
     this.addValueMarker(this.parent.select(".number-line"))
     this.addOutputCells(this.parent.select(".output-cells"))
@@ -56,18 +67,17 @@ class SimpleScalarEncoder extends React.Component {
     let markerWidth = 1
     let markerHeight = 40
 
-    let magicSix = 6
-    let x = this.valToScreen(this.state.val) - (markerWidth / 2) - magicSix
-    let y = 0 - (markerHeight / 2) - magicSix
+    let x = this.valToScreen(this.val) - (markerWidth / 2)
+    let y = 0 - (markerHeight / 2)
 
+    // FIXME: standardize some styles for diagrams
     let text = g.append("text")
         .attr("x", x)
         .attr("y", y)
         .attr("font-family", "sans-serif")
         .attr("font-size", "10pt")
-        .text(this.state.val)
+        .text(this.val)
 
-    let spacing = 7
     let mark = g.append("rect")
         .attr("stroke", "red")
         .attr("stroke-width", 1.5)
@@ -75,13 +85,13 @@ class SimpleScalarEncoder extends React.Component {
         .attr("width", markerWidth)
         .attr("height", markerHeight)
         .attr("x", x)
-        .attr("y", y + spacing)
+        .attr("y", y)
   }
 
   addOutputCells(g) {
     let topMargin = 120
-    let bits = this.state.bits
-    let width = this.state.width
+    let bits = this.bits
+    let width = this.width
     let bitsToOutputDisplay = d3.scaleLinear()
         .domain([0, bits])
         .range([0 + gutter, width - gutter])
@@ -89,6 +99,7 @@ class SimpleScalarEncoder extends React.Component {
     let cellHeight = 30
 
     function treatCellRects(r) {
+      // FIXME: standardize some styles for diagrams
       r.attr('class', 'bit')
         .attr('fill', (d) => {
           if (d) return onColor
@@ -106,7 +117,7 @@ class SimpleScalarEncoder extends React.Component {
     }
 
     // Update
-    let rects = g.selectAll('rect').data(this.state.encoding)
+    let rects = g.selectAll('rect').data(this.encoding)
     treatCellRects(rects)
     // Enter
     let newRects = rects.enter().append('rect')
@@ -132,7 +143,7 @@ class SimpleScalarEncoder extends React.Component {
       border: "solid red 1px"
     }
     return (
-      <svg id={this.state.id} style={debugStyle}>
+      <svg id={this.id} style={debugStyle}>
 
         <text x="10" y="20" fontSize="10pt">scalar value</text>
         <g className="number-line" onMouseMove={this.handleNumberLineHover}></g>

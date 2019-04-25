@@ -7,13 +7,12 @@ export default function EncodingNumbers() {
       <Layout>
         
         <SimpleScalarEncoder 
-          id="sse"
+          id="sse1"
           min={0} 
           max={55}
           val={27.5}
           bits={50}
           width={500}
-          // no data source needed (behind the scenes)
         />
 
       </Layout>
