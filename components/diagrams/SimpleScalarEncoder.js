@@ -174,8 +174,7 @@ class SimpleScalarEncoder extends React.Component {
     let $hoverGroup = this.parent.select('g.range')
     let cellWidth = Math.floor(this.width / this.bits)
     
-    // FIXME: WTF does this 40 come from?
-    let lineX = e.pageX - sideGutter - 40
+    let lineX = e.pageX - sideGutter
     let index = Math.floor(this.displayToBitRange(lineX))
     console.log(index)
     let cx = this.bitsToOutputDisplay(index) + (cellWidth / 2)
@@ -235,8 +234,7 @@ class SimpleScalarEncoder extends React.Component {
   }
 
   handleNumberLineHover(e) {
-    // FIXME: WTF does this 40 come from?
-    let lineX = e.pageX - sideGutter - 40
+    let lineX = e.pageX - sideGutter
     let value = this.screenToVal(lineX)
     value = precisionRound(value, 1)
     if (value < this.min || value > this.max) {

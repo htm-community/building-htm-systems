@@ -1,6 +1,8 @@
 import Layout from '../components/Layout'
 import SimpleScalarEncoder from '../components/diagrams/SimpleScalarEncoder'
 
+
+
 export default function EncodingNumbers() {
   return (
     <div>

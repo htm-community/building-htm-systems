@@ -1,10 +1,6 @@
 import Latex from 'react-latex'
 import Layout from '../components/Layout'
 
-let listStyle = {
-  listStyleType: "none"
-}
-
 export default function Encoders() {
   return (
     <div>
@@ -42,8 +38,6 @@ export default function Encoders() {
         subsampling.</li>
         </ol>
 
-        
-
         <p>In following sections we will examine each of these characteristics in detail and then describe how you can encode several different types of data. Note that several SDR encoders exist already and most people will not need to create their own. Those who do should carefully consider the above criteria.</p>
 
         <h4>1) Semantically similar data should result in SDRs with overlapping active bits</h4>
@@ -62,7 +56,7 @@ export default function Encoders() {
 
           <p><Latex>Let $A$ be an arbitrary input space and let $S(n,k)$ be the set of SDRs of length $n$ with $k$ ON bits. An encoder $f$ is simply a function $f$ ∶ $A \rightarrow S(n,k)$. A distance score $d_A$ over space $A$ is a function $d_A$ ∶ $A \times A \rightarrow R$ that satisfies three conditions:</Latex></p>
           
-          <ul style={listStyle}>
+          <ul>
             <li><Latex>1. $\forall x,y \in A,d_A (x,y) ≥ 0$</Latex></li>
             <li><Latex>2. $\forall x,y \in A,d_A (x,y) = d_A (y,x)$</Latex></li>
             <li><Latex>3. $\forall x \in A,d_A (x,x) = 0$</Latex></li>
@@ -75,7 +69,7 @@ export default function Encoders() {
 
           <p><Latex>For SDRs $s$ and $t$ with the same length, let $O(s,t)$ be the number of overlapping bits (i.e. the number of ON bits in $s$ & $t$). Then for an encoder $f$∶ $A \rightarrow S(n,k)$ and $\forall w,x,y,z \in A$,</Latex></p>
 
-          <ul style={listStyle}>
+          <ul>
             <li><Latex>4. $O(f(w),f(x)) ≥ O(f(y),f(z)) \Leftrightarrow d_A (w,x) ≤ d_A (y,z)$</Latex></li>
           </ul>
 

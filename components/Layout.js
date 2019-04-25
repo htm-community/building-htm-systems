@@ -1,15 +1,10 @@
 import Header from './Header'
 import Head from 'next/head'
 
-const layoutStyle = {
-  margin: 20,
-  padding: 20,
-  border: '1px solid #DDD',
-  fontFamily: 'Verdana',
-}
+import './layout.css'
 
 const Layout = props => (
-  <div style={layoutStyle}>
+  <div className="body">
     <Head>
       <link href="/static/katex.min.css" rel="stylesheet" />
     </Head>
