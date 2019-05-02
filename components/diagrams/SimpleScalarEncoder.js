@@ -33,8 +33,11 @@ class SimpleScalarEncoder extends React.Component {
     this.min = props.min
     this.max = props.max
     this.val = props.val
-    this.bits = props.bits
-    this.width = props.width
+
+    this.n = props.n || 10
+    this.w = props.w || 100
+
+    this.diagramWidth = props.diagramWidth
 
     let EncoderClass = ScalarEncoder
     if (this.bounded) {
@@ -43,7 +46,7 @@ class SimpleScalarEncoder extends React.Component {
     
     this.encoder = new EncoderClass({
       min: this.min, max: this.max,
-      w: 18, n: this.bits,
+      w: this.w, n: this.n,
       bounded: false,
     })
 
@@ -62,19 +65,19 @@ class SimpleScalarEncoder extends React.Component {
     // Create D3 scales
     this.valToScreen = d3.scaleLinear()
         .domain([this.min, this.max])
-        .range([sideGutter, this.width - sideGutter])
+        .range([sideGutter, this.diagramWidth - sideGutter])
     this.screenToVal = d3.scaleLinear()
-        .domain([sideGutter, this.width - sideGutter])
+        .domain([sideGutter, this.diagramWidth - sideGutter])
         .range([this.min, this.max])
     this.bitsToOutputDisplay = d3.scaleLinear()
-        .domain([0, this.bits])
-        .range([0 + sideGutter, this.width - sideGutter])
+        .domain([0, this.n])
+        .range([0 + sideGutter, this.diagramWidth - sideGutter])
     this.displayToBitRange = d3.scaleLinear()
-        .domain([0 + sideGutter, this.width - sideGutter])
-        .range([0, this.bits])
+        .domain([0 + sideGutter, this.diagramWidth - sideGutter])
+        .range([0, this.n])
     // Sets up the d3 diagram
     this.parent = d3.select("#" + this.id)
-        .attr("width", this.width)
+        .attr("width", this.diagramWidth)
     this.renderNumberLine()
     this.renderOutputCells()
     this.renderValueMarker(this.val)
@@ -117,8 +120,8 @@ class SimpleScalarEncoder extends React.Component {
 
   renderOutputCells() {
     let g = this.parent.select(".output-cells")
-    let bits = this.bits
-    let width = this.width
+    let bits = this.n
+    let width = this.diagramWidth
     let cellWidth = Math.floor(width / bits)
     let cellHeight = 30
     let bitsToOutputDisplay = this.bitsToOutputDisplay
@@ -178,7 +181,7 @@ class SimpleScalarEncoder extends React.Component {
 
   handleOutputCellHover(e) {
     let $hoverGroup = this.parent.select('g.range')
-    let cellWidth = Math.floor(this.width / this.bits)
+    let cellWidth = Math.floor(this.diagramWidth / this.n)
     
     let lineX = e.pageX - sideGutter
     let index = Math.floor(this.displayToBitRange(lineX))

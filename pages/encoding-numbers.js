@@ -150,8 +150,9 @@ export default function EncodingNumbers() {
           min={0} 
           max={55}
           val={27.5}
-          bits={50}
-          width={500}
+          w={18}
+          n={50}
+          diagramWidth={500}
         />
         <div>
           <span><a href="#simpleScalarEncoder">¶</a>Figure 1:</span> A value between 0 and 55 is encoded into bits above. Move your mouse over the number line to see the encoding update. Hover over the bits in the encoding to see the value range each bit can represent.
@@ -174,8 +175,9 @@ export default function EncodingNumbers() {
           min={0} 
           max={55}
           val={27.5}
-          bits={50}
-          width={500}
+          w={18}
+          n={50}
+          diagramWidth={500}
         />
         <div>
           <span><a href="#boundedScalarEncoder">¶</a>Figure 2:</span> Unlike the encodings in <em>Figure 1</em>, the size of all output encodings in this example will be the same because we have manually bounded the edges to force the representation to have a constant sparsity.
@@ -191,10 +193,19 @@ export default function EncodingNumbers() {
           <span><a href="#code-example-3">¶</a>Code Example 3:</span>An example of the creation of an encoder and its usage.
         </div>
 
-        <DiagramStub 
+        <SimpleScalarEncoder 
           id="exampleBoundedScalarEncoder" 
+          bounded={true}
+          min={0} 
+          max={50}
+          val={27.5}
+          w={10}
+          n={100}
+          diagramWidth={500}
         />
-        <span><a href="#exampleBoundedScalarEncoder">¶</a>Figure 3:</span> The behavior of a bounded encoder with a continuous input range of <code>0-50</code> into a bit range of <code>10</code> on bits in a <code>100</code>-bit array.
+        <div>
+          <span><a href="#exampleBoundedScalarEncoder">¶</a>Figure 3:</span> The behavior of a bounded encoder with a continuous input range of <code>0-50</code> into a bit range of <code>10</code> on bits in a <code>100</code>-bit array.
+        </div>
 
         <h3 id="output-parameters">Output Parameters<a href="#output-parameters">¶</a></h3>
         <p>Encoders should give users control over the size and sparsity of encoders they create. Given constant values for the input range of 0-100, change the <code>w</code> and <code>n</code> values in the visualization below and observe how the output encoding changes. </p>
