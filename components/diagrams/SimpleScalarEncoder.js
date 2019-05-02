@@ -2,8 +2,8 @@ import * as d3 from "d3"
 import PropTypes from 'prop-types'
 import simplehtm from 'simplehtm'
 
-
 const ScalarEncoder = simplehtm.encoders.ScalarEncoder
+const BoundedScalarEncoder = simplehtm.encoders.BoundedScalarEncoder
 
 const onColor = 'skyblue'
 const offColor = 'white'
@@ -19,8 +19,8 @@ let lineFunction = d3.line()
 
 // FIXME: Add a utils library.
 function precisionRound(number, precision) {
-  let factor = Math.pow(10, precision);
-  return Math.round(number * factor) / factor;
+  let factor = Math.pow(10, precision)
+  return Math.round(number * factor) / factor
 }
 
 class SimpleScalarEncoder extends React.Component {
@@ -29,13 +29,19 @@ class SimpleScalarEncoder extends React.Component {
     super(props)
 
     this.id = props.id
+    this.bounded = props.bounded
     this.min = props.min
     this.max = props.max
     this.val = props.val
     this.bits = props.bits
     this.width = props.width
+
+    let EncoderClass = ScalarEncoder
+    if (this.bounded) {
+      EncoderClass = BoundedScalarEncoder
+    }
     
-    this.encoder = new ScalarEncoder({
+    this.encoder = new EncoderClass({
       min: this.min, max: this.max,
       w: 18, n: this.bits,
       bounded: false,
