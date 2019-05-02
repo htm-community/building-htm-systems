@@ -168,8 +168,9 @@ export default function EncodingNumbers() {
 
         <p>Now when you hover near the min and max values, you'll see that the size of the representation remains consistent. You might also notice that some bits will now <a>represent more values than others</a>.</p>
 
-        <DiagramStub 
+        <SimpleScalarEncoder 
           id="boundedScalarEncoder" 
+          bounded={true}
           min={0} 
           max={55}
           val={27.5}
