@@ -1,5 +1,5 @@
 import Layout from '../components/Layout'
-import Code from '../components/Code'
+import CodeSyntax from '../components/CodeSyntax'
 
 
 const codeBlockContents =
@@ -36,7 +36,7 @@ export default function EncodingCategories() {
         <h2>Components Showcase</h2>
         <i>This page demoes the available components for creating tutorials</i>
         <h3>Code block</h3>
-        <Code highlightedLines={highlightedLines}>{codeBlockContents}</Code>
+        <CodeSyntax highlightedLines={highlightedLines}>{codeBlockContents}</CodeSyntax>
       </Layout>
     </div>
   )
