@@ -42,7 +42,7 @@ const copyToClipboard = str => {
 };
 
 
-const Code = (props) => {
+const CodeSyntax = (props) => {
 
   const copyCodeToClipboard = () => {
     copyToClipboard(props.children)
@@ -70,4 +70,4 @@ const Code = (props) => {
   </div>
 )}
 
-export default Code
+export default CodeSyntax
