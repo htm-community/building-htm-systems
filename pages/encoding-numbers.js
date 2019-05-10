@@ -145,18 +145,20 @@ export default function EncodingNumbers() {
 
         <p>Using only the code shown above, we can create an interactive visualization of this encoder. If you hover over the "scalar value" axis in the <strong><a href="#simpleScalarEncoder">Figure 1</a></strong> below, the red line moves and the current value being encoded changes. As the value changes, the encoding beneath it also changes, showing which bits are <em>on</em> (the blue ones) vs <em>off</em>. Also hover your mouse over the rectangles representing bits in the output encoding and see the range within the scalar input domain that activates that bit.</p>
 
-        <SimpleScalarEncoder 
-          id="simpleScalarEncoder"
-          min={0} 
-          max={55}
-          val={27.5}
-          w={18}
-          n={50}
-          diagramWidth={500}
-        />
-        <div>
-          <span><a href="#simpleScalarEncoder">¶</a>Figure 1:</span> A value between 0 and 55 is encoded into bits above. Move your mouse over the number line to see the encoding update. Hover over the bits in the encoding to see the value range each bit can represent.
-        </div>
+        <figure>
+          <SimpleScalarEncoder 
+            id="simpleScalarEncoder"
+            min={0} 
+            max={55}
+            val={27.5}
+            w={18}
+            n={50}
+            diagramWidth={500}
+          />
+          <figcaption>
+            <span><a href="#simpleScalarEncoder">¶</a>Figure 1:</span> A value between 0 and 55 is encoded into bits above. Move your mouse over the number line to see the encoding update. Hover over the bits in the encoding to see the value range each bit can represent.
+          </figcaption>
+        </figure>
 
         <p>Notice how the range of the on bits in the encoding always encompass the currently selected value. As you move towards the min and max values, you might notice there is a problem with this representation. If you increase the resolution and move the value, you can clearly see the number of bits in the representation decreasing by half as you approach the min and max values (watch the figure above as you <a>click here</a>). Did you notice anything? <a>Click again</a> and pay attention to the size of the encoding. It changes as the value moves toward the edge, and that breaks one of our <a href="/encoders"> established earlier</a>. Principle #4 of encoders states:</p>
         <blockquote>The output should have similar sparsity for all inputs and have enough one-bits to handle noise and subsampling.</blockquote>
@@ -169,19 +171,21 @@ export default function EncodingNumbers() {
 
         <p>Now when you hover near the min and max values, you'll see that the size of the representation remains consistent. You might also notice that some bits will now <a>represent more values than others</a>.</p>
 
-        <SimpleScalarEncoder 
-          id="boundedScalarEncoder" 
-          bounded={true}
-          min={0} 
-          max={55}
-          val={27.5}
-          w={18}
-          n={50}
-          diagramWidth={500}
-        />
-        <div>
-          <span><a href="#boundedScalarEncoder">¶</a>Figure 2:</span> Unlike the encodings in <em>Figure 1</em>, the size of all output encodings in this example will be the same because we have manually bounded the edges to force the representation to have a constant sparsity.
-        </div>
+        <figure>
+          <SimpleScalarEncoder 
+            id="boundedScalarEncoder" 
+            bounded={true}
+            min={0} 
+            max={55}
+            val={27.5}
+            w={18}
+            n={50}
+            diagramWidth={500}
+          />
+          <figcaption>
+            <span><a href="#boundedScalarEncoder">¶</a>Figure 2:</span> Unlike the encodings in <em>Figure 1</em>, the size of all output encodings in this example will be the same because we have manually bounded the edges to force the representation to have a constant sparsity.
+          </figcaption>
+        </figure>
 
         <h3 id="complete-code-reference">Complete Code Reference <a href="#complete-code-reference">¶</a></h3>
         <p>See the complete <code><a href="https://github.com/htm-community/simplehtm/blob/master/src/encoders/scalar.js" rel="noopener" target="_blank">ScalarEncoder</a></code> and <code><a href="https://github.com/htm-community/simplehtm/blob/master/src/encoders/boundedScalar.js" rel="noopener" target="_blank">BoundedScalarEncoder</a></code> JavaScript classes used in these examples. As an example, the following configuration produces the behavior visualized below.</p>
@@ -193,27 +197,40 @@ export default function EncodingNumbers() {
           <span><a href="#code-example-3">¶</a>Code Example 3:</span>An example of the creation of an encoder and its usage.
         </div>
 
-        <SimpleScalarEncoder 
-          id="exampleBoundedScalarEncoder" 
-          bounded={true}
-          min={0} 
-          max={50}
-          val={27.5}
-          w={10}
-          n={100}
-          diagramWidth={500}
-        />
-        <div>
-          <span><a href="#exampleBoundedScalarEncoder">¶</a>Figure 3:</span> The behavior of a bounded encoder with a continuous input range of <code>0-50</code> into a bit range of <code>10</code> on bits in a <code>100</code>-bit array.
-        </div>
+        <figure>
+          <SimpleScalarEncoder 
+            id="exampleBoundedScalarEncoder" 
+            bounded={true}
+            min={0} 
+            max={50}
+            val={27.5}
+            w={10}
+            n={100}
+            diagramWidth={500}
+          />
+          <figcaption>
+            <span><a href="#exampleBoundedScalarEncoder">¶</a>Figure 3:</span> The behavior of a bounded encoder with a continuous input range of <code>0-50</code> into a bit range of <code>10</code> on bits in a <code>100</code>-bit array.
+          </figcaption>
+        </figure>
 
         <h3 id="output-parameters">Output Parameters<a href="#output-parameters">¶</a></h3>
         <p>Encoders should give users control over the size and sparsity of encoders they create. Given constant values for the input range of 0-100, change the <code>w</code> and <code>n</code> values in the visualization below and observe how the output encoding changes. </p>
-        <DiagramStub 
-          id="outputRange" 
-        />
-        <span><a href="#outputRange">¶</a>Figure 4:</span> This visual allows you to change the number of bits in the entire encoding (<code>n</code>) and the number of bits on (<code>w</code>).
 
+        <figure>
+          <SimpleScalarEncoder 
+            id="outputRange" 
+            bounded={true}
+            min={0} 
+            max={50}
+            val={27.5}
+            w={10}
+            n={100}
+            diagramWidth={500}
+          />
+          <figcaption>
+            <span><a href="#outputRange">¶</a>Figure 4:</span> This visual allows you to change the number of bits in the entire encoding <span data-name="n">100</span> and the number of bits on (<span data-name="w">10</span>).
+          </figcaption>
+        </figure>
 
         <h3 id="encoding-by-min-max">Encoding by min / max<a href="#encoding-by-min-max">¶</a></h3>
         <p>If you know the input domain for an encoder will remain constant, the easiest way to create an encoder is by defining a minimum and maximum input range. Once an encoder is created, these values cannot be changed or else encodings will be inconsistent. To see what an encoder configuration by min/max values might be like, change the <code>min</code> and <code>max</code> values in the panel below.</p>

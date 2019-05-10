@@ -53,6 +53,37 @@ class SimpleScalarEncoder extends React.Component {
     this.encoding = this.encode(this.val)
   }
 
+  stateChanged() {
+    this.renderValueMarker()
+    this.renderOutputCells()
+  }
+
+  makeScrubbableNumber(name, low, high, precision) {
+    let diagram = this
+    let elements = d3.selectAll(`[data-name='${name}']`);
+    let positionToValue = d3.scaleLinear()
+        .clamp(true)
+        .domain([-100, +100])
+        .range([low, high]);
+  
+    function updateNumbers() {
+        elements.text(() => {
+            let format = `.${precision}f`;
+            return d3.format(format)(diagram[name]);
+        });
+    }
+  
+    updateNumbers();
+  
+    elements.call(d3.drag()
+                  .subject(() => ({x: positionToValue.invert(diagram[name]), y: 0}))
+                  .on('drag', () => {
+                      diagram[name] = positionToValue(d3.event.x);
+                      updateNumbers();
+                      diagram.stateChanged();
+                  }));
+  }
+
   // Use the internal encoder to turn bits into
   encode(value) {
     let encoding = this.encoder.encode(value)
@@ -76,21 +107,24 @@ class SimpleScalarEncoder extends React.Component {
         .domain([0 + sideGutter, this.diagramWidth - sideGutter])
         .range([0, this.n])
     // Sets up the d3 diagram
-    this.parent = d3.select("#" + this.id)
+    this.root = d3.select(`#${this.id}`)
         .attr("width", this.diagramWidth)
     this.renderNumberLine()
+    this.makeScrubbableNumber('w', 0, 100, 0)
+    this.makeScrubbableNumber('n', 0, 1000, 0)
     this.renderOutputCells()
-    this.renderValueMarker(this.val)
+    this.renderValueMarker()
   }
 
   renderNumberLine() {
-    let g = this.parent.select(".number-line")
+    let g = this.root.select(".number-line")
     let xAxis = d3.axisBottom(this.valToScreen)
     g.attr("transform", `translate(0,${topGutter})`).call(xAxis)
   }
 
-  renderValueMarker(value) {
-    let g = this.parent.select(".value-marker")
+  renderValueMarker() {
+    let value = this.val
+    let g = this.root.select(".value-marker")
     g.attr("transform", `translate(0,${topGutter})`)
 
     let markerWidth = 1
@@ -119,7 +153,7 @@ class SimpleScalarEncoder extends React.Component {
   }
 
   renderOutputCells() {
-    let g = this.parent.select(".output-cells")
+    let g = this.root.select(".output-cells")
     let bits = this.n
     let width = this.diagramWidth
     let cellWidth = Math.floor(width / bits)
@@ -180,7 +214,7 @@ class SimpleScalarEncoder extends React.Component {
 }
 
   handleOutputCellHover(e) {
-    let $hoverGroup = this.parent.select('g.range')
+    let $hoverGroup = this.root.select('g.range')
     let cellWidth = Math.floor(this.diagramWidth / this.n)
     
     let lineX = e.pageX - sideGutter
@@ -246,12 +280,12 @@ class SimpleScalarEncoder extends React.Component {
     let lineX = e.pageX - sideGutter
     let value = this.screenToVal(lineX)
     value = precisionRound(value, 1)
+    this.val = value
     if (value < this.min || value > this.max) {
       return
     } else {
-      this.renderValueMarker(value)
       this.encoding = this.encoder.encode(value)
-      this.renderOutputCells()
+      this.stateChanged()
     }
   }
 
@@ -291,8 +325,9 @@ SimpleScalarEncoder.propTypes = {
   max: PropTypes.number.isRequired,
   val: PropTypes.number.isRequired,
   id: PropTypes.string.isRequired,
-  bits: PropTypes.number.isRequired,
-  width: PropTypes.number.isRequired,
+  w: PropTypes.number.isRequired,
+  n: PropTypes.number.isRequired,
+  diagramWidth: PropTypes.number.isRequired,
 }
 
 export default SimpleScalarEncoder
