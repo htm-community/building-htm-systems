@@ -58,32 +58,6 @@ class SimpleScalarEncoder extends React.Component {
     this.renderOutputCells()
   }
 
-  makeScrubbableNumber(name, low, high, precision) {
-    let diagram = this
-    let elements = d3.selectAll(`[data-name='${name}']`);
-    let positionToValue = d3.scaleLinear()
-        .clamp(true)
-        .domain([-100, +100])
-        .range([low, high]);
-  
-    function updateNumbers() {
-        elements.text(() => {
-            let format = `.${precision}f`;
-            return d3.format(format)(diagram[name]);
-        });
-    }
-  
-    updateNumbers();
-  
-    elements.call(d3.drag()
-                  .subject(() => ({x: positionToValue.invert(diagram[name]), y: 0}))
-                  .on('drag', () => {
-                      diagram[name] = positionToValue(d3.event.x);
-                      updateNumbers();
-                      diagram.stateChanged();
-                  }));
-  }
-
   // Use the internal encoder to turn bits into
   encode(value) {
     let encoding = this.encoder.encode(value)
@@ -110,8 +84,6 @@ class SimpleScalarEncoder extends React.Component {
     this.root = d3.select(`#${this.id}`)
         .attr("width", this.diagramWidth)
     this.renderNumberLine()
-    this.makeScrubbableNumber('w', 0, 100, 0)
-    this.makeScrubbableNumber('n', 0, 1000, 0)
     this.renderOutputCells()
     this.renderValueMarker()
   }
