@@ -135,6 +135,8 @@ class EncodingNumbers extends React.Component {
 					max:{ParameterMax} ---
 					n:{ParameterN} ---
 					w:{ParameterW} ---
+					
+  				<br />
 
   				<BasicScalarEncoder 
   					id="removeme" 
