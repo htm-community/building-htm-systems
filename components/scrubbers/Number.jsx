@@ -9,6 +9,8 @@ const style =  {
 }
 
 const Number = ({ high = 100, name, low = 0, onUpdate, precision = 0, value = 0}) => {
+	
+	// TODO: Understand what this is doing.
 	const ref = React.createRef()
   
 	useEffect(() => {
@@ -16,7 +18,7 @@ const Number = ({ high = 100, name, low = 0, onUpdate, precision = 0, value = 0}
 			.clamp(true)
 			.domain([-100, +100])
 			.range([low, high])
-	
+		console.log('Number useEffect')
 		d3.selectAll(`.${name}`)
 			.call(d3.drag()
 				.on('drag', () => {

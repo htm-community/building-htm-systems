@@ -4,115 +4,11 @@ import NumberValue from '../components/scrubbers/Number'
 import BasicScalarEncoder from '../components/diagrams/BasicScalarEncoder'
 import DiagramStub from '../components/diagrams/DiagramStub'
 import CodeSyntax from '../components/CodeSyntax'
+import examples from '../examples/encoding-numbers'
 
-const exampleOne = `let d3 = require('d3')
-
-const n = 100
-const w = 18
-const min = 0
-const max = 55
-
-let scale = d3.scaleLinear()
-    .domain([min, max])
-    .range([0, n])
-let reverseScale = d3.scaleLinear()
-    .domain([0, n])
-    .range([min, max])
-
-function applyBitmaskAtIndex(index) {
-    let out = [],
-        lowerValue = reverseScale(index - (w/2)),
-        upperValue = reverseScale(index + (w/2))
-
-    // For each bit in the encoding, we get the input domain
-    // value. Using w, we know how wide the bitmask should
-    // be, so we use the reverse scales to define the size
-    // of the bitmask. If this index is within the value
-    // range, we turn it on.
-    for (let i = 0; i < n; i++) {
-        let bitValue = reverseScale(i),
-            bitOut = 0
-        if (lowerValue <= bitValue && bitValue < upperValue) {
-            bitOut = 1
-        }
-        out.push(bitOut)
-    }
-    return out
-}
-// Accepts a scalar value within the input domain, returns an
-// array of bits representing the value.
-function encode(value) {
-    // Using the scale, get the corresponding integer
-    // index for this value
-    let index = Math.floor(scale(value))
-    if (index > n - 1) {
-        index = n - 1
-    }
-    return applyBitmaskAtIndex(index)
-}`
-const encodingOne = `[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
- 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,
- 1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
- 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]`
-
-const codeExampleTwo = `function applyBoundedBitmaskAtIndex(index) {
-  let out = [],
-      lowerBuffer = reverseScale(w),
-      upperBuffer = reverseScale(n - w),
-      lowerValue = reverseScale(index - (w/2)),
-      upperValue = reverseScale(index + (w/2))
-
-  // For each bit in the encoding, we get the input domain 
-  // value. Using w, we know how wide the bitmask should be,
-  // so we use the reverse scales to define the size of the
-  // bitmask. If this index is within the value range, we 
-  // turnit on.
-  for (let i = 0; i < n; i++) {
-      let bitValue = reverseScale(i),
-          bitOut = 0
-
-      if (lowerValue <= bitValue && bitValue < upperValue) {
-          bitOut = 1
-      }
-
-      // Keeps the output width from changing size at 
-      // min/max values
-      if (lowerValue < min && bitValue < lowerBuffer) {
-          bitOut = 1
-      }
-      if (upperValue > max && bitValue >= upperBuffer) {
-          bitOut = 1
-      }
-      out.push(bitOut)
-  }
-  return out
-}`
-const codeExampleThree = `let encoder = new BoundedScalarEncoder({
-  min: 0, max: 50,
-  w: 10, n: 100
-})
-function onNewValue(value) {
-  let encoding = encoder.encode(value)
-}`
-const codeExampleFour = `applyBitmaskAtIndex(encoding, index) {
-  for (let i = 1; i < w; i++) {
-      let bitIndex = index + i
-      // Adjust for out of range, by cycling around
-      if (bitIndex >= n) bitIndex = bitIndex - n
-      encoding[bitIndex] = 1
-  }
-  return encoding
-}`
-const codeExampleFive = `let values = [0,1,2,3,4]
-let w = 5
-let encoder = new CyclicScalarEncoder({
-    w: w,
-    n: values.length * w,
-    min: 0,
-    max: values.length
-})`
 
 class EncodingNumbers extends React.Component {
+
   state = {
   	max: 100,
   	min: 0,
@@ -122,20 +18,42 @@ class EncodingNumbers extends React.Component {
 
   render() {
 
-  	// example simple way of creating reusable NumberValue scrubbers (I receommend just using gui dat instead)
-  	const ParameterMax = <NumberValue name="param-max" value={this.state.max} onUpdate={value => this.setState({max: Number(value)})} />
-  	const ParameterMin = <NumberValue name="param-min" value={this.state.min} onUpdate={value => this.setState({min: Number(value)})} />
-  	const ParameterN = <NumberValue name="param-n" value={this.state.n} onUpdate={value => this.setState({n: Number(value)})} />
-  	const ParameterW = <NumberValue name="param-w" value={this.state.w} onUpdate={value => this.setState({w: Number(value)})} />
+		// example simple way of creating reusable NumberValue scrubbers (I receommend just using gui dat instead)
+		const ParameterMax =
+			<NumberValue
+				name="param-max"
+				value={this.state.max}
+				onUpdate={value => this.setState({ max: Number(value) })}
+			/>
+		const ParameterMin =
+			<NumberValue
+				name="param-min"
+				value={this.state.min}
+				onUpdate={value => this.setState({ min: Number(value) })}
+			/>
+		const ParameterN =
+			<NumberValue
+				name="param-n"
+				value={this.state.n}
+				onUpdate={value => this.setState({ n: Number(value) })}
+			/>
+		const ParameterW =
+			<NumberValue
+				name="param-w"
+				value={this.state.w}
+				onUpdate={value => this.setState({ w: Number(value) })}
+			/>
 
   	return (
-  		<div>
+			<div>
+				
   			<div>Remove Me - Test Area<br/>
 					min:{ParameterMin} ---
 					max:{ParameterMax} ---
 					n:{ParameterN} ---
 					w:{ParameterW} ---
 					
+  				<br />
   				<br />
 
   				<BasicScalarEncoder 
@@ -163,7 +81,7 @@ class EncodingNumbers extends React.Component {
   				<p>So, given constant values for <code>w</code>, <code>n</code>, <code>min</code>, and <code>max</code>, we can write the JavaScript code for this encoder like this:</p>
   
   				<div id="code-example-1">
-  					<CodeSyntax>{exampleOne}</CodeSyntax>
+  					<CodeSyntax>{examples.code[0]}</CodeSyntax>
   				</div>
           
   				<span>
@@ -174,7 +92,7 @@ class EncodingNumbers extends React.Component {
   				<p>So, given that <code>value</code>  is a scalar number between <code>0</code> and <code>55</code>, the <code>encode()</code> function above will create an encoding <code>100</code> bits long with <code>18</code> bits on (the <em>bitmask</em>) to represent that specific value. Calling <code>encode(27.5)</code> would return a 100-element array, with a bitmask, or block of <code>1</code>s, in the middle:</p>
   
   				<div id="encoding-example-1">
-  					<CodeSyntax>{encodingOne}</CodeSyntax>
+  					<CodeSyntax>{examples.encodings[0]}</CodeSyntax>
   				</div>
   				<span><a href="#encoding-example-1">¶</a>Encoding Example 1:</span> The encoding for the scalar value <code>27.5</code>. Shows an 18-bit long bitmask.
   
@@ -192,7 +110,7 @@ class EncodingNumbers extends React.Component {
   				<p>Our super simple encoder detailed above is going to need a little more logic to handle the literal "edge cases" of minimum and maximum representations. We can do this by overriding the <code>applyBitmaskAtIndex()</code> function above with another one that accounts for this new behavior we want:</p>
   
   				<div id="code-example-2">
-  					<CodeSyntax highlightedLines={[21,22,23,24,25,26,27,28]}>{codeExampleTwo}</CodeSyntax>
+  					<CodeSyntax highlightedLines={[21,22,23,24,25,26,27,28]}>{examples.code[1]}</CodeSyntax>
   				</div>
   				<span><a href="#code-example-2">¶</a>Code Example 2:</span> The only difference between the two encoders is highlighted above. We simply prevent the bitmask from getting smaller with some custom handling at the min and max.
   
@@ -219,7 +137,7 @@ class EncodingNumbers extends React.Component {
   				<p>See the complete <code><a href="https://github.com/htm-community/simplehtm/blob/master/src/encoders/scalar.js" rel="noopener" target="_blank">ScalarEncoder</a></code> and <code><a href="https://github.com/htm-community/simplehtm/blob/master/src/encoders/boundedScalar.js" rel="noopener" target="_blank">BoundedScalarEncoder</a></code> JavaScript classes used in these examples. As an example, the following configuration produces the behavior visualized below.</p>
   
   				<div id="code-example-3">
-  					<CodeSyntax>{codeExampleThree}</CodeSyntax>
+  					<CodeSyntax>{examples.code[2]}</CodeSyntax>
   				</div>
   				<div>
   					<span><a href="#code-example-3">¶</a>Code Example 3:</span>An example of the creation of an encoder and its usage.
@@ -282,7 +200,7 @@ class EncodingNumbers extends React.Component {
   				<p>Remember above when we had to deal with the special cases of values being encoded at the beginning and end of the value range so all representations were the same size in the output array? Another way to deal with that is by assuming the entire output array is a continuous space -- that it wraps around from the end back to the beginning. We can do this simply by changing how the bitmask around the target index is created:</p>
   
   				<div id="code-example-4">
-  					<CodeSyntax>{codeExampleFour}</CodeSyntax>
+  					<CodeSyntax>{examples.code[3]}</CodeSyntax>
   				</div>
   				<span><a href="#code-example-4">¶</a>Code Example 4:</span> The only code we need to override is the code that applies the bitmask at the specified index.
   
@@ -316,12 +234,10 @@ class EncodingNumbers extends React.Component {
   				/>
   				<span><a href="#discreteEncoding">¶</a>Figure 9:</span> By limiting the input to discrete values and making <code>n</code> an even multiple of <code>w</code>, it is easy to encode discrete scalar values with a <code>CyclicScalarEncoder</code>.
   
-  
-  
   				<p>Accomplishing this is really quite simple if we use logic we've already defined for the <code><a href="https://github.com/htm-community/simplehtm/blob/master/src/encoders/cyclicScalar.js" target="_blank">CyclicScalarEncoder</a></code>. If we know how many different discrete values we need to encode and the number of bits to use for each, we can do this:</p>
   
   				<div id="code-example-5">
-  					<CodeSyntax>{codeExampleFive}</CodeSyntax>
+  					<CodeSyntax>{examples.code[4]}</CodeSyntax>
   				</div>
   				<span><a href="#code-example-5">¶</a>Code Example 5:</span>Use the <code>CyclicScalarEncoder</code>.
   
