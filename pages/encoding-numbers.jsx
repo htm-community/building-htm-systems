@@ -1,7 +1,7 @@
 import React from 'react'
 import Layout from '../components/Layout'
-import NumberValue from '../components/scrubbers/Number'
-import BasicScalarEncoder from '../components/diagrams/BasicScalarEncoder'
+import NumberScrubber from '../components/input/NumberScrubber'
+import SimpleScalarEncoder from '../components/diagrams/SimpleScalarEncoder'
 import DiagramStub from '../components/diagrams/DiagramStub'
 import CodeSyntax from '../components/CodeSyntax'
 import examples from '../examples/encoding-numbers'
@@ -14,59 +14,52 @@ class EncodingNumbers extends React.Component {
   	min: 0,
   	n: 100,
   	w: 10,
-  }
-
+	}
+	
   render() {
 
-		// example simple way of creating reusable NumberValue scrubbers (I receommend just using gui dat instead)
-		const ParameterMax =
-			<NumberValue
-				name="param-max"
-				value={this.state.max}
-				onUpdate={value => this.setState({ max: Number(value) })}
-			/>
+		// Creating scrubbable numbers we can put inline for changing page level 
+		// diagram parameters.
+
+		function onScrubUpdate(value, me, name) {
+			let override = {}
+			override[name] = Number(value)
+			console.log(`setting ${name} to ${value}`)
+			me.setState(Object.assign({}, me.state, override))
+		}
+
 		const ParameterMin =
-			<NumberValue
+			<NumberScrubber
 				name="param-min"
+				low={0} high={99} precision={0}
 				value={this.state.min}
-				onUpdate={value => this.setState({ min: Number(value) })}
+				onUpdate={value => onScrubUpdate(value, this, 'min') }
 			/>
-		const ParameterN =
-			<NumberValue
-				name="param-n"
-				value={this.state.n}
-				onUpdate={value => this.setState({ n: Number(value) })}
+		const ParameterMax =
+			<NumberScrubber
+				name="param-max"
+				low={100} high={1000} precision={0}
+				value={this.state.max}
+				onUpdate={value => onScrubUpdate(value, this, 'max') }
 			/>
 		const ParameterW =
-			<NumberValue
+			<NumberScrubber
 				name="param-w"
+				low={1} high={50} precision={0}
 				value={this.state.w}
-				onUpdate={value => this.setState({ w: Number(value) })}
+				onUpdate={value => onScrubUpdate(value, this, 'w') }
+			/>
+		const ParameterN =
+			<NumberScrubber
+				name="param-n"
+				low={20} high={200} precision={0}
+				value={this.state.n}
+				onUpdate={value => onScrubUpdate(value, this, 'n') }
 			/>
 
   	return (
 			<div>
 				
-  			<div>Remove Me - Test Area<br/>
-					min:{ParameterMin} ---
-					max:{ParameterMax} ---
-					n:{ParameterN} ---
-					w:{ParameterW} ---
-					
-  				<br />
-  				<br />
-
-  				<BasicScalarEncoder 
-  					id="removeme" 
-  					diagramWidth={500}
-  					max={this.state.max}
-  					min={this.state.min} 
-  					n={this.state.n}
-  					val={27.5}
-  					w={this.state.w}
-  				/>
-  			</div>
-
   			<Layout>
   				<p>One of the most common data types to encode is <em>numbers</em>. This could be a numeric value of any kind – <em>82 degrees</em>, <em>$145.00</em> in sales, <em>34%</em> of capacity, etc. The sections below describe encoders for a single numeric value. In the sections below, we will introduce several strategies for encoding scalar values into binary arrays.</p>
   
@@ -98,10 +91,17 @@ class EncodingNumbers extends React.Component {
   
   				<p>Using only the code shown above, we can create an interactive visualization of this encoder. If you hover over the "scalar value" axis in the <strong><a href="#simpleScalarEncoder">Figure 1</a></strong> below, the red line moves and the current value being encoded changes. As the value changes, the encoding beneath it also changes, showing which bits are <em>on</em> (the blue ones) vs <em>off</em>. Also hover your mouse over the rectangles representing bits in the output encoding and see the range within the scalar input domain that activates that bit.</p>
   
-  				<figure>
-          
+					<figure>
+						<SimpleScalarEncoder 
+								id="simpleScalarEncoder" 
+								diagramWidth={500}
+								max={this.state.max}
+								min={this.state.min} 
+								n={this.state.n}
+								w={this.state.w}
+							/>
   					<figcaption>
-  						<span><a href="#simpleScalarEncoder">¶</a>Figure 1:</span> A value between 0 and 55 is encoded into bits above. Move your mouse over the number line to see the encoding update. Hover over the bits in the encoding to see the value range each bit can represent.
+  						<span><a href="#simpleScalarEncoder">¶</a>Figure 1:</span> A value between {ParameterMin} and {ParameterMax} is encoded into bits above. Move your mouse over the number line to see the encoding update. Hover over the bits in the encoding to see the value range each bit can represent.
   					</figcaption>
   				</figure>
   
@@ -117,14 +117,13 @@ class EncodingNumbers extends React.Component {
   				<p>Now when you hover near the min and max values, you'll see that the size of the representation remains consistent. You might also notice that some bits will now <a>represent more values than others</a>.</p>
   
   				<figure>
-  					<BasicScalarEncoder 
+  					<SimpleScalarEncoder 
   						id="boundedScalarEncoder" 
   						bounded
   						diagramWidth={500}
   						max={this.state.max}
   						min={this.state.min} 
   						n={this.state.n}
-  						val={27.5}
   						w={this.state.w}
   					/>
   				
@@ -144,19 +143,18 @@ class EncodingNumbers extends React.Component {
   				</div>
   
   				<figure>
-  					<BasicScalarEncoder 
+  					<SimpleScalarEncoder 
   						id="exampleBoundedScalarEncoder" 
   						bounded
   						diagramWidth={500}
-  						max={50}
-  						min={0} 
-  						n={100}
-  						val={27.5}
-  						w={10}
+  						max={this.state.max}
+  						min={this.state.min} 
+  						n={this.state.n}
+  						w={this.state.w}
   					/>
   				
   					<figcaption>
-  						<span><a href="#exampleBoundedScalarEncoder">¶</a>Figure 3:</span> The behavior of a bounded encoder with a continuous input range of <code>0-50</code> into a bit range of <code>10</code> on bits in a <code>100</code>-bit array.
+							<span><a href="#exampleBoundedScalarEncoder">¶</a>Figure 3:</span> The behavior of a bounded encoder with a continuous input range of {ParameterMin}-{ParameterMax} into a bit range of {ParameterW} on bits in a {ParameterN}-bit array.
   					</figcaption>
   				</figure>
   
@@ -164,14 +162,13 @@ class EncodingNumbers extends React.Component {
   				<p>Encoders should give users control over the size and sparsity of encoders they create. Given constant values for the input range of 0-100, change the <code>w</code> and <code>n</code> values in the visualization below and observe how the output encoding changes. </p>
   
   				<figure>
-  					<BasicScalarEncoder 
+  					<SimpleScalarEncoder 
+  						id="outputRange" 
   						bounded
   						diagramWidth={500}
-  						id="outputRange" 
-  						max={50}
-  						min={0} 
+  						max={this.state.max}
+  						min={this.state.min} 
   						n={this.state.n}
-  						val={27.5}
   						w={this.state.w}
   					/>
 
