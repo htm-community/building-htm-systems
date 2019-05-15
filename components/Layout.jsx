@@ -5,18 +5,18 @@ import PropTypes from 'prop-types'
 
 import './layout.css'
 
-const Layout = ({children}) => (
-	<div className="body">
-		<Head>
-			<link href="/static/katex.min.css" rel="stylesheet" />
-		</Head>
-		<Header />
-		{children}
-	</div>
+const Layout = ({ children }) => (
+  <div className="body">
+    <Head>
+      <link href="/static/katex.min.css" rel="stylesheet" />
+    </Head>
+    <Header />
+    {children}
+  </div>
 )
 
 Layout.propTypes = {
-	children: PropTypes.any
+  children: PropTypes.any
 }
 
 export default Layout
