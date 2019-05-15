@@ -10,22 +10,32 @@ import examples from '../examples/encoding-numbers'
 class EncodingNumbers extends React.Component {
 
   state = {
+    value: 50,
     max: 100,
     min: 0,
     n: 100,
-    w: 10,
+    w: 30,
+  }
+
+  componentDidUpdate() {
+    console.log('EncodingNumbers Page Updated')
   }
 
   render() {
+    let me = this
 
     // Creating scrubbable numbers we can put inline for changing page level 
     // diagram parameters.
 
-    function onScrubUpdate(value, me, name) {
+    function onStateUpdate(value, me, name) {
       let override = {}
       override[name] = Number(value)
       console.log(`setting ${name} to ${value}`)
       me.setState(Object.assign({}, me.state, override))
+    }
+
+    function onEncoderValueUpdate(value) {
+      onStateUpdate(value, me, 'value')
     }
 
     const ParameterMin =
@@ -33,29 +43,49 @@ class EncodingNumbers extends React.Component {
         name="param-min"
         low={0} high={99} precision={0}
         value={this.state.min}
-        onUpdate={value => onScrubUpdate(value, this, 'min')}
+        onUpdate={value => onStateUpdate(value, this, 'min')}
       />
     const ParameterMax =
       <NumberScrubber
         name="param-max"
         low={100} high={1000} precision={0}
         value={this.state.max}
-        onUpdate={value => onScrubUpdate(value, this, 'max')}
+        onUpdate={value => onStateUpdate(value, this, 'max')}
       />
     const ParameterW =
       <NumberScrubber
         name="param-w"
         low={1} high={50} precision={0}
         value={this.state.w}
-        onUpdate={value => onScrubUpdate(value, this, 'w')}
+        onUpdate={value => onStateUpdate(value, this, 'w')}
       />
     const ParameterN =
       <NumberScrubber
         name="param-n"
         low={20} high={200} precision={0}
         value={this.state.n}
-        onUpdate={value => onScrubUpdate(value, this, 'n')}
+        onUpdate={value => onStateUpdate(value, this, 'n')}
       />
+
+    function animateValueTo(target) {
+      return () => {
+        let value = me.state.value
+        let diff = target - value
+        let cuts = 16
+        let cut = 0
+        let speed = 100
+        let handle = setInterval(() => {
+          let ratio = cut / cuts
+          let current = Math.round(value + (diff * ratio))
+          let newState = Object.assign({}, me.state, { value: current })
+          console.log(newState)
+          me.setState(newState)
+          if (cut++ >= cuts) {
+            clearInterval(handle)
+          }
+        }, speed)
+      }
+    }
 
     return (
       <div>
@@ -95,17 +125,19 @@ class EncodingNumbers extends React.Component {
             <SimpleScalarEncoder
               id="simpleScalarEncoder"
               diagramWidth={500}
+              value={this.state.value}
               max={this.state.max}
               min={this.state.min}
               n={this.state.n}
               w={this.state.w}
+              onUpdate={value => onEncoderValueUpdate(value, this)}
             />
             <figcaption>
               <span><a href="#simpleScalarEncoder">¶</a>Figure 1:</span> A value between {ParameterMin} and {ParameterMax} is encoded into bits above. Move your mouse over the number line to see the encoding update. Hover over the bits in the encoding to see the value range each bit can represent.
   					</figcaption>
           </figure>
 
-          <p>Notice how the range of the on bits in the encoding always encompass the currently selected value. As you move towards the min and max values, you might notice there is a problem with this representation. If you increase the resolution and move the value, you can clearly see the number of bits in the representation decreasing by half as you approach the min and max values (watch the figure above as you <a>click here</a>). Did you notice anything? <a>Click again</a> and pay attention to the size of the encoding. It changes as the value moves toward the edge, and that breaks one of our <a href="/encoders"> established earlier</a>. Principle #4 of encoders states:</p>
+          <p>Notice how the range of the on bits in the encoding always encompass the currently selected value. As you move towards the min and max values, you might notice there is a problem with this representation. If you increase the resolution and move the value, you can clearly see the number of bits in the representation decreasing by half as you approach the min and max values (watch the figure above as you <a onClick={animateValueTo(this.state.min)}>click here</a>). Did you notice anything? <a>Click again</a> and pay attention to the size of the encoding. It changes as the value moves toward the edge, and that breaks one of our <a href="/encoders"> established earlier</a>. Principle #4 of encoders states:</p>
           <blockquote>The output should have similar sparsity for all inputs and have enough one-bits to handle noise and subsampling.</blockquote>
           <p>Our super simple encoder detailed above is going to need a little more logic to handle the literal "edge cases" of minimum and maximum representations. We can do this by overriding the <code>applyBitmaskAtIndex()</code> function above with another one that accounts for this new behavior we want:</p>
 
@@ -121,10 +153,12 @@ class EncodingNumbers extends React.Component {
               id="boundedScalarEncoder"
               bounded
               diagramWidth={500}
+              value={this.state.value}
               max={this.state.max}
               min={this.state.min}
               n={this.state.n}
               w={this.state.w}
+              onUpdate={value => onEncoderValueUpdate(value, this)}
             />
 
             <figcaption>
@@ -147,10 +181,12 @@ class EncodingNumbers extends React.Component {
               id="exampleBoundedScalarEncoder"
               bounded
               diagramWidth={500}
+              value={this.state.value}
               max={this.state.max}
               min={this.state.min}
               n={this.state.n}
               w={this.state.w}
+              onUpdate={value => onEncoderValueUpdate(value, this)}
             />
 
             <figcaption>
@@ -166,10 +202,12 @@ class EncodingNumbers extends React.Component {
               id="outputRange"
               bounded
               diagramWidth={500}
+              value={this.state.value}
               max={this.state.max}
               min={this.state.min}
               n={this.state.n}
               w={this.state.w}
+              onUpdate={value => onEncoderValueUpdate(value, this)}
             />
 
             <figcaption>
