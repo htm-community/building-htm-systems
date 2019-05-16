@@ -1,32 +1,27 @@
 import React from 'react'
 import Link from 'next/link'
-import './header.css'
-
-const linkStyle = {
-	marginRight: 15
-}
-
 const Header = () => (
-	<div className="header">
+
+	<nav className="nav">
 		<Link href="/">
-			<a style={linkStyle}>Home</a>
+			<a className="nav-link active">Home</a>
 		</Link>
 		<Link href="/encoders">
-			<a style={linkStyle}>Encoders</a>
+			<a className="nav-link">Encoders</a>
 		</Link>
 		<Link href="/encoding-numbers">
-			<a style={linkStyle}>Encoding Numbers</a>
+			<a className="nav-link">Encoding Numbers</a>
 		</Link>
 		<Link href="/encoding-categories">
-			<a style={linkStyle}>Encoding Categories</a>
+			<a className="nav-link">Encoding Categories</a>
 		</Link>
 		<Link href="/encoding-time">
-			<a style={linkStyle}>Encoding Time</a>
+			<a className="nav-link">Encoding Time</a>
 		</Link>
 		<Link href="/components-showcase">
-			<a style={linkStyle}>Components Showcase</a>
+			<a className="nav-link">Components Showcase</a>
 		</Link>
-	</div>
+	</nav>
 )
 
 export default Header
