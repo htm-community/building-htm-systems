@@ -17,18 +17,31 @@ const debugStyle = {
 }
 
 class SimpleScalarEncoder extends React.Component {
-  encoding = undefined; // current encoding
-  encoder = undefined; // current encode used to encode value
-  value = undefined; // current value
+
+  constructor(props) {
+    super(props)
+    this.encoding = undefined; // current encoding
+    this.encoder = undefined; // current encode used to encode value
+    
+    // If there is no onUpdate, we'll manage our own state
+    if (!props.onUpdate) {
+      this.state = {
+        value: props.value
+      }
+    }
+
+  }
 
   // Use the internal encoder to turn bits into
-  encode(value) {
+  encode() {
+    let value = this.state ? this.state.value : this.props.value
     return this.encoder.encode(value)
   }
 
   // handle setting up when params are set/changed
   update() {
     this.orientD3()
+    this.resetEncoder()
     this.renderNumberLine()
     this.renderOutputCells()
     this.renderValueMarker()
@@ -36,32 +49,21 @@ class SimpleScalarEncoder extends React.Component {
 
   // setup any time params change
   componentDidUpdate() {
-    // console.log('BasicScalarEncoder.componentDidUpdate')
     this.update()
   }
 
   // setup on initial mount
   componentDidMount() {
-    // console.log('BasicScalarEncoder.componentDidMount')
-
-    // Sets up the d3 diagram
-    this.root = d3.select(`#${this.props.id}`)
+    // Sets up the d3 diagram on an SVG element.
+    this.root = d3.select(`svg#${this.props.id}`)
       .attr('width', this.props.diagramWidth)
-
     this.update()
   }
 
   orientD3() {
-    this.value = this.props.value
-
     const {
-      bounded, diagramWidth, id, min, max, n, w
+      diagramWidth, min, max, n
     } = this.props
-
-    this.encoder = new (bounded ? BoundedScalarEncoder : ScalarEncoder)({
-      min, max, w, n, bounded,
-    })
-    this.encoding = this.encode(this.value)
 
     // Create D3 scales
     this.valToScreen = d3.scaleLinear()
@@ -73,7 +75,17 @@ class SimpleScalarEncoder extends React.Component {
     this.displayToBitRange = d3.scaleLinear()
       .domain([0 + sideGutter, diagramWidth - sideGutter])
       .range([0, n])
+  }
 
+  resetEncoder() {
+    let value = this.state ? this.state.value : this.props.value
+    const {
+      bounded, min, max, n, w
+    } = this.props
+    this.encoder = new (bounded ? BoundedScalarEncoder : ScalarEncoder)({
+      min, max, w, n, bounded,
+    })
+    this.encoding = this.encode(value)
   }
 
   renderNumberLine() {
@@ -81,6 +93,8 @@ class SimpleScalarEncoder extends React.Component {
   }
 
   renderValueMarker() {
+    let value = this.state ? this.state.value : this.props.value
+
     const g = this.root.select('.value-marker')
 
     g.attr('transform', `translate(0,${topGutter})`)
@@ -88,7 +102,7 @@ class SimpleScalarEncoder extends React.Component {
     const markerWidth = 1
     const markerHeight = 20
 
-    const x = this.valToScreen(this.props.value) - (markerWidth / 2)
+    const x = this.valToScreen(value) - (markerWidth / 2)
     const y = 0 - (markerHeight / 2)
 
     const text = g.select('text')
@@ -99,7 +113,7 @@ class SimpleScalarEncoder extends React.Component {
       .attr('y', y)
       .attr('font-family', 'sans-serif')
       .attr('font-size', '10pt')
-      .text(this.props.value)
+      .text(value)
 
     mark.attr('stroke', 'red')
       .attr('stroke-width', 1.5)
@@ -225,6 +239,8 @@ class SimpleScalarEncoder extends React.Component {
     $hoverGroup.attr('visibility', 'visible')
   }
 
+  // This is the only thing that could change internal state coming
+  // from inside this child.
   handleNumberLineHover(e) {
     const { min, max } = this.props
     const lineX = e.pageX - sideGutter
@@ -237,7 +253,11 @@ class SimpleScalarEncoder extends React.Component {
       this.renderValueMarker()
       this.renderOutputCells()
     }
-    this.props.onUpdate(value)
+    // If there's an onUpdate in the props, we'll assume this state
+    // is managed by the parent and pass it along.
+    if (this.props.onUpdate) this.props.onUpdate(value)
+    // Otherwise, we'll just worry about our own state
+    else this.setState({value: value})
   }
 
   render() {

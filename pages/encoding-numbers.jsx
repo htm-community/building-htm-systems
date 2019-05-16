@@ -18,58 +18,56 @@ class EncodingNumbers extends React.Component {
     w: 30,
   }
 
-  // componentDidUpdate() {
-  //   console.log('EncodingNumbers Page Updated')
-  // }
+  animationHandle = undefined
+
+  /**
+   * This allows triggers in the page to animate page state value while 
+   * children update.
+   */
+  animateValue(fromValue, toValue) {
+    return () => {
+      clearInterval(this.animationHandle)
+      let cut = 0
+      let diff = toValue - fromValue
+      const cuts = 16
+      const speed = 100
+      this.animationHandle = setInterval(() => {
+        const ratio = cut / cuts
+        const current = Math.round(fromValue + (diff * ratio))
+        this.setState({ value : current})
+        if (cut++ >= cuts) {
+          clearInterval(this.animationHandle)
+        }
+      }, speed)
+    }
+  }
 
   render() {
-    let me = this
-
     const ParameterMax = <NumberValue
-      name="param-max"
+      name="param-max" low={30} high={200}
       value={this.state.max}
       onUpdate={value => this.setState({ max: Number(value) })}
     />
     const ParameterMin = <NumberValue
-      name="param-min"
+      name="param-min" low={-50} high={50}
       value={this.state.min}
       onUpdate={value => this.setState({ min: Number(value) })}
     />
     const ParameterN = <NumberValue
-      name="param-n"
+      name="param-n" low={30} high={200}
       value={this.state.n}
       onUpdate={value => this.setState({ n: Number(value) })}
     />
     const ParameterW = <NumberValue
-      name="param-w"
+      name="param-w" low={1} high={60}
       value={this.state.w}
       onUpdate={value => this.setState({ w: Number(value) })}
     />
     const ParameterValue = <NumberValue
-      name="param-value3"
+      name="param-value3" low={this.state.min} high={this.state.max}
       value={this.state.value}
       onUpdate={value => this.setState({ value: Number(value) })}
     />
-
-    // This allows triggers in the page to animate page state values while 
-    // children update.
-    function animateValueTo(target) {
-      return () => {
-        let value = me.state.value
-        let diff = target - value
-        let cuts = 16
-        let cut = 0
-        let speed = 100
-        let handle = setInterval(() => {
-          let ratio = cut / cuts
-          let current = Math.round(value + (diff * ratio))
-          me.setState({ value: current })
-          if (cut++ >= cuts) {
-            clearInterval(handle)
-          }
-        }, speed)
-      }
-    }
 
     return (
       <div>
@@ -122,7 +120,11 @@ class EncodingNumbers extends React.Component {
   					</figcaption>
           </figure>
 
-          <p>Notice how the range of the on bits in the encoding always encompass the currently selected value. As you move towards the min and max values, you might notice there is a problem with this representation. If you increase the resolution and move the value, you can clearly see the number of bits in the representation decreasing by half as you approach the min and max values (watch the figure above as you <a className='interactive' onClick={animateValueTo(this.state.min)}>click here</a>). Did you notice anything? <a>Click again</a> and pay attention to the size of the encoding. It changes as the value moves toward the edge, and that breaks one of our <a href="/encoders"> established earlier</a>. Principle #4 of encoders states:</p>
+          <p>Notice how the range of the on bits in the encoding always encompass the currently selected value. As you move towards the min and max values, you might notice there is a problem with this representation. If you increase the resolution and move the value, you can clearly see the number of bits in the representation decreasing by half as you approach the min and max values (watch the figure above as you <a className='interactive'
+            onClick={this.animateValue(this.state.value, this.state.min)}>click here</a>
+          ). Did you notice anything? <a className='interactive'
+            onClick={this.animateValue(this.state.value, this.state.max)}>Click again</a> 
+          and pay attention to the size of the encoding. It changes as the value moves toward the edge, and that breaks one of our <a href="/encoders"> established earlier</a>. Principle #4 of encoders states:</p>
           <blockquote>The output should have similar sparsity for all inputs and have enough one-bits to handle noise and subsampling.</blockquote>
           <p>Our super simple encoder detailed above is going to need a little more logic to handle the literal "edge cases" of minimum and maximum representations. We can do this by overriding the <code>applyBitmaskAtIndex()</code> function above with another one that accounts for this new behavior we want:</p>
 
@@ -166,21 +168,20 @@ class EncodingNumbers extends React.Component {
               id="exampleBoundedScalarEncoder"
               bounded
               diagramWidth={500}
-              value={this.state.value}
-              max={this.state.max}
-              min={this.state.min}
-              n={this.state.n}
-              w={this.state.w}
-              onUpdate={value => this.setState({ value: value })}
+              value={25}
+              min={0}
+              max={50}
+              n={100}
+              w={10}
             />
 
             <figcaption>
-              <span><a href="#exampleBoundedScalarEncoder">¶</a>Figure 3:</span> The behavior of a bounded encoder with a continuous input range of {ParameterMin}-{ParameterMax} into a bit range of {ParameterW} on bits in a {ParameterN}-bit array.
+              <span><a href="#exampleBoundedScalarEncoder">¶</a>Figure 3:</span> The behavior of a bounded encoder with a continuous input range of <code>0</code>-<code>50</code> into a bit range of <code>10</code> on bits in a <code>100</code>-bit array.
   					</figcaption>
           </figure>
 
           <h3 id="output-parameters">Output Parameters<a href="#output-parameters">¶</a></h3>
-          <p>Encoders should give users control over the size and sparsity of encoders they create. Given constant values for the input range of 0-100, change the <code>w</code> and <code>n</code> values in the visualization below and observe how the output encoding changes. </p>
+          <p>Encoders should give users control over the size and sparsity of encoders they create. Given constant values for the input range of 0-100, change the <code>w</code>{ParameterW} and <code>n</code>{ParameterN} values in the visualization below and observe how the output encoding changes. </p>
 
           <figure>
             <SimpleScalarEncoder
@@ -201,7 +202,7 @@ class EncodingNumbers extends React.Component {
           </figure>
 
           <h3 id="encoding-by-min-max">Encoding by min / max<a href="#encoding-by-min-max">¶</a></h3>
-          <p>If you know the input domain for an encoder will remain constant, the easiest way to create an encoder is by defining a minimum and maximum input range. Once an encoder is created, these values cannot be changed or else encodings will be inconsistent. To see what an encoder configuration by min/max values might be like, change the <code>min</code> and <code>max</code> values in the panel below.</p>
+          <p>If you know the input domain for an encoder will remain constant, the easiest way to create an encoder is by defining a minimum and maximum input range. Once an encoder is created, these values cannot be changed or else encodings will be inconsistent. To see what an encoder configuration by min/max values might be like, change the <code>min</code>{ParameterMin} and <code>max</code>{ParameterMax} values in the panel below.</p>
           <DiagramStub
             id="byMinMaxScalarEncoder"
           />
