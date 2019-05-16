@@ -245,19 +245,17 @@ class SimpleScalarEncoder extends React.Component {
 		const { min, max } = this.props
 		const lineX = e.pageX - sideGutter
 		let value = precisionRound(this.valToScreen.invert(lineX), 1)
-
-		if (value < min || value > max) {
-			return
-		} else {
+		// Only update if in bounds.
+		if (min <= value && value <= max) {
 			this.encoding = this.encoder.encode(value)
 			this.renderValueMarker()
 			this.renderOutputCells()
+			// If there's an onUpdate in the props, we'll assume this state
+			// is managed by the parent and pass it along.
+			if (this.props.onUpdate) this.props.onUpdate(value)
+			// Otherwise, we'll just worry about our own state
+			else this.setState({value: value})
 		}
-		// If there's an onUpdate in the props, we'll assume this state
-		// is managed by the parent and pass it along.
-		if (this.props.onUpdate) this.props.onUpdate(value)
-		// Otherwise, we'll just worry about our own state
-		else this.setState({value: value})
 	}
 
 	render() {
