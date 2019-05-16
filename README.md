@@ -8,9 +8,11 @@ The HTM system running these visualization is called [simplehtm](https://github.
 
 ## Running
 
-    npm run dev
+		npm run dev
 
 ## Developers
+
+Please use tabs.
 
 ### Live On Twitch
 

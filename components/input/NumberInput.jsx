@@ -9,7 +9,7 @@ const style =  {
 }
 
 const NumberInput = ({ high = 100, low = 0, onUpdate, precision = 0, value = 0}) => <input type="number" min={low} max={high} style={style} value={value} onChange={(e) => onUpdate(e.target.value)} step="1" />
-  
+	
 NumberInput.propTypes = {
 	high: PropTypes.number,
 	low: PropTypes.number,
