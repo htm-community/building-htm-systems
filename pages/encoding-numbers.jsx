@@ -202,12 +202,21 @@ class EncodingNumbers extends React.Component {
 					</figure>
 
 					<h3 id="encoding-by-min-max">Encoding by min / max<a href="#encoding-by-min-max">¶</a></h3>
-					<p>If you know the input domain for an encoder will remain constant, the easiest way to create an encoder is by defining a minimum and maximum input range. Once an encoder is created, these values cannot be changed or else encodings will be inconsistent. To see what an encoder configuration by min/max values might be like, change the <code>min</code>{ParameterMin} and <code>max</code>{ParameterMax} values in the panel below.</p>
-					<DiagramStub
-						id="byMinMaxScalarEncoder"
-						/>
-					<span><a href="#byMinMaxScalarEncoder">¶</a>Figure 5:</span> Define the input range with <code>min</code> and <code>max</code>.
-
+					<p>If you know the input domain for an encoder will remain constant, the easiest way to create an encoder is by defining a minimum and maximum input range. Once an encoder is created, these values cannot be changed or else encodings will be inconsistent. To see what an encoder configuration by min/max values might be like, change the <code>min</code>{ParameterMin} and <code>max</code>{ParameterMax}.</p>
+					<SimpleScalarEncoder
+							id="byMinMaxScalarEncoder"
+							bounded
+							diagramWidth={500}
+							value={this.state.value}
+							max={this.state.max}
+							min={this.state.min}
+							n={this.state.n}
+							w={this.state.w}
+							onUpdate={value => this.setState({ value })}
+					/>
+					<div>
+						<span><a href="#byMinMaxScalarEncoder">¶</a>Figure 5:</span> Define the input range with <code>min</code>: {ParameterMin} and <code>max</code>: {ParameterMax}.
+					</div>
 
 					<h3 id="encoding-by-bit-resolution">Encoding by bit resolution<a href="#encoding-by-bit-resolution">¶</a></h3>
 					<p>It might make more sense to create an encoder based upon the range of values each bit in the output array can represent. That is what we mean by <code>resolution</code>, the range of input values one bit represents in the output space.</p>
