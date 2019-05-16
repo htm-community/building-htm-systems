@@ -18,33 +18,17 @@ const debugStyle = {
 
 class SimpleScalarEncoder extends React.Component {
 
-	constructor(props) {
-		super(props)
-		this.encoding = undefined; // current encoding
-		this.encoder = undefined; // current encode used to encode value
-		
-		// If there is no onUpdate, we'll manage our own state
-		if (!props.onUpdate) {
-			this.state = {
-				value: props.value
-			}
-		}
-
-	}
-
-	// Use the internal encoder to turn bits into
-	encode() {
-		let value = this.state ? this.state.value : this.props.value
-		return this.encoder.encode(value)
-	}
+	encoding = undefined
+	encoder = undefined
 
 	// handle setting up when params are set/changed
 	update() {
+		let value = this.getValue()
 		this.orientD3()
-		this.resetEncoder()
+		this.resetEncoder(value)
 		this.renderNumberLine()
+		this.renderValueMarker(value)
 		this.renderOutputCells()
-		this.renderValueMarker()
 	}
 
 	// setup any time params change
@@ -77,24 +61,31 @@ class SimpleScalarEncoder extends React.Component {
 			.range([0, n])
 	}
 
-	resetEncoder() {
-		let value = this.state ? this.state.value : this.props.value
+	resetEncoder(value) {
 		const {
 			bounded, min, max, n, w
 		} = this.props
 		this.encoder = new (bounded ? BoundedScalarEncoder : ScalarEncoder)({
 			min, max, w, n, bounded,
 		})
-		this.encoding = this.encode(value)
+		this.encoding = this.encoder.encode(value)
 	}
 
 	renderNumberLine() {
-		this.root.select('.number-line').attr('transform', `translate(0,${topGutter})`).call(d3.axisBottom(this.valToScreen))
+		this.root.select('.number-line')
+			.attr('transform', `translate(0,${topGutter})`)
+			.call(d3.axisBottom(this.valToScreen))
 	}
 
-	renderValueMarker() {
-		let value = this.state ? this.state.value : this.props.value
+	/**
+	 * Providing this so we can have a local override of the value
+	 * without polluting global space (if we want).
+	 */
+	getValue() {
+		return this.value || this.props.value
+	}
 
+	renderValueMarker(value) {
 		const g = this.root.select('.value-marker')
 
 		g.attr('transform', `translate(0,${topGutter})`)
@@ -244,17 +235,16 @@ class SimpleScalarEncoder extends React.Component {
 	handleNumberLineHover(e) {
 		const { min, max } = this.props
 		const lineX = e.pageX - sideGutter
-		let value = precisionRound(this.valToScreen.invert(lineX), 1)
+		let value = this.value = precisionRound(this.valToScreen.invert(lineX), 1)
 		// Only update if in bounds.
 		if (min <= value && value <= max) {
-			this.encoding = this.encoder.encode(value)
-			this.renderValueMarker()
-			this.renderOutputCells()
 			// If there's an onUpdate in the props, we'll assume this state
 			// is managed by the parent and pass it along.
-			if (this.props.onUpdate) this.props.onUpdate(value)
-			// Otherwise, we'll just worry about our own state
-			else this.setState({value: value})
+			if (this.props.onUpdate) {
+				this.props.onUpdate(value)
+			} else {
+				this.update()
+			}
 		}
 	}
 
@@ -289,6 +279,8 @@ class SimpleScalarEncoder extends React.Component {
 
 SimpleScalarEncoder.propTypes = {
 	bounded: PropTypes.bool,
+	value: PropTypes.number,
+	onUpdate: PropTypes.func,
 	min: PropTypes.number.isRequired,
 	max: PropTypes.number.isRequired,
 	id: PropTypes.string.isRequired,

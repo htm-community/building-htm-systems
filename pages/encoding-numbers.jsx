@@ -113,7 +113,7 @@ class EncodingNumbers extends React.Component {
 							min={this.state.min}
 							n={this.state.n}
 							w={this.state.w}
-							onUpdate={value => this.setState({ value: value })}
+							onUpdate={value => this.setState({ value })}
 						/>
 						<figcaption>
 							<span><a href="#simpleScalarEncoder">¶</a>Figure 1:</span> A value between {ParameterMin} and {ParameterMax} is encoded into bits above. Move your mouse over the number line to see the encoding update. Hover over the bits in the encoding to see the value range each bit can represent.
@@ -145,7 +145,7 @@ class EncodingNumbers extends React.Component {
 							min={this.state.min}
 							n={this.state.n}
 							w={this.state.w}
-							onUpdate={value => this.setState({ value: value })}
+							onUpdate={value => this.setState({ value })}
 						/>
 
 						<figcaption>
@@ -193,7 +193,7 @@ class EncodingNumbers extends React.Component {
 							min={this.state.min}
 							n={this.state.n}
 							w={this.state.w}
-							onUpdate={value => this.setState({ value: value })}
+							onUpdate={value => this.setState({ value })}
 						/>
 
 						<figcaption>
