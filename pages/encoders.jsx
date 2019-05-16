@@ -1,9 +1,6 @@
+import React from 'react'
 import Latex from 'react-latex'
 import Layout from '../components/Layout'
-
-let listStyle = {
-  listStyleType: "none"
-}
 
 export default function Encoders() {
   return (
@@ -35,14 +32,11 @@ export default function Encoders() {
         <p>There are a few important aspects that need to be considered when encoding data:</p>
 
         <ol>
- 	        <li>Semantically similar data should result in SDRs with overlapping active bits.</li>
-         	<li>The same input should always produce the same SDR as output.</li>
-         	<li>The output should have the same dimensionality (total number of bits) for all inputs.</li>
-         	<li>The output should have similar sparsity for all inputs and have enough one-bits to handle noise and
-        subsampling.</li>
+          <li>Semantically similar data should result in SDRs with overlapping active bits.</li>
+          <li>The same input should always produce the same SDR as output.</li>
+          <li>The output should have the same dimensionality (total number of bits) for all inputs.</li>
+          <li>The output should have similar sparsity for all inputs and have enough one-bits to handle noise and subsampling.</li>
         </ol>
-
-        
 
         <p>In following sections we will examine each of these characteristics in detail and then describe how you can encode several different types of data. Note that several SDR encoders exist already and most people will not need to create their own. Those who do should carefully consider the above criteria.</p>
 
@@ -61,13 +55,13 @@ export default function Encoders() {
           <p>Here we formalize the encoding process by defining a set of rules that relate the semantic similarity of two inputs  with the number of overlapping one9bits in the corresponding encoded SDRs.</p>
 
           <p><Latex>Let $A$ be an arbitrary input space and let $S(n,k)$ be the set of SDRs of length $n$ with $k$ ON bits. An encoder $f$ is simply a function $f$ ∶ $A \rightarrow S(n,k)$. A distance score $d_A$ over space $A$ is a function $d_A$ ∶ $A \times A \rightarrow R$ that satisfies three conditions:</Latex></p>
-          
-          <ul style={listStyle}>
+
+          <ul>
             <li><Latex>1. $\forall x,y \in A,d_A (x,y) ≥ 0$</Latex></li>
             <li><Latex>2. $\forall x,y \in A,d_A (x,y) = d_A (y,x)$</Latex></li>
             <li><Latex>3. $\forall x \in A,d_A (x,x) = 0$</Latex></li>
           </ul>
-          
+
 
           <p>Equation 1 requires the semantic similarity metric give a distance value of zero or greater. Equation 2 requires the distance metric to be symmetric. And Equation 3 requires that the distance between two identical values be zero.</p>
 
@@ -75,7 +69,7 @@ export default function Encoders() {
 
           <p><Latex>For SDRs $s$ and $t$ with the same length, let $O(s,t)$ be the number of overlapping bits (i.e. the number of ON bits in $s$ & $t$). Then for an encoder $f$∶ $A \rightarrow S(n,k)$ and $\forall w,x,y,z \in A$,</Latex></p>
 
-          <ul style={listStyle}>
+          <ul>
             <li><Latex>4. $O(f(w),f(x)) ≥ O(f(y),f(z)) \Leftrightarrow d_A (w,x) ≤ d_A (y,z)$</Latex></li>
           </ul>
 
@@ -83,21 +77,22 @@ export default function Encoders() {
 
         </div>
 
-        <h4>2) The same input should always produce the same SDR as output</h4>
+        <h4>2: The same input should always produce the same SDR as output</h4>
 
         Encoders should be deterministic so that the same input produces the same output every time. Without this property, the sequences learned in an HTM system will become obsolete as the encoded representations for values change. Avoid creating encoders with random or adaptive elements.
         It can be tempting to create adaptive encoders that adjust representations to handle input data with an unknown range. There is a way to design an encoder to handle this case without changing the representations of inputs that is described below in the section labeled “A more flexible encoder method.” This method allows encoders to handle input with unbounded or unknown ranges.
 
-        <h4>3) The output should have the same dimensionality (total number of bits) for all inputs</h4>
+				<h4>3: The output should have the same dimensionality (total number of bits) for all inputs</h4>
 
         The output of an encoder must always produce the same number of bits for each of its inputs. SDRs are compared and operated on using a bit-by-bit assumption such that a bit with a certain “meaning” is always in the same position. If the encoders produced varying bit lengths for the SDRs, comparisons and other operations would not be possible.
 
-        <h4>4) The output should have similar sparsity for all inputs and have enough one-bits to handle noise and subsampling</h4>
+				<h4>4: The output should have similar sparsity for all inputs and have enough one-bits to handle noise and subsampling</h4>
 
         The fraction of total ON bits in an encoder can vary from around 1% to 35%, but the sparsity should be relatively fixed for a given application of an encoder. While keeping the sparsity the same should be the rule, small variations in sparsity will not have a negative effect.
         Additionally, there must be enough one-bits to handle noise and subsampling. A general rule of thumb is to have at least 20-25 one bits. Encoders that produce representations with fewer than 20 one bits do not work well in HTM systems since they may become extremely susceptible to errors due to small amounts of noise or non-determinism.
-        
-      </Layout>
+
+			</Layout>
     </div>
   )
 }
+

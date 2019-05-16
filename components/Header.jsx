@@ -1,11 +1,13 @@
+import React from 'react'
 import Link from 'next/link'
+import './header.css'
 
 const linkStyle = {
   marginRight: 15
 }
 
 const Header = () => (
-  <div>
+  <div className="header">
     <Link href="/">
       <a style={linkStyle}>Home</a>
     </Link>

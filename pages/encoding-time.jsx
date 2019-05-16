@@ -1,10 +1,11 @@
+import React from 'react'
 import Layout from '../components/Layout'
 
-export default function EncodingCategories() {
+export default function EncodingTime() {
   return (
     <div>
       <Layout>
-        <h2>Encoding Categories</h2>
+        <h2>Encoding Time</h2>
       </Layout>
     </div>
   )
