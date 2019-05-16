@@ -18,26 +18,12 @@ class EncodingNumbers extends React.Component {
     w: 30,
   }
 
-  componentDidUpdate() {
-    console.log('EncodingNumbers Page Updated')
-  }
+  // componentDidUpdate() {
+  //   console.log('EncodingNumbers Page Updated')
+  // }
 
   render() {
     let me = this
-
-    // Creating scrubbable numbers we can put inline for changing page level 
-    // diagram parameters.
-
-    function onStateUpdate(value, me, name) {
-      let override = {}
-      override[name] = Number(value)
-      console.log(`setting ${name} to ${value}`)
-      me.setState(Object.assign({}, me.state, override))
-    }
-
-    function onEncoderValueUpdate(value) {
-      onStateUpdate(value, me, 'value')
-    }
 
     const ParameterMax = <NumberValue
       name="param-max"
@@ -77,9 +63,7 @@ class EncodingNumbers extends React.Component {
         let handle = setInterval(() => {
           let ratio = cut / cuts
           let current = Math.round(value + (diff * ratio))
-          let newState = Object.assign({}, me.state, { value: current })
-          console.log(newState)
-          me.setState(newState)
+          me.setState({ value: current })
           if (cut++ >= cuts) {
             clearInterval(handle)
           }
@@ -131,7 +115,7 @@ class EncodingNumbers extends React.Component {
               min={this.state.min}
               n={this.state.n}
               w={this.state.w}
-              onUpdate={value => onEncoderValueUpdate(value, this)}
+              onUpdate={value => this.setState({ value: value })}
             />
             <figcaption>
               <span><a href="#simpleScalarEncoder">¶</a>Figure 1:</span> A value between {ParameterMin} and {ParameterMax} is encoded into bits above. Move your mouse over the number line to see the encoding update. Hover over the bits in the encoding to see the value range each bit can represent.
@@ -159,7 +143,7 @@ class EncodingNumbers extends React.Component {
               min={this.state.min}
               n={this.state.n}
               w={this.state.w}
-              onUpdate={value => onEncoderValueUpdate(value, this)}
+              onUpdate={value => this.setState({ value: value })}
             />
 
             <figcaption>
@@ -187,7 +171,7 @@ class EncodingNumbers extends React.Component {
               min={this.state.min}
               n={this.state.n}
               w={this.state.w}
-              onUpdate={value => onEncoderValueUpdate(value, this)}
+              onUpdate={value => this.setState({ value: value })}
             />
 
             <figcaption>
@@ -208,7 +192,7 @@ class EncodingNumbers extends React.Component {
               min={this.state.min}
               n={this.state.n}
               w={this.state.w}
-              onUpdate={value => onEncoderValueUpdate(value, this)}
+              onUpdate={value => this.setState({ value: value })}
             />
 
             <figcaption>
