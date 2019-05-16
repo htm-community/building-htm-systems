@@ -1,6 +1,7 @@
 import React from 'react'
 import Layout from '../components/Layout'
 import NumberScrubber from '../components/input/NumberScrubber'
+import NumberValue from '../components/input/NumberInput'
 import SimpleScalarEncoder from '../components/diagrams/SimpleScalarEncoder'
 import DiagramStub from '../components/diagrams/DiagramStub'
 import CodeSyntax from '../components/CodeSyntax'
@@ -38,35 +39,34 @@ class EncodingNumbers extends React.Component {
       onStateUpdate(value, me, 'value')
     }
 
-    const ParameterMin =
-      <NumberScrubber
-        name="param-min"
-        low={0} high={99} precision={0}
-        value={this.state.min}
-        onUpdate={value => onStateUpdate(value, this, 'min')}
-      />
-    const ParameterMax =
-      <NumberScrubber
-        name="param-max"
-        low={100} high={1000} precision={0}
-        value={this.state.max}
-        onUpdate={value => onStateUpdate(value, this, 'max')}
-      />
-    const ParameterW =
-      <NumberScrubber
-        name="param-w"
-        low={1} high={50} precision={0}
-        value={this.state.w}
-        onUpdate={value => onStateUpdate(value, this, 'w')}
-      />
-    const ParameterN =
-      <NumberScrubber
-        name="param-n"
-        low={20} high={200} precision={0}
-        value={this.state.n}
-        onUpdate={value => onStateUpdate(value, this, 'n')}
-      />
+    const ParameterMax = <NumberValue
+      name="param-max"
+      value={this.state.max}
+      onUpdate={value => this.setState({ max: Number(value) })}
+    />
+    const ParameterMin = <NumberValue
+      name="param-min"
+      value={this.state.min}
+      onUpdate={value => this.setState({ min: Number(value) })}
+    />
+    const ParameterN = <NumberValue
+      name="param-n"
+      value={this.state.n}
+      onUpdate={value => this.setState({ n: Number(value) })}
+    />
+    const ParameterW = <NumberValue
+      name="param-w"
+      value={this.state.w}
+      onUpdate={value => this.setState({ w: Number(value) })}
+    />
+    const ParameterValue = <NumberValue
+      name="param-value3"
+      value={this.state.value}
+      onUpdate={value => this.setState({ value: Number(value) })}
+    />
 
+    // This allows triggers in the page to animate page state values while 
+    // children update.
     function animateValueTo(target) {
       return () => {
         let value = me.state.value
@@ -91,6 +91,7 @@ class EncodingNumbers extends React.Component {
       <div>
 
         <Layout>
+
           <p>One of the most common data types to encode is <em>numbers</em>. This could be a numeric value of any kind – <em>82 degrees</em>, <em>$145.00</em> in sales, <em>34%</em> of capacity, etc. The sections below describe encoders for a single numeric value. In the sections below, we will introduce several strategies for encoding scalar values into binary arrays.</p>
 
           <h2 id="a-simple-encoder-for-numbers">
@@ -137,7 +138,7 @@ class EncodingNumbers extends React.Component {
   					</figcaption>
           </figure>
 
-          <p>Notice how the range of the on bits in the encoding always encompass the currently selected value. As you move towards the min and max values, you might notice there is a problem with this representation. If you increase the resolution and move the value, you can clearly see the number of bits in the representation decreasing by half as you approach the min and max values (watch the figure above as you <a onClick={animateValueTo(this.state.min)}>click here</a>). Did you notice anything? <a>Click again</a> and pay attention to the size of the encoding. It changes as the value moves toward the edge, and that breaks one of our <a href="/encoders"> established earlier</a>. Principle #4 of encoders states:</p>
+          <p>Notice how the range of the on bits in the encoding always encompass the currently selected value. As you move towards the min and max values, you might notice there is a problem with this representation. If you increase the resolution and move the value, you can clearly see the number of bits in the representation decreasing by half as you approach the min and max values (watch the figure above as you <a className='interactive' onClick={animateValueTo(this.state.min)}>click here</a>). Did you notice anything? <a>Click again</a> and pay attention to the size of the encoding. It changes as the value moves toward the edge, and that breaks one of our <a href="/encoders"> established earlier</a>. Principle #4 of encoders states:</p>
           <blockquote>The output should have similar sparsity for all inputs and have enough one-bits to handle noise and subsampling.</blockquote>
           <p>Our super simple encoder detailed above is going to need a little more logic to handle the literal "edge cases" of minimum and maximum representations. We can do this by overriding the <code>applyBitmaskAtIndex()</code> function above with another one that accounts for this new behavior we want:</p>
 

@@ -39,3 +39,7 @@ span[data-name] {
 .draggable {
 	cursor: move;
 }
+
+a.interactive {
+	text-decoration: dotted underline !important;
+}

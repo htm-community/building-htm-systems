@@ -22,10 +22,13 @@ class SimpleScalarEncoder extends React.Component {
   value = undefined; // current value
 
   // Use the internal encoder to turn bits into
-  encode = (value) => this.encoder.encode(value)
+  encode(value) {
+    return this.encoder.encode(value)
+  }
 
   // handle setting up when params are set/changed
-  update = () => {
+  update() {
+    this.orientD3()
     this.renderNumberLine()
     this.renderOutputCells()
     this.renderValueMarker()
@@ -40,6 +43,15 @@ class SimpleScalarEncoder extends React.Component {
   // setup on initial mount
   componentDidMount() {
     // console.log('BasicScalarEncoder.componentDidMount')
+
+    // Sets up the d3 diagram
+    this.root = d3.select(`#${this.props.id}`)
+      .attr('width', this.props.diagramWidth)
+
+    this.update()
+  }
+
+  orientD3() {
     this.value = this.props.value
 
     const {
@@ -62,18 +74,13 @@ class SimpleScalarEncoder extends React.Component {
       .domain([0 + sideGutter, diagramWidth - sideGutter])
       .range([0, n])
 
-    // Sets up the d3 diagram
-    this.root = d3.select(`#${id}`)
-      .attr('width', diagramWidth)
-
-    this.update()
   }
 
-  renderNumberLine = () => {
+  renderNumberLine() {
     this.root.select('.number-line').attr('transform', `translate(0,${topGutter})`).call(d3.axisBottom(this.valToScreen))
   }
 
-  renderValueMarker = () => {
+  renderValueMarker() {
     const g = this.root.select('.value-marker')
 
     g.attr('transform', `translate(0,${topGutter})`)
@@ -103,7 +110,7 @@ class SimpleScalarEncoder extends React.Component {
       .attr('y', y)
   }
 
-  renderOutputCells = () => {
+  renderOutputCells() {
     const { diagramWidth, n } = this.props
 
     const g = this.root.select('.output-cells')
@@ -141,7 +148,7 @@ class SimpleScalarEncoder extends React.Component {
     rects.exit().remove()
   }
 
-  getRangeFromBitIndex = (i, encoder) => {
+  getRangeFromBitIndex(i, encoder) {
     const { bounded, w, resolution, min, max } = encoder
     const v = encoder.reverseScale(i)
     const radius = w * resolution / 2
@@ -156,7 +163,7 @@ class SimpleScalarEncoder extends React.Component {
     return [left, right]
   }
 
-  handleOutputCellHover = (e) => {
+  handleOutputCellHover(e) {
     const { diagramWidth, n } = this.props
     const $hoverGroup = this.root.select('g.range')
     const cellWidth = Math.floor(diagramWidth / n)
@@ -218,7 +225,7 @@ class SimpleScalarEncoder extends React.Component {
     $hoverGroup.attr('visibility', 'visible')
   }
 
-  handleNumberLineHover = (e) => {
+  handleNumberLineHover(e) {
     const { min, max } = this.props
     const lineX = e.pageX - sideGutter
     let value = precisionRound(this.valToScreen.invert(lineX), 1)
