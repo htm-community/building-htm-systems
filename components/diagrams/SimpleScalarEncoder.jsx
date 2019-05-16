@@ -26,6 +26,20 @@ class SimpleScalarEncoder extends React.Component {
 
   // handle setting up when params are set/changed
   update = () => {
+    this.renderNumberLine()
+    this.renderOutputCells()
+    this.renderValueMarker()
+  }
+
+  // setup any time params change
+  componentDidUpdate() {
+    // console.log('BasicScalarEncoder.componentDidUpdate')
+    this.update()
+  }
+
+  // setup on initial mount
+  componentDidMount() {
+    // console.log('BasicScalarEncoder.componentDidMount')
     this.value = this.props.value
 
     const {
@@ -52,20 +66,6 @@ class SimpleScalarEncoder extends React.Component {
     this.root = d3.select(`#${id}`)
       .attr('width', diagramWidth)
 
-    this.renderNumberLine()
-    this.renderOutputCells()
-    this.renderValueMarker()
-  }
-
-  // setup any time params change
-  componentDidUpdate() {
-    // console.log('BasicScalarEncoder.componentDidUpdate')
-    this.update()
-  }
-
-  // setup on initial mount
-  componentDidMount() {
-    // console.log('BasicScalarEncoder.componentDidMount')
     this.update()
   }
 
