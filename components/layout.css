@@ -1,7 +1,7 @@
 .body {
-  font-family: 'Arial';
-  margin: 20;
-  padding: 20;
+	font-family: 'Arial';
+	margin: 20;
+	padding: 20;
 }
 
 .aside {
@@ -15,7 +15,7 @@
 	margin: 20px 0;
 } 
 .aside ul li {
-  list-style-type: none;
+	list-style-type: none;
 }
 
 a {
