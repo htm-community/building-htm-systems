@@ -116,7 +116,7 @@ class EncodingNumbers extends React.Component {
 							onUpdate={value => this.setState({ value })}
 						/>
 						<figcaption>
-							<span><a href="#simpleScalarEncoder">¶</a>Figure 1:</span> A value between {ParameterMin} and {ParameterMax} is encoded into bits above. Move your mouse over the number line to see the encoding update. Hover over the bits in the encoding to see the value range each bit can represent.
+							<span><a href="#simpleScalarEncoder">¶</a>Figure 1:</span> A value between <code>{this.state.min}</code> and <code>{this.state.max}</code> is encoded into bits above. Move your mouse over the number line to see the encoding update. Hover over the bits in the encoding to see the value range each bit can represent.
 						</figcaption>
 					</figure>
 
@@ -205,7 +205,7 @@ class EncodingNumbers extends React.Component {
 					<p>If you know the input domain for an encoder will remain constant, the easiest way to create an encoder is by defining a minimum and maximum input range. Once an encoder is created, these values cannot be changed or else encodings will be inconsistent. To see what an encoder configuration by min/max values might be like, change the <code>min</code>{ParameterMin} and <code>max</code>{ParameterMax} values in the panel below.</p>
 					<DiagramStub
 						id="byMinMaxScalarEncoder"
-					/>
+						/>
 					<span><a href="#byMinMaxScalarEncoder">¶</a>Figure 5:</span> Define the input range with <code>min</code> and <code>max</code>.
 
 
