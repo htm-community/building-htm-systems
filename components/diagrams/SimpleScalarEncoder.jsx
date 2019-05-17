@@ -25,8 +25,8 @@ class SimpleScalarEncoder extends React.Component {
 
 	// handle setting up when params are set/changed
 	update() {
-		this.orientD3()
 		this.resetEncoder(this.value)
+		this.orientD3()
 		this.renderNumberLine()
 		this.renderValueMarker(this.value)
 		this.renderOutputCells()
@@ -49,9 +49,11 @@ class SimpleScalarEncoder extends React.Component {
 
 	orientD3() {
 		const {
-			diagramWidth, min, max, n
+			diagramWidth, n
 		} = this.props
-
+		const {
+			min, max
+		} = this.encoder
 		// Create D3 scales
 		this.valToScreen = d3.scaleLinear()
 			.domain([min, max])
@@ -66,10 +68,10 @@ class SimpleScalarEncoder extends React.Component {
 
 	resetEncoder(value) {
 		const {
-			bounded, min, max, n, w
+			bounded, min, max, resolution, n, w
 		} = this.props
 		this.encoder = new (bounded ? BoundedScalarEncoder : ScalarEncoder)({
-			min, max, w, n, bounded,
+			min, max, resolution, w, n, bounded,
 		})
 		this.encoding = this.encoder.encode(value)
 	}
@@ -229,7 +231,7 @@ class SimpleScalarEncoder extends React.Component {
 	// This is the only thing that could change internal state coming
 	// from inside this child.
 	handleNumberLineHover(e) {
-		const { min, max } = this.props
+		const { min, max } = this.encoder
 		const lineX = e.pageX - this.svgRef.current.getBoundingClientRect().x
 		//const lineX = e.pageX - sideGutter
 		let value = this.value = precisionRound(this.valToScreen.invert(lineX), 1)
@@ -279,8 +281,9 @@ SimpleScalarEncoder.propTypes = {
 	bounded: PropTypes.bool,
 	value: PropTypes.number,
 	onUpdate: PropTypes.func,
-	min: PropTypes.number.isRequired,
-	max: PropTypes.number.isRequired,
+	min: PropTypes.number,
+	max: PropTypes.number,
+	resolution: PropTypes.number,
 	id: PropTypes.string.isRequired,
 	w: PropTypes.number.isRequired,
 	n: PropTypes.number.isRequired,

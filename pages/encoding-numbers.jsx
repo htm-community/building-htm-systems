@@ -14,6 +14,7 @@ class EncodingNumbers extends React.Component {
 		value: 50,
 		max: 100,
 		min: 0,
+		resolution: 1,
 		n: 100,
 		w: 30,
 	}
@@ -63,10 +64,10 @@ class EncodingNumbers extends React.Component {
 			value={this.state.w}
 			onUpdate={value => this.setState({ w: Number(value) })}
 		/>
-		const ParameterValue = <NumberValue
-			name="param-value3" low={this.state.min} high={this.state.max}
-			value={this.state.value}
-			onUpdate={value => this.setState({ value: Number(value) })}
+		const ParameterRes = <NumberValue
+			name="param-res" low={0.1} high={3.0} step={0.1}
+			value={this.state.resolution}
+			onUpdate={value => this.setState({ resolution: Number(value) })}
 		/>
 
 		return (
@@ -195,7 +196,6 @@ class EncodingNumbers extends React.Component {
 							w={this.state.w}
 							onUpdate={value => this.setState({ value })}
 						/>
-
 						<figcaption>
 							<span><a href="#outputRange">¶</a>Figure 4:</span> This visual allows you to change the number of bits in the entire encoding {ParameterN} and the number of bits on {ParameterW} .
 						</figcaption>
@@ -203,28 +203,43 @@ class EncodingNumbers extends React.Component {
 
 					<h3 id="encoding-by-min-max">Encoding by min / max<a href="#encoding-by-min-max">¶</a></h3>
 					<p>If you know the input domain for an encoder will remain constant, the easiest way to create an encoder is by defining a minimum and maximum input range. Once an encoder is created, these values cannot be changed or else encodings will be inconsistent. To see what an encoder configuration by min/max values might be like, change the <code>min</code>{ParameterMin} and <code>max</code>{ParameterMax}.</p>
-					<SimpleScalarEncoder
-							id="byMinMaxScalarEncoder"
-							bounded
-							diagramWidth={500}
-							value={this.state.value}
-							max={this.state.max}
-							min={this.state.min}
-							n={this.state.n}
-							w={this.state.w}
-							onUpdate={value => this.setState({ value })}
-					/>
-					<div>
-						<span><a href="#byMinMaxScalarEncoder">¶</a>Figure 5:</span> Define the input range with <code>min</code>: {ParameterMin} and <code>max</code>: {ParameterMax}.
-					</div>
+					
+					<figure>
+						<SimpleScalarEncoder
+								id="byMinMaxScalarEncoder"
+								bounded
+								diagramWidth={500}
+								value={this.state.value}
+								max={this.state.max}
+								min={this.state.min}
+								n={this.state.n}
+								w={this.state.w}
+								onUpdate={value => this.setState({ value })}
+						/>
+						<figcaption>
+							<span><a href="#byMinMaxScalarEncoder">¶</a>Figure 5:</span> Define the input range with <code>min</code>: {ParameterMin} and <code>max</code>: {ParameterMax}.
+						</figcaption>
+					</figure>
 
 					<h3 id="encoding-by-bit-resolution">Encoding by bit resolution<a href="#encoding-by-bit-resolution">¶</a></h3>
 					<p>It might make more sense to create an encoder based upon the range of values each bit in the output array can represent. That is what we mean by <code>resolution</code>, the range of input values one bit represents in the output space.</p>
-					<DiagramStub
-						id="byResolutionScalarEncoder"
-					/>
-					<span><a href="#byResolutionScalarEncoder">¶</a>Figure 6:</span> The <code>resolution</code> is the range of values that one output bit represents.
-					<p>The higher the <code>resolution</code>, the larger the input range. This makes sense when you think about each bit containing a larger range of values. For this example, I simply hard-coded the <code>min</code> value to be zero and updated the encoder's <code>max</code> based upon the <code>resolution</code> value.</p>
+
+					<figure>
+						<SimpleScalarEncoder
+							id="byResolutionScalarEncoder"
+							bounded
+							diagramWidth={500}
+							value={25}
+							resolution={this.state.resolution}
+							n={100}
+							w={10}
+						/>
+						<figcaption>
+							<span><a href="#byResolutionScalarEncoder">¶</a>Figure 6:</span> The <code>resolution</code> is the range of values that one output bit represents.
+						</figcaption>
+					</figure>
+					
+					<p>The higher the <code>resolution</code> {ParameterRes}, the larger the input range. This makes sense when you think about each bit containing a larger range of values. For this example, I simply hard-coded the <code>min</code> value to be zero and updated the encoder's <code>max</code> based upon the <code>resolution</code> value.</p>
 
 					<h2 id="cyclic-encoding">Cyclic Encoding<a href="#cyclic-encoding">¶</a></h2>
 					<p>Remember above when we had to deal with the special cases of values being encoded at the beginning and end of the value range so all representations were the same size in the output array? Another way to deal with that is by assuming the entire output array is a continuous space -- that it wraps around from the end back to the beginning. We can do this simply by changing how the bitmask around the target index is created:</p>
