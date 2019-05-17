@@ -1,9 +1,3 @@
-.body {
-	font-family: 'Arial';
-	margin: 20;
-	padding: 20;
-}
-
 .aside {
 	border: solid navy 1px;
 	background-color: lightgoldenrodyellow;
@@ -20,24 +14,6 @@
 
 a {
 	text-decoration: underline;
-}
-
-figure {
-	display: block;
-	/* FIXME: zeroed out these or else Diagram mouse interaction breaks. */
-	margin-block-start: 0;
-	margin-block-end: 0;
-	margin-inline-start: 0;
-	margin-inline-end: 0;	
-}
-		
-span[data-name] {
-	cursor: col-resize;
-	font-weight: bold;
-	border-bottom: 2px dotted #a44;
-}
-.draggable {
-	cursor: move;
 }
 
 a.interactive {

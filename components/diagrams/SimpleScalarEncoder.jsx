@@ -17,6 +17,7 @@ const debugStyle = {
 }
 
 class SimpleScalarEncoder extends React.Component {
+	svgRef = React.createRef() // this will give you reference to HTML DOM element
 
 	encoding = undefined
 	encoder = undefined
@@ -24,11 +25,10 @@ class SimpleScalarEncoder extends React.Component {
 
 	// handle setting up when params are set/changed
 	update() {
-		let value = this.value
 		this.orientD3()
-		this.resetEncoder(value)
+		this.resetEncoder(this.value)
 		this.renderNumberLine()
-		this.renderValueMarker(value)
+		this.renderValueMarker(this.value)
 		this.renderOutputCells()
 	}
 
@@ -168,7 +168,8 @@ class SimpleScalarEncoder extends React.Component {
 		const $hoverGroup = this.root.select('g.range')
 		const cellWidth = Math.floor(diagramWidth / n)
 
-		const lineX = e.pageX - sideGutter
+		const lineX = e.pageX - this.svgRef.current.getBoundingClientRect().x
+	//	const lineX = e.pageX - sideGutter
 		const index = Math.floor(this.displayToBitRange(lineX))
 		const cx = this.bitsToOutputDisplay(index) + (cellWidth / 2)
 		const cy = outputCellsTopMargin
@@ -229,7 +230,8 @@ class SimpleScalarEncoder extends React.Component {
 	// from inside this child.
 	handleNumberLineHover(e) {
 		const { min, max } = this.props
-		const lineX = e.pageX - sideGutter
+		const lineX = e.pageX - this.svgRef.current.getBoundingClientRect().x
+		//const lineX = e.pageX - sideGutter
 		let value = this.value = precisionRound(this.valToScreen.invert(lineX), 1)
 		// Only update if in bounds.
 		if (min <= value && value <= max) {
@@ -242,10 +244,11 @@ class SimpleScalarEncoder extends React.Component {
 			}
 		}
 	}
-
+				
 	render() {
 		return (
 			<svg id={this.props.id}
+				ref={this.svgRef}
 				style={debugStyle}
 				onMouseMove={
 					(e) => e.target.className.animVal === 'bit' ? this.handleOutputCellHover(e) : this.handleNumberLineHover(e)
