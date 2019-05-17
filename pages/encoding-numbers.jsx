@@ -1,8 +1,8 @@
 import React from 'react'
 import Layout from '../components/Layout'
-import NumberScrubber from '../components/input/NumberScrubber'
 import NumberValue from '../components/input/NumberInput'
 import SimpleScalarEncoder from '../components/diagrams/SimpleScalarEncoder'
+import CyclicScalarEncoder from '../components/diagrams/CyclicScalarEncoder'
 import DiagramStub from '../components/diagrams/DiagramStub'
 import CodeSyntax from '../components/CodeSyntax'
 import examples from '../examples/encoding-numbers'
@@ -251,10 +251,21 @@ class EncodingNumbers extends React.Component {
 
 					<p>Wow, our <code><a href="https://github.com/htm-community/simplehtm/blob/master/src/encoders/cyclicScalar.js" target="_blank">CyclicScalarEncoder</a></code> is the simplest one so far! As a value starts to approach the end of the encoding space, bits in the beginning of the array will activate and the value will <a>loop through the array as a value changes</a>. In the figure below, mouse over the line towards the max value and watch as the bits wrap to the beginning of the array.</p>
 
-					<DiagramStub
-						id="cyclicEncoder"
-					/>
-					<span><a href="#cyclicEncoder">¶</a>Figure 7:</span> Because the block of on bits wraps as you approach the end of this array, it is natural to view this as a circle by choosing the `circle` display option above.
+					<figure>
+						<CyclicScalarEncoder
+							id="cyclicEncoder"
+							diagramWidth={500}
+							value={this.state.value}
+							max={this.state.max}
+							min={this.state.min}
+							n={100}
+							w={10}
+							onUpdate={value => this.setState({ value })}
+						/>
+						<figcaption>
+							<span><a href="#cyclicEncoder">¶</a>Figure 7:</span> Because the block of on bits wraps as you approach the end of this array, it is natural to view this as a circle by choosing the `circle` display option above.
+						</figcaption>
+					</figure>
 
 					<p>Change the display option in the visualization above to <code>circle</code>. When viewed in this way, the wrapping of the output bit makes more sense. Change the value being encoded by mousing over the value line above and observe the encoding. </p>
 
