@@ -20,10 +20,11 @@ class SimpleScalarEncoder extends React.Component {
 
 	encoding = undefined
 	encoder = undefined
+	value = this.props.value
 
 	// handle setting up when params are set/changed
 	update() {
-		let value = this.getValue()
+		let value = this.value
 		this.orientD3()
 		this.resetEncoder(value)
 		this.renderNumberLine()
@@ -32,10 +33,12 @@ class SimpleScalarEncoder extends React.Component {
 	}
 
 	// setup any time params change
-	componentDidUpdate() {
+	componentDidUpdate(prevProps) {
+		if(prevProps.value != this.props.value) {
+			this.value = this.props.value
+		}
 		this.update()
 	}
-
 	// setup on initial mount
 	componentDidMount() {
 		// Sets up the d3 diagram on an SVG element.
@@ -75,14 +78,6 @@ class SimpleScalarEncoder extends React.Component {
 		this.root.select('.number-line')
 			.attr('transform', `translate(0,${topGutter})`)
 			.call(d3.axisBottom(this.valToScreen))
-	}
-
-	/**
-	 * Providing this so we can have a local override of the value
-	 * without polluting global space (if we want).
-	 */
-	getValue() {
-		return this.value || this.props.value
 	}
 
 	renderValueMarker(value) {
