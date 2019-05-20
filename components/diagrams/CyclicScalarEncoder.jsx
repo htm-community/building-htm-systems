@@ -137,7 +137,8 @@ class CyclicScalarEncoder extends React.Component {
 		const bucketSpread = (2 * Math.PI) / buckets
 		let size = diagramWidth
 		let radius = size / 2.5
-		let center = {x: size / 2, y: size / 2}
+		let center = { x: size / 2, y: size / 2 }
+		const transitioning = this._transition !== undefined
 
 		function treatCells(cell) {
 			// FIXME: standardize some styles for diagrams
@@ -158,13 +159,15 @@ class CyclicScalarEncoder extends React.Component {
 				.attr('r', cellWidth)
 		}
 
+		console.log(displayState)
+
 		let data = this.encoding.map((bit, i) => {
 			// Adding pi starts it at the top of the circle (180 into it)
 			let theta = i * bucketSpread + Math.PI
 			let out = {bit: bit}
 			let topCellPadding = 80
 			// Transitioning to cirle
-			if (displayState === 'circle' && this.animationHandle) {
+			if (displayState === 'circle' && transitioning) {
 				out.cx = d3.scaleLinear().domain([0, 1]).range([
 						this.bitsToOutputDisplay(i),
 						center.x + radius * Math.sin(theta),
@@ -177,18 +180,18 @@ class CyclicScalarEncoder extends React.Component {
 			} else if (displayState === 'circle') {
 					out.cx = center.x + radius * Math.sin(theta)
 					out.cy = topCellPadding - 40 + center.y + radius * Math.cos(theta)
+			} else if (displayState === 'line' && transitioning) {
+				out.cx = d3.scaleLinear().domain([0, 1]).range([
+						center.x + radius * Math.sin(theta),
+						this.bitsToOutputDisplay(i),
+				])(this._transition)
+				out.cy = d3.scaleLinear().domain([0, 1]).range([
+						center.y + radius * Math.cos(theta),
+						topCellPadding,
+				])(this._transition)
 			} else if (displayState === 'line') {
 					out.cx = this.valToScreen(i)
 					out.cy = topCellPadding
-			// } else if (displayState === 'circle-to-line') {
-			// 		out.cx = d3.scaleLinear().domain([0, 1]).range([
-			// 				center.x + radius * Math.sin(theta),
-			// 				linearScale(i),
-			// 		])(this._transition)
-			// 		out.cy = d3.scaleLinear().domain([0, 1]).range([
-			// 				center.y + radius * Math.cos(theta),
-			// 				ratioToTop,
-			// 		])(this._transition)
 			} else {
 					throw new Error('Unknown display format: ' + displayState)
 			}
