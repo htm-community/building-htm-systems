@@ -4,11 +4,11 @@ import PropTypes from 'prop-types'
 import simplehtm from 'simplehtm'
 import { precisionRound } from './helpers'
 
-const { ScalarEncoder } = simplehtm.encoders
+const { CyclicEncoder } = simplehtm.encoders
 
 const offColor = 'white'
 const onColor = 'skyblue'
-const outputCellsTopMargin = 120
+// const outputCellsTopMargin = 120
 const sideGutter = 10
 const topGutter = 40
 
@@ -22,7 +22,8 @@ class CyclicScalarEncoder extends React.Component {
 	encoding = undefined
 	encoder = undefined
 	value = this.props.value
-
+	animationHandle = undefined
+	
 	// handle setting up when params are set/changed
 	update() {
 		this.resetEncoder(this.value)
@@ -34,10 +35,25 @@ class CyclicScalarEncoder extends React.Component {
 
 	// setup any time params change
 	componentDidUpdate(prevProps) {
-		if(prevProps.value != this.props.value) {
+		const me = this
+		const speed = 100
+		if (prevProps.value != this.props.value) {
 			this.value = this.props.value
+			this.update()
+		} else if (prevProps.displayState != this.props.displayState) {
+			// create animation handle
+			const cuts = 16
+			let count = 0
+			this._transition = 0
+			this.animationHandle = setInterval(() => {
+				me._transition = count / cuts
+				if (count++ >= cuts) {
+						clearInterval(me.animationHandle)
+						delete me._transition
+				}
+				me.update()
+			}, speed)
 		}
-		this.update()
 	}
 	// setup on initial mount
 	componentDidMount() {
@@ -71,7 +87,7 @@ class CyclicScalarEncoder extends React.Component {
 		const {
 			min, max, resolution, n, w
 		} = this.props
-		this.encoder = new ScalarEncoder({
+		this.encoder = new CyclicEncoder({
 			min, max, resolution, w, n
 		})
 		this.encoding = this.encoder.encode(value)
@@ -114,68 +130,74 @@ class CyclicScalarEncoder extends React.Component {
 	}
 
 	renderOutputCells() {
-		const { diagramWidth, n } = this.props
+		const { diagramWidth, displayState, n } = this.props 
 		const g = this.root.select('.output-cells')
 		const cellWidth = Math.floor(diagramWidth / n)
-		const bitsToOutputDisplay = this.bitsToOutputDisplay
+		const buckets = this.encoder.n
+		const bucketSpread = (2 * Math.PI) / buckets
+		let size = diagramWidth
+		let radius = size / 2.5
+		let center = {x: size / 2, y: size / 2}
 
 		function treatCells(cell) {
 			// FIXME: standardize some styles for diagrams
 			cell.attr('class', 'bit')
 				.attr('fill', (d) => {
-					if (d) return onColor
+					if (d.bit) return onColor
 					else return offColor
 				})
 				.attr('stroke', 'darkgrey')
 				.attr('stroke-width', 0.5)
 				.attr('fill-opacity', 1)
-				.attr('cx', function (d, i) {
-					return bitsToOutputDisplay(i)
+				.attr('cx', (d) => {
+					return d.cx
 				})
-				.attr('cy', outputCellsTopMargin)
+				.attr('cy', (d) => {
+					return d.cy
+				})
 				.attr('r', cellWidth)
 		}
 
-		// let center = {x: diagramWidth / 2, y: diagramWidth / 2}
-
-		// let data = encoding.map((bit, i) => {
-		// 	// Adding pi starts it at the top of the circle (180 into it)
-		// 	let theta = i * bucketSpread + Math.PI
-		// 	let out = {bit: bit}
-		// 	let ratioToTop = size / 20
-		// 	if (displayState === 'circle') {
-		// 			out.cx = center.x + radius * Math.sin(theta)
-		// 			out.cy = center.y + radius * Math.cos(theta)
-		// 	// } else if (displayState === 'line-to-circle') {
-		// 	// 		out.cx = d3.scaleLinear().domain([0, 1]).range([
-		// 	// 				linearScale(i),
-		// 	// 				center.x + radius * Math.sin(theta),
-		// 	// 		])(this._transition)
-		// 	// 		out.cy = d3.scaleLinear().domain([0, 1]).range([
-		// 	// 				ratioToTop,
-		// 	// 				center.y + radius * Math.cos(theta),
-		// 	// 		])(this._transition)
-		// 	} else if (displayState === 'line') {
-		// 			out.cx = linearScale(i)
-		// 			out.cy = ratioToTop
-		// 	// } else if (displayState === 'circle-to-line') {
-		// 	// 		out.cx = d3.scaleLinear().domain([0, 1]).range([
-		// 	// 				center.x + radius * Math.sin(theta),
-		// 	// 				linearScale(i),
-		// 	// 		])(this._transition)
-		// 	// 		out.cy = d3.scaleLinear().domain([0, 1]).range([
-		// 	// 				center.y + radius * Math.cos(theta),
-		// 	// 				ratioToTop,
-		// 	// 		])(this._transition)
-		// 	} else {
-		// 			throw new Error('Unknown display format: ' + displayState)
-		// 	}
-		// 	return out
-		// })
+		let data = this.encoding.map((bit, i) => {
+			// Adding pi starts it at the top of the circle (180 into it)
+			let theta = i * bucketSpread + Math.PI
+			let out = {bit: bit}
+			let topCellPadding = 80
+			// Transitioning to cirle
+			if (displayState === 'circle' && this.animationHandle) {
+				out.cx = d3.scaleLinear().domain([0, 1]).range([
+						this.bitsToOutputDisplay(i),
+						center.x + radius * Math.sin(theta),
+				])(this._transition)
+				out.cy = d3.scaleLinear().domain([0, 1]).range([
+						topCellPadding,
+						center.y + radius * Math.cos(theta),
+				])(this._transition)
+			// Circle, no transition
+			} else if (displayState === 'circle') {
+					out.cx = center.x + radius * Math.sin(theta)
+					out.cy = topCellPadding - 40 + center.y + radius * Math.cos(theta)
+			} else if (displayState === 'line') {
+					out.cx = this.valToScreen(i)
+					out.cy = topCellPadding
+			// } else if (displayState === 'circle-to-line') {
+			// 		out.cx = d3.scaleLinear().domain([0, 1]).range([
+			// 				center.x + radius * Math.sin(theta),
+			// 				linearScale(i),
+			// 		])(this._transition)
+			// 		out.cy = d3.scaleLinear().domain([0, 1]).range([
+			// 				center.y + radius * Math.cos(theta),
+			// 				ratioToTop,
+			// 		])(this._transition)
+			} else {
+					throw new Error('Unknown display format: ' + displayState)
+			}
+			return out
+		})
 
 
 		// Update
-		const circles = g.selectAll('circle').data(this.encoding)
+		const circles = g.selectAll('circle').data(data)
 		treatCells(circles)
 
 		// Enter
