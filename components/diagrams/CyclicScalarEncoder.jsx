@@ -8,7 +8,7 @@ const { ScalarEncoder } = simplehtm.encoders
 
 const offColor = 'white'
 const onColor = 'skyblue'
-// const outputCellsTopMargin = 120
+const outputCellsTopMargin = 120
 const sideGutter = 10
 const topGutter = 40
 
@@ -44,6 +44,7 @@ class CyclicScalarEncoder extends React.Component {
 		// Sets up the d3 diagram on an SVG element.
 		this.root = d3.select(`svg#${this.props.id}`)
 			.attr('width', this.props.diagramWidth)
+			.attr('height', this.props.diagramWidth)
 		this.update()
 	}
 
@@ -58,9 +59,9 @@ class CyclicScalarEncoder extends React.Component {
 		this.valToScreen = d3.scaleLinear()
 			.domain([min, max])
 			.range([sideGutter, diagramWidth - sideGutter])
-		// this.bitsToOutputDisplay = d3.scaleLinear()
-		// 	.domain([0, n])
-		// 	.range([0 + sideGutter, diagramWidth - sideGutter])
+		this.bitsToOutputDisplay = d3.scaleLinear()
+			.domain([0, n])
+			.range([0 + sideGutter, diagramWidth - sideGutter])
 		// this.displayToBitRange = d3.scaleLinear()
 		// 	.domain([0 + sideGutter, diagramWidth - sideGutter])
 		// 	.range([0, n])
@@ -113,41 +114,76 @@ class CyclicScalarEncoder extends React.Component {
 	}
 
 	renderOutputCells() {
-		// const { diagramWidth, n } = this.props
+		const { diagramWidth, n } = this.props
+		const g = this.root.select('.output-cells')
+		const cellWidth = Math.floor(diagramWidth / n)
+		const bitsToOutputDisplay = this.bitsToOutputDisplay
 
-		// const g = this.root.select('.output-cells')
-		// const cellWidth = Math.floor(diagramWidth / n)
-		// const cellHeight = 30
-		// const bitsToOutputDisplay = this.bitsToOutputDisplay
+		function treatCells(cell) {
+			// FIXME: standardize some styles for diagrams
+			cell.attr('class', 'bit')
+				.attr('fill', (d) => {
+					if (d) return onColor
+					else return offColor
+				})
+				.attr('stroke', 'darkgrey')
+				.attr('stroke-width', 0.5)
+				.attr('fill-opacity', 1)
+				.attr('cx', function (d, i) {
+					return bitsToOutputDisplay(i)
+				})
+				.attr('cy', outputCellsTopMargin)
+				.attr('r', cellWidth)
+		}
 
-		// function treatCellRects(r) {
-		// 	// FIXME: standardize some styles for diagrams
-		// 	r.attr('class', 'bit')
-		// 		.attr('fill', (d) => {
-		// 			if (d) return onColor
-		// 			else return offColor
-		// 		})
-		// 		.attr('stroke', 'darkgrey')
-		// 		.attr('stroke-width', 0.5)
-		// 		.attr('fill-opacity', 1)
-		// 		.attr('x', function (d, i) {
-		// 			return bitsToOutputDisplay(i)
-		// 		})
-		// 		.attr('y', outputCellsTopMargin)
-		// 		.attr('width', cellWidth)
-		// 		.attr('height', cellHeight)
-		// }
+		// let center = {x: diagramWidth / 2, y: diagramWidth / 2}
 
-		// // Update
-		// const rects = g.selectAll('rect').data(this.encoding)
+		// let data = encoding.map((bit, i) => {
+		// 	// Adding pi starts it at the top of the circle (180 into it)
+		// 	let theta = i * bucketSpread + Math.PI
+		// 	let out = {bit: bit}
+		// 	let ratioToTop = size / 20
+		// 	if (displayState === 'circle') {
+		// 			out.cx = center.x + radius * Math.sin(theta)
+		// 			out.cy = center.y + radius * Math.cos(theta)
+		// 	// } else if (displayState === 'line-to-circle') {
+		// 	// 		out.cx = d3.scaleLinear().domain([0, 1]).range([
+		// 	// 				linearScale(i),
+		// 	// 				center.x + radius * Math.sin(theta),
+		// 	// 		])(this._transition)
+		// 	// 		out.cy = d3.scaleLinear().domain([0, 1]).range([
+		// 	// 				ratioToTop,
+		// 	// 				center.y + radius * Math.cos(theta),
+		// 	// 		])(this._transition)
+		// 	} else if (displayState === 'line') {
+		// 			out.cx = linearScale(i)
+		// 			out.cy = ratioToTop
+		// 	// } else if (displayState === 'circle-to-line') {
+		// 	// 		out.cx = d3.scaleLinear().domain([0, 1]).range([
+		// 	// 				center.x + radius * Math.sin(theta),
+		// 	// 				linearScale(i),
+		// 	// 		])(this._transition)
+		// 	// 		out.cy = d3.scaleLinear().domain([0, 1]).range([
+		// 	// 				center.y + radius * Math.cos(theta),
+		// 	// 				ratioToTop,
+		// 	// 		])(this._transition)
+		// 	} else {
+		// 			throw new Error('Unknown display format: ' + displayState)
+		// 	}
+		// 	return out
+		// })
 
-		// treatCellRects(rects)
-		// // Enter
-		// const newRects = rects.enter().append('rect')
-		// treatCellRects(newRects)
 
-		// // Exit
-		// rects.exit().remove()
+		// Update
+		const circles = g.selectAll('circle').data(this.encoding)
+		treatCells(circles)
+
+		// Enter
+		const newCircles = circles.enter().append('circle')
+		treatCells(newCircles)
+
+		// Exit
+		circles.exit().remove()
 	}
 
 	getRangeFromBitIndex(i, encoder) {
@@ -263,13 +299,15 @@ class CyclicScalarEncoder extends React.Component {
 					<rect></rect>
 				</g>
 
-				<g className="bits">
+				<g className="output-cells"></g>
+
+				{/* <g className="bits">
 					<text className="value-display"></text>
 					<text className="name-label">
 							<tspan dx="0.5em">cyclic</tspan>
 							<tspan dx="-3.25em" dy="1em">encoding</tspan>
 					</text>
-				</g>
+				</g> */}
 				
 			</svg>
 		)

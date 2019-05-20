@@ -1,6 +1,7 @@
 import React from 'react'
 import Layout from '../components/Layout'
 import NumberValue from '../components/input/NumberInput'
+import ToggleButton from '../components/input/ToggleButton'
 import SimpleScalarEncoder from '../components/diagrams/SimpleScalarEncoder'
 import CyclicScalarEncoder from '../components/diagrams/CyclicScalarEncoder'
 import DiagramStub from '../components/diagrams/DiagramStub'
@@ -10,6 +11,8 @@ import examples from '../examples/encoding-numbers'
 
 class EncodingNumbers extends React.Component {
 
+	cyclicEncoderStates = ['line', 'circle']
+
 	state = {
 		value: 50,
 		max: 100,
@@ -17,6 +20,7 @@ class EncodingNumbers extends React.Component {
 		resolution: 1,
 		n: 100,
 		w: 30,
+		cyclicEncoderState: this.cyclicEncoderStates[0],
 	}
 
 	animationHandle = undefined
@@ -68,6 +72,12 @@ class EncodingNumbers extends React.Component {
 			name="param-res" low={0.1} high={3.0} step={0.1}
 			value={this.state.resolution}
 			onUpdate={value => this.setState({ resolution: Number(value) })}
+		/>
+
+		const ToggleCyclicEncoder = <ToggleButton 
+			options={this.cyclicEncoderStates} 
+			value={this.state.cyclicEncoderState} 
+			onChange={(newValue) => this.setState({ cyclicEncoderState: newValue })} 
 		/>
 
 		return (
@@ -260,12 +270,15 @@ class EncodingNumbers extends React.Component {
 							min={this.state.min}
 							n={100}
 							w={10}
+							displayState={this.state.cyclicEncoderState}
 							onUpdate={value => this.setState({ value })}
 						/>
 						<figcaption>
 							<span><a href="#cyclicEncoder">¶</a>Figure 7:</span> Because the block of on bits wraps as you approach the end of this array, it is natural to view this as a circle by choosing the `circle` display option above.
 						</figcaption>
 					</figure>
+
+					{ToggleCyclicEncoder}
 
 					<p>Change the display option in the visualization above to <code>circle</code>. When viewed in this way, the wrapping of the output bit makes more sense. Change the value being encoded by mousing over the value line above and observe the encoding. </p>
 
