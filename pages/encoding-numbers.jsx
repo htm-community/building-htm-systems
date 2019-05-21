@@ -268,7 +268,7 @@ class EncodingNumbers extends React.Component {
 							value={this.state.value}
 							max={this.state.max}
 							min={this.state.min}
-							n={100}
+							n={40}
 							w={10}
 							displayState={this.state.cyclicEncoderState}
 							onUpdate={value => this.setState({ value })}

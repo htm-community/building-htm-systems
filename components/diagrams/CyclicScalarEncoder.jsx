@@ -10,7 +10,8 @@ const offColor = 'white'
 const onColor = 'skyblue'
 // const outputCellsTopMargin = 120
 const sideGutter = 10
-const topGutter = 40
+const numberLineY = 40
+const outputCellsTop = 100
 
 const debugStyle = {
 	border: 'solid red 1px'
@@ -95,14 +96,14 @@ class CyclicScalarEncoder extends React.Component {
 
 	renderNumberLine() {
 		this.root.select('.number-line')
-			.attr('transform', `translate(0,${topGutter})`)
+			.attr('transform', `translate(0,${numberLineY})`)
 			.call(d3.axisBottom(this.valToScreen))
 	}
 
 	renderValueMarker(value) {
 		const g = this.root.select('.value-marker')
 
-		g.attr('transform', `translate(0,${topGutter})`)
+		g.attr('transform', `translate(0,${numberLineY})`)
 
 		const markerWidth = 1
 		const markerHeight = 20
@@ -132,13 +133,14 @@ class CyclicScalarEncoder extends React.Component {
 	renderOutputCells() {
 		const { diagramWidth, displayState, n } = this.props 
 		const g = this.root.select('.output-cells')
-		const cellWidth = Math.floor(diagramWidth / n)
 		const buckets = this.encoder.n
 		const bucketSpread = (2 * Math.PI) / buckets
-		let size = diagramWidth
-		let radius = size / 2.5
-		let center = { x: size / 2, y: size / 2 }
 		const transitioning = this._transition !== undefined
+		const maxCircleRadius = 20
+		const size = diagramWidth
+		const radius = size / 2.5
+		const circumference = 2 * Math.PI * radius
+		const center = { x: size / 2, y: size / 2 }
 
 		function treatCells(cell) {
 			// FIXME: standardize some styles for diagrams
@@ -156,7 +158,9 @@ class CyclicScalarEncoder extends React.Component {
 				.attr('cy', (d) => {
 					return d.cy
 				})
-				.attr('r', cellWidth)
+				.attr('r', (d) => {
+					return d.radius
+				})
 		}
 
 		console.log(displayState)
@@ -164,36 +168,50 @@ class CyclicScalarEncoder extends React.Component {
 		let data = this.encoding.map((bit, i) => {
 			// Adding pi starts it at the top of the circle (180 into it)
 			let theta = i * bucketSpread + Math.PI
-			let out = {bit: bit}
-			let topCellPadding = 80
-			// Transitioning to cirle
+			let out = { bit: bit }
+			let circleBuffer = 30
+			const circleRight = center.x + radius * Math.sin(theta)
+			const circleBottom = circleBuffer + center.y + radius * Math.cos(theta)
+			// Line To Circle
 			if (displayState === 'circle' && transitioning) {
 				out.cx = d3.scaleLinear().domain([0, 1]).range([
-						this.bitsToOutputDisplay(i),
-						center.x + radius * Math.sin(theta),
+					this.bitsToOutputDisplay(i),
+					circleRight,
 				])(this._transition)
 				out.cy = d3.scaleLinear().domain([0, 1]).range([
-						topCellPadding,
-						center.y + radius * Math.cos(theta),
+					outputCellsTop,
+					circleBottom,
 				])(this._transition)
-			// Circle, no transition
+				out.radius = d3.scaleLinear().domain([0, 1]).range([
+					Math.min(diagramWidth / n / 2, maxCircleRadius),
+					Math.min(circumference / n / 2, maxCircleRadius),
+				])(this._transition)
+			// Circle
 			} else if (displayState === 'circle') {
-					out.cx = center.x + radius * Math.sin(theta)
-					out.cy = topCellPadding - 40 + center.y + radius * Math.cos(theta)
+				out.cx = circleRight
+				out.cy = circleBottom
+				out.radius = Math.min(circumference / n / 2, maxCircleRadius)
+			// Circle To Line
 			} else if (displayState === 'line' && transitioning) {
 				out.cx = d3.scaleLinear().domain([0, 1]).range([
-						center.x + radius * Math.sin(theta),
-						this.bitsToOutputDisplay(i),
+					circleRight,
+					this.bitsToOutputDisplay(i),
 				])(this._transition)
 				out.cy = d3.scaleLinear().domain([0, 1]).range([
-						center.y + radius * Math.cos(theta),
-						topCellPadding,
+					circleBottom,
+					outputCellsTop,
 				])(this._transition)
+				out.radius = d3.scaleLinear().domain([0, 1]).range([
+					Math.min(circumference / n / 2, maxCircleRadius),
+					Math.min(diagramWidth / n / 2, maxCircleRadius),
+				])(this._transition)
+			// Line
 			} else if (displayState === 'line') {
-					out.cx = this.valToScreen(i)
-					out.cy = topCellPadding
+				out.cx = this.bitsToOutputDisplay(i)
+				out.cy = outputCellsTop
+				out.radius = Math.min(diagramWidth / n / 2, maxCircleRadius)
 			} else {
-					throw new Error('Unknown display format: ' + displayState)
+				throw new Error('Unknown display format: ' + displayState)
 			}
 			return out
 		})
@@ -209,84 +227,6 @@ class CyclicScalarEncoder extends React.Component {
 
 		// Exit
 		circles.exit().remove()
-	}
-
-	getRangeFromBitIndex(i, encoder) {
-		// const { bounded, w, resolution, min, max } = encoder
-		// const v = encoder.reverseScale(i)
-		// const radius = w * resolution / 2
-		// let left = Math.max(min, v - radius)
-		// let right = Math.min(max, v + radius)
-
-		// // Keeps the bucket from changing size at min/max values
-		// if (bounded) {
-		// 	if (left < (min + radius)) left = min
-		// 	if (right > (max - radius)) right = max
-		// }
-		// return [left, right]
-	}
-
-	handleOutputCellHover(e) {
-	// 	const { diagramWidth, n } = this.props
-	// 	const $hoverGroup = this.root.select('g.range')
-	// 	const cellWidth = Math.floor(diagramWidth / n)
-
-	// 	const lineX = e.pageX - this.svgRef.current.getBoundingClientRect().x
-	// //	const lineX = e.pageX - sideGutter
-	// 	const index = Math.floor(this.displayToBitRange(lineX))
-	// 	const cx = this.bitsToOutputDisplay(index) + (cellWidth / 2)
-	// 	const cy = outputCellsTopMargin
-	// 	$hoverGroup.select('g.range circle')
-	// 		.attr('r', cellWidth / 2)
-	// 		.attr('cx', cx)
-	// 		.attr('cy', cy)
-	// 		.attr('fill', 'royalblue')
-
-	// 	const valueRange = this.getRangeFromBitIndex(index, this.encoder)
-	// 	const leftValueBound = Math.max(this.encoder.min, valueRange[0]),
-	// 		rightValueBound = Math.min(this.encoder.max, valueRange[1])
-	// 	const leftLineData = []
-	// 	const rightLineData = []
-	// 	leftLineData.push({ x: cx, y: cy })
-	// 	rightLineData.push({ x: cx, y: cy })
-	// 	const nearX = this.valToScreen(leftValueBound)
-	// 	const farX = this.valToScreen(rightValueBound)
-	// 	// Intermediary points for curving
-	// 	leftLineData.push({
-	// 		x: cx - 10,
-	// 		y: cy - 20,
-	// 	})
-	// 	leftLineData.push({
-	// 		x: nearX,
-	// 		y: topGutter + 20
-	// 	})
-	// 	rightLineData.push({
-	// 		x: cx + 10,
-	// 		y: cy - 20,
-	// 	})
-	// 	rightLineData.push({
-	// 		x: farX,
-	// 		y: topGutter + 20
-	// 	})
-
-	// 	// Point on value line
-	// 	leftLineData.push({
-	// 		x: nearX,
-	// 		y: topGutter
-	// 	})
-	// 	rightLineData.push({
-	// 		x: farX,
-	// 		y: topGutter
-	// 	})
-	// 	$hoverGroup.select('path.left')
-	// 		.attr('d', lineFunction(leftLineData))
-	// 		.attr('stroke', 'black')
-	// 		.attr('fill', 'none')
-	// 	$hoverGroup.select('path.right')
-	// 		.attr('d', lineFunction(rightLineData))
-	// 		.attr('stroke', 'black')
-	// 		.attr('fill', 'none')
-	// 	$hoverGroup.attr('visibility', 'visible')
 	}
 
 	// This is the only thing that could change internal state coming
@@ -314,7 +254,7 @@ class CyclicScalarEncoder extends React.Component {
 				ref={this.svgRef}
 				style={debugStyle}
 				onMouseMove={
-					(e) => e.target.className.animVal === 'bit' ? this.handleOutputCellHover(e) : this.handleNumberLineHover(e)
+					(e) => this.handleNumberLineHover(e)
 				}>
 
 				<g className="number-line"></g>
@@ -325,14 +265,6 @@ class CyclicScalarEncoder extends React.Component {
 				</g>
 
 				<g className="output-cells"></g>
-
-				{/* <g className="bits">
-					<text className="value-display"></text>
-					<text className="name-label">
-							<tspan dx="0.5em">cyclic</tspan>
-							<tspan dx="-3.25em" dy="1em">encoding</tspan>
-					</text>
-				</g> */}
 				
 			</svg>
 		)
