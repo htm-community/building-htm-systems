@@ -52,7 +52,7 @@ class CyclicScalarEncoder extends React.Component {
 						clearInterval(me.animationHandle)
 						delete me._transition
 				}
-				me.update()
+				me.renderOutputCells() 
 			}, speed)
 		}
 	}
@@ -79,9 +79,6 @@ class CyclicScalarEncoder extends React.Component {
 		this.bitsToOutputDisplay = d3.scaleLinear()
 			.domain([0, n])
 			.range([0 + sideGutter, diagramWidth - sideGutter])
-		// this.displayToBitRange = d3.scaleLinear()
-		// 	.domain([0 + sideGutter, diagramWidth - sideGutter])
-		// 	.range([0, n])
 	}
 
 	resetEncoder(value) {

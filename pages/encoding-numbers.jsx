@@ -7,6 +7,7 @@ import CyclicScalarEncoder from '../components/diagrams/CyclicScalarEncoder'
 import DiagramStub from '../components/diagrams/DiagramStub'
 import CodeSyntax from '../components/CodeSyntax'
 import examples from '../examples/encoding-numbers'
+import ScalarOverlapDiagram from '../components/diagrams/ScalarOverlapDiagram';
 
 
 class EncodingNumbers extends React.Component {
@@ -21,6 +22,8 @@ class EncodingNumbers extends React.Component {
 		n: 100,
 		w: 30,
 		cyclicEncoderState: this.cyclicEncoderStates[0],
+		valueA: 4,
+		valueB: 5,
 	}
 
 	animationHandle = undefined
@@ -73,7 +76,6 @@ class EncodingNumbers extends React.Component {
 			value={this.state.resolution}
 			onUpdate={value => this.setState({ resolution: Number(value) })}
 		/>
-
 		const ToggleCyclicEncoder = <ToggleButton 
 			options={this.cyclicEncoderStates} 
 			value={this.state.cyclicEncoderState} 
@@ -288,10 +290,22 @@ class EncodingNumbers extends React.Component {
 
 					<p>All the examples shown so far have been of continuous encodings, because all our input ranges have been a continuous scale of numeric values. This also means that numbers near one another on the number line have been represented similarly. For example, in <strong>Figure 8</strong> below you can see encodings for two numbers: <code>4</code> and <code>5</code>. Given the encoding parameters defined below, you can see the overlapping bits in green.</p>
 
-					<DiagramStub
-						id="continuousOverlap"
-					/>
-					<span><a href="#continuousOverlap">¶</a>Figure 8:</span> The encoding of <code>4</code> is in blue and <code>5</code> is in yellow. The overlapping bits are green.
+					<figure>
+						<ScalarOverlapDiagram
+							id="continuousOverlap"
+							diagramWidth={500}
+							max={10}
+							min={0}
+							w={14}
+							n={100}
+							valueA={this.state.valueA}
+							valueB={this.state.valueB}
+							onUpdate={value => this.setState({ value })}
+						/>
+						<figcaption>
+							<span><a href="#continuousOverlap">¶</a>Figure 8:</span> The encoding of <code>{this.state.valueA}</code> is in blue and <code>{this.state.valueB}</code> is in yellow. The overlapping bits are green.
+						</figcaption>
+					</figure>
 
 
 					<p>This overlap means that these to values are semantically similar. They are represented similarly because their values are close on the number line. Compare the overlap of <a>two close values</a> vs two values farther from each other. <a>These two values</a> are far enough away from each other on the number line that they have no semantic similarity. Try changing the values of <code>w</code> and <code>n</code> while noticing how it affects the overlap between <a>close</a> and <a>far</a> values.</p>
