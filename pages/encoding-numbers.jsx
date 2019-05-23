@@ -296,19 +296,18 @@ class EncodingNumbers extends React.Component {
 							diagramWidth={500}
 							max={10}
 							min={0}
-							w={14}
-							n={100}
+							w={this.state.w}
+							n={this.state.n}
 							valueA={this.state.valueA}
 							valueB={this.state.valueB}
-							onUpdate={value => this.setState({ value })}
+							onUpdate={value => this.setState(value)}
 						/>
 						<figcaption>
 							<span><a href="#continuousOverlap">¶</a>Figure 8:</span> The encoding of <code>{this.state.valueA}</code> is in blue and <code>{this.state.valueB}</code> is in yellow. The overlapping bits are green.
 						</figcaption>
 					</figure>
 
-
-					<p>This overlap means that these to values are semantically similar. They are represented similarly because their values are close on the number line. Compare the overlap of <a>two close values</a> vs two values farther from each other. <a>These two values</a> are far enough away from each other on the number line that they have no semantic similarity. Try changing the values of <code>w</code> and <code>n</code> while noticing how it affects the overlap between <a>close</a> and <a>far</a> values.</p>
+					<p>This overlap means that these to values are semantically similar. They are represented similarly because their values are close on the number line. Compare the overlap of <a>two close values</a> vs two values farther from each other. <a>These two values</a> are far enough away from each other on the number line that they have no semantic similarity. Try changing the values of <code>w</code>{ParameterW} and <code>n</code>{ParameterN} while noticing how it affects the overlap between <a>close</a> and <a>far</a> values.</p>
 
 					<p>Continuous encoding is great for ranges of input values, but sometimes we don't want encodings to overlap. You might want to separate an encoding space into equal sections that encode different categories of data, like this:</p>
 

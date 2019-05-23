@@ -10,9 +10,9 @@ const offColor = 'white'
 const aColor = 'blue'
 const bColor = 'yellow'
 const bothColor = 'green'
-const outputCellsTopMargin = 120
+const outputCellsTopMargin = 0
 const sideGutter = 10
-const topGutter = 40
+const cellHeight = 30
 
 const debugStyle = {
 	border: 'solid red 1px'
@@ -88,7 +88,6 @@ class ScalarOverlapDiagram extends React.Component {
 
 		const g = this.root.select('.output-cells')
 		const cellWidth = Math.floor(diagramWidth / n)
-		const cellHeight = 30
 		const bitsToOutputDisplay = this.bitsToOutputDisplay
 
 		function treatCellRects(r) {
@@ -125,6 +124,23 @@ class ScalarOverlapDiagram extends React.Component {
 
 		// Exit
 		rects.exit().remove()
+
+		this.drawBrackets()
+	}
+
+	drawBrackets() {
+		let me = this
+		this.drawBracket(this.valueA, 'valueA')
+		this.drawBracket(this.valueB, 'valueB')
+
+		this.root.selectAll('text')
+			.call(d3.drag()
+				.on('drag', function () {
+					me.props.onUpdate({
+						[this.id]: precisionRound(me.valToScreen.invert(d3.event.x), 1)
+					})
+				})
+			)
 	}
 
 	getRangeFromBitIndex(i, encoder) {
@@ -142,20 +158,95 @@ class ScalarOverlapDiagram extends React.Component {
 		return [left, right]
 	}
 
+	drawBracket(value, name) {
+		const { diagramWidth, n } = this.props
+		let valueScaleTopMargin = 30
+		const cellWidth = Math.floor(diagramWidth / n)
+
+		let encoder = this.encoder
+		let g = this.root.select(`.${name}`)
+		let leftPath = g.select('path.left')
+		let rightPath = g.select('path.right')
+		let label = g.select('text')
+
+		let leftLineData = []
+		let rightLineData = []
+		let index = Math.floor(encoder.scale(value))
+		let w = encoder.w
+		let leftValue = encoder.reverseScale(index - (w/2))
+		let rightValue = encoder.reverseScale(index + (w/2))
+		let uiRange = [sideGutter, diagramWidth - sideGutter]
+
+		let cx = sideGutter + index * cellWidth // center x
+		let cy = cellHeight * 2.2 // center y
+
+		label.attr('x', cx)
+				.attr('y', cy + 15)
+				.html(precisionRound(value, 1))
+		
+		leftLineData.push({x: cx, y: cy})
+		rightLineData.push({x: cx, y: cy})
+		let leftX = Math.max(this.valToScreen(leftValue), uiRange[0])
+		let rightX = Math.min(this.valToScreen(rightValue), uiRange[1])
+		// Intermediary points for curving
+		leftLineData.push({
+				x: cx - 10,
+				y: cy - 10,
+		})
+		leftLineData.push({
+				x: leftX,
+				y: valueScaleTopMargin + 10
+		})
+		rightLineData.push({
+				x: cx + 10,
+				y: cy - 10,
+		})
+		rightLineData.push({
+				x: rightX,
+				y: valueScaleTopMargin + 10
+		})
+
+		// Point on value line
+		leftLineData.push({
+				x: leftX,
+				y: valueScaleTopMargin
+		})
+		rightLineData.push({
+				x: rightX,
+				y: valueScaleTopMargin
+		})
+		leftPath
+				.attr('d', lineFunction(leftLineData))
+				.attr('stroke', 'black')
+				.attr('fill', 'none')
+		rightPath
+				.attr('d', lineFunction(rightLineData))
+				.attr('stroke', 'black')
+				.attr('fill', 'none')
+	}
+
 	render() {
 		return (
 			<svg id={this.props.id}
+				height={100}
 				ref={this.svgRef}
 				style={debugStyle}
 			>
 
 				<g className="output-cells"></g>
 
-				<g className="range" visibility="hidden">
-					<circle></circle>
+				<g className="valueA range">
 					<path className="left"></path>
 					<path className="right"></path>
+					<text id="valueA"></text>
 				</g>
+
+				<g className="valueB range">
+					<path className="left"></path>
+					<path className="right"></path>
+					<text id="valueB"></text>
+				</g>
+
 			</svg>
 		)
 	}
