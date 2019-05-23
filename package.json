@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start",
-    "fix-code": "prettier-eslint --write 'src/**/*.{js,jsx}' "
+    "start": "next start -p $PORT",
+		"heroku-postbuild": "npm run build",
+		"fix-code": "prettier-eslint --write 'src/**/*.{js,jsx}' "
   },
   "author": "matt@numenta.org",
   "license": "AGPL-3.0",
