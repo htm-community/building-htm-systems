@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import simplehtm from 'simplehtm'
 import { lineFunction, precisionRound } from './helpers'
 
-const { ScalarEncoder } = simplehtm.encoders
+const ScalarEncoder = simplehtm.encoders.ScalarEncoder
 
 const offColor = 'white'
 const aColor = 'blue'
@@ -18,7 +18,7 @@ const debugStyle = {
 	border: 'solid red 1px'
 }
 
-class ScalarOverlapDiagram extends React.Component {
+class ScalarOverlap extends React.Component {
 	svgRef = React.createRef() // this will give you reference to HTML DOM element
 
 	// encoding = undefined
@@ -55,7 +55,7 @@ class ScalarOverlapDiagram extends React.Component {
 
 	orientD3() {
 		const {
-			diagramWidth, n
+			diagramWidth
 		} = this.props
 		const {
 			min, max
@@ -65,11 +65,8 @@ class ScalarOverlapDiagram extends React.Component {
 			.domain([min, max])
 			.range([sideGutter, diagramWidth - sideGutter])
 		this.bitsToOutputDisplay = d3.scaleLinear()
-			.domain([0, n])
+			.domain(this.encoder.outputRange)
 			.range([0 + sideGutter, diagramWidth - sideGutter])
-		// this.displayToBitRange = d3.scaleLinear()
-		// 	.domain([0 + sideGutter, diagramWidth - sideGutter])
-		// 	.range([0, n])
 	}
 
 	resetEncoder() {
@@ -79,15 +76,16 @@ class ScalarOverlapDiagram extends React.Component {
 		this.encoder = new (bounded ? BoundedScalarEncoder : ScalarEncoder)({
 			min, max, resolution, w, n, bounded,
 		})
+
 		this.encodingA = this.encoder.encode(this.valueA)
 		this.encodingB = this.encoder.encode(this.valueB)
 	}
 
 	renderOutputCells() {
-		const { diagramWidth, n } = this.props
+		const { diagramWidth } = this.props
 
 		const g = this.root.select('.output-cells')
-		const cellWidth = Math.floor(diagramWidth / n)
+		const cellWidth = Math.floor(diagramWidth / this.encoder.n)
 		const bitsToOutputDisplay = this.bitsToOutputDisplay
 
 		function treatCellRects(r) {
@@ -136,8 +134,9 @@ class ScalarOverlapDiagram extends React.Component {
 		this.root.selectAll('text')
 			.call(d3.drag()
 				.on('drag', function () {
+					const key = this.id.replace(`${me.props.id}-`, '')
 					me.props.onUpdate({
-						[this.id]: precisionRound(me.valToScreen.invert(d3.event.x), 1)
+						[key]: precisionRound(me.valToScreen.invert(d3.event.x), 1)
 					})
 				})
 			)
@@ -159,9 +158,9 @@ class ScalarOverlapDiagram extends React.Component {
 	}
 
 	drawBracket(value, name) {
-		const { diagramWidth, n } = this.props
+		const diagramWidth = this.props.diagramWidth
 		let valueScaleTopMargin = 30
-		const cellWidth = Math.floor(diagramWidth / n)
+		const cellWidth = Math.floor(diagramWidth / this.encoder.n)
 
 		let encoder = this.encoder
 		let g = this.root.select(`.${name}`)
@@ -173,8 +172,6 @@ class ScalarOverlapDiagram extends React.Component {
 		let rightLineData = []
 		let index = Math.floor(encoder.scale(value))
 		let w = encoder.w
-		let leftValue = encoder.reverseScale(index - (w/2))
-		let rightValue = encoder.reverseScale(index + (w/2))
 		let uiRange = [sideGutter, diagramWidth - sideGutter]
 
 		let cx = sideGutter + index * cellWidth // center x
@@ -185,9 +182,11 @@ class ScalarOverlapDiagram extends React.Component {
 				.html(precisionRound(value, 1))
 		
 		leftLineData.push({x: cx, y: cy})
-		rightLineData.push({x: cx, y: cy})
-		let leftX = Math.max(this.valToScreen(leftValue), uiRange[0])
-		let rightX = Math.min(this.valToScreen(rightValue), uiRange[1])
+		rightLineData.push({ x: cx, y: cy })
+		let leftIndex = index - w/2
+		let rightIndex = index + w/2
+		let leftX = Math.max(this.bitsToOutputDisplay(leftIndex), uiRange[0])
+		let rightX = Math.min(this.bitsToOutputDisplay(rightIndex), uiRange[1])
 		// Intermediary points for curving
 		leftLineData.push({
 				x: cx - 10,
@@ -238,13 +237,13 @@ class ScalarOverlapDiagram extends React.Component {
 				<g className="valueA range">
 					<path className="left"></path>
 					<path className="right"></path>
-					<text id="valueA"></text>
+					<text id={`${this.props.id}-valueA`}></text>
 				</g>
 
 				<g className="valueB range">
 					<path className="left"></path>
 					<path className="right"></path>
-					<text id="valueB"></text>
+					<text id={`${this.props.id}-valueB`}></text>
 				</g>
 
 			</svg>
@@ -252,7 +251,7 @@ class ScalarOverlapDiagram extends React.Component {
 	}
 }
 
-ScalarOverlapDiagram.propTypes = {
+ScalarOverlap.propTypes = {
 	diagramWidth: PropTypes.number.isRequired,
 	id: PropTypes.string.isRequired,
 	max: PropTypes.number.isRequired,
@@ -264,4 +263,4 @@ ScalarOverlapDiagram.propTypes = {
 	w: PropTypes.number.isRequired,
 }
 
-export default ScalarOverlapDiagram
+export default ScalarOverlap

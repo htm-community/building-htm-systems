@@ -21,7 +21,7 @@ class SimpleScalarEncoder extends React.Component {
 
 	encoding = undefined
 	encoder = undefined
-	value = this.props.value
+	value = this.props.value || 0
 
 	// handle setting up when params are set/changed
 	update() {

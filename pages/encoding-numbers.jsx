@@ -4,10 +4,10 @@ import NumberValue from '../components/input/NumberInput'
 import ToggleButton from '../components/input/ToggleButton'
 import SimpleScalarEncoder from '../components/diagrams/SimpleScalarEncoder'
 import CyclicScalarEncoder from '../components/diagrams/CyclicScalarEncoder'
-import DiagramStub from '../components/diagrams/DiagramStub'
+import DiscreteEncodingDiagram from '../components/diagrams/DiscreteEncodingDiagram'
 import CodeSyntax from '../components/CodeSyntax'
 import examples from '../examples/encoding-numbers'
-import ScalarOverlapDiagram from '../components/diagrams/ScalarOverlapDiagram';
+import ScalarOverlap from '../components/diagrams/ScalarOverlapDiagram';
 
 
 class EncodingNumbers extends React.Component {
@@ -24,6 +24,8 @@ class EncodingNumbers extends React.Component {
 		cyclicEncoderState: this.cyclicEncoderStates[0],
 		valueA: 4,
 		valueB: 5,
+		valueC: 6,
+		categoryLength: 10,
 	}
 
 	animationHandle = undefined
@@ -75,6 +77,11 @@ class EncodingNumbers extends React.Component {
 			name="param-res" low={0.1} high={3.0} step={0.1}
 			value={this.state.resolution}
 			onUpdate={value => this.setState({ resolution: Number(value) })}
+		/>
+		const ParameterCategoryLength = <NumberValue
+			name="param-categories" low={5} high={50}
+			value={this.state.categoryLength}
+			onUpdate={value => this.setState({ categoryLength: Number(value) })}
 		/>
 		const ToggleCyclicEncoder = <ToggleButton 
 			options={this.cyclicEncoderStates} 
@@ -291,7 +298,7 @@ class EncodingNumbers extends React.Component {
 					<p>All the examples shown so far have been of continuous encodings, because all our input ranges have been a continuous scale of numeric values. This also means that numbers near one another on the number line have been represented similarly. For example, in <strong>Figure 8</strong> below you can see encodings for two numbers: <code>4</code> and <code>5</code>. Given the encoding parameters defined below, you can see the overlapping bits in green.</p>
 
 					<figure>
-						<ScalarOverlapDiagram
+						<ScalarOverlap
 							id="continuousOverlap"
 							diagramWidth={500}
 							max={10}
@@ -311,10 +318,22 @@ class EncodingNumbers extends React.Component {
 
 					<p>Continuous encoding is great for ranges of input values, but sometimes we don't want encodings to overlap. You might want to separate an encoding space into equal sections that encode different categories of data, like this:</p>
 
-					<DiagramStub
-						id="discreteEncoding"
-					/>
-					<span><a href="#discreteEncoding">¶</a>Figure 9:</span> By limiting the input to discrete values and making <code>n</code> an even multiple of <code>w</code>, it is easy to encode discrete scalar values with a <code>CyclicScalarEncoder</code>.
+					<figure>
+						<DiscreteEncodingDiagram
+							id="discreteEncoding"
+							diagramWidth={500}
+							w={this.state.w}
+							categoryLength={this.state.categoryLength}
+							valueA={this.state.valueC}
+							valueB={this.state.valueC}
+							onUpdate={value => this.setState( { valueC: Object.values(value)[0] })}
+						/>
+						<figcaption>
+							<span><a href="#discreteEncoding">¶</a>Figure 9:</span> By limiting the input to discrete values and making <code>n</code> an even multiple of <code>w</code>, it is easy to encode discrete scalar values with a <code>CyclicScalarEncoder</code>.
+						</figcaption>
+					</figure>
+
+					{ParameterCategoryLength}
 
 					<p>Accomplishing this is really quite simple if we use logic we've already defined for the <code><a href="https://github.com/htm-community/simplehtm/blob/master/src/encoders/cyclicScalar.js" target="_blank">CyclicScalarEncoder</a></code>. If we know how many different discrete values we need to encode and the number of bits to use for each, we can do this:</p>
 
