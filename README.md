@@ -8,19 +8,17 @@ The HTM system running these visualization is called [simplehtm](https://github.
 
 ## Running
 
-		npm run dev
+	npm run dev
 
 ## Developers
 
-Please use tabs.
+Please use tabs. We are using Github [Issues](https://github.com/htm-community/building-htm-systems/issues) & [Kanban](https://github.com/htm-community/building-htm-systems/projects).
 
-### Live On Twitch
+### [Live On Twitch](https://www.twitch.tv/rhyolight_)
 
-This project is being developed mostly live on Twitch with the help of the [HTM Community](https://discourse.numenta.org/categories) and others in Matt's Twitch channel.
+This project is being developed mostly [live on Twitch](https://www.twitch.tv/rhyolight_) with the help of the [HTM Community](https://discourse.numenta.org/categories) and others in [@rhyolight](https://github.com/rhyolight)'s Twitch channel.
 
-TUNE TO https://www.twitch.tv/rhyolight_ THURSDAYS 9AM PDT. See the [archive of live-streams here](https://www.youtube.com/watch?v=vRSh3ceP6xE&list=PL3yXMgtrZmDr6hlnTDmsG4GFMv2htzArt).
-
-Issues are tracked in [trello](https://trello.com/b/iOG0iEnT/building-htm-systems).
+See the [archive of live-streams here](https://www.youtube.com/watch?v=vRSh3ceP6xE&list=PL3yXMgtrZmDr6hlnTDmsG4GFMv2htzArt).
 
 ### Deployment
 
