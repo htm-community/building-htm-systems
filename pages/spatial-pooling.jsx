@@ -2,6 +2,8 @@ import React from 'react'
 import Layout from '../components/Layout'
 import withScalarData from '../hoc/withScalarData';
 
+import CombinedEncoding from '../components/diagrams/CombinedEncoding'
+
 
 class SpatialPooling extends React.Component {
 
@@ -16,6 +18,11 @@ class SpatialPooling extends React.Component {
 					<h2>Spatial Pooling</h2>
 					
 					{JSON.stringify(this.props.data)}
+
+					<CombinedEncoding
+						id="combinedEncoding"
+						data={this.props.data}
+					/>
 
 				</Layout>
 			</div>
