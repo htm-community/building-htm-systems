@@ -8,6 +8,13 @@ var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'S
 const { BoundedScalarEncoder, CyclicEncoder, DayOfWeekCategoryEncoder, WeekendEncoder } = simplehtm.encoders
 
 const offColor = '#FFF'
+const combinedColor = '#BBB'
+const scalarColor = '#68228B'
+const dayOfWeekColor = '#F3C300'
+const dayOfMonthColor = '#DF0024'
+const hourOfDayColor = '#2E6DB4'
+const weekendColor = '#00AC9F'
+
 const diagramPadding = 40
 
 class CombinedEncoding extends React.Component {
@@ -18,15 +25,9 @@ class CombinedEncoding extends React.Component {
 	scalarEncoder = new BoundedScalarEncoder({
 		w: 20, n: 100, min: 0, max: 1
 	})
-	// Discrete days of week
 	dayOfWeekEncoder = new DayOfWeekCategoryEncoder({
 		w: 3
 	})
-	// // Continuous days of week
-	// dayOfWeekEncoder = new CyclicEncoder({
-	// 	w: 5, n: 14,
-	// 	min: 0, max: 6,
-	// })
 	dayOfMonthEncoder = new CyclicEncoder({
 		w: 5, n: 40,
 		min: 1, max: 31,
@@ -44,31 +45,28 @@ class CombinedEncoding extends React.Component {
 	}
 
 	encode() {
-    const { data: { time, value } } = this.props
+    const { data: { time, value }, combined } = this.props
 		const encoding = []
+		const jointColor = combined == 'combined' ? combinedColor : undefined;
 		// scalar
 		this.scalarEncoder.encode(value).forEach(bit => {
-			encoding.push(bit ? 'cyan' : offColor)
+			encoding.push(bit ? jointColor || scalarColor : offColor)
 		})
 		// day of week (discrete)
 		this.dayOfWeekEncoder.encode(days[time.getDay()]).forEach(bit => {
-			encoding.push(bit ? '#F3C300' : offColor)
+			encoding.push(bit ? jointColor || dayOfWeekColor : offColor)
 		})
-		// // day of week (continuous)
-		// this.dayOfWeekEncoder.encode(time.getDay()).forEach(bit => {
-		// 	encoding.push(bit ? '#F3C300' : offColor)
-		// })
 		// day of month
 		this.dayOfMonthEncoder.encode(time.getDate()).forEach(bit => {
-			encoding.push(bit ? '#DF0024' : offColor)
-		})
-		// weekend
-		this.weekendEncoder.encode(time).forEach(bit => {
-			encoding.push(bit ? '#00AC9F' : offColor)
+			encoding.push(bit ? jointColor || dayOfMonthColor : offColor)
 		})
 		// hour of day
 		this.hourOfDayEncoder.encode(time.getHours()).forEach(bit => {
-			encoding.push(bit ? '#2E6DB4' : offColor)
+			encoding.push(bit ? jointColor || hourOfDayColor : offColor)
+		})
+		// weekend
+		this.weekendEncoder.encode(time).forEach(bit => {
+			encoding.push(bit ? jointColor || weekendColor : offColor)
 		})
 		this.encoding = encoding
 	}
