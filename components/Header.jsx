@@ -18,6 +18,9 @@ const Header = () => (
 		<Link href="/encoding-time">
 			<a className="nav-link">Encoding Time</a>
 		</Link>
+		<Link href="/spatial-pooling">
+			<a className="nav-link">Spatial Pooling</a>
+		</Link>
 		<Link href="/components-showcase">
 			<a className="nav-link">Components Showcase</a>
 		</Link>
