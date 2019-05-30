@@ -17,10 +17,9 @@ class SpatialPooling extends React.Component {
 				<Layout>
 					<h2>Spatial Pooling</h2>
 					
-					{JSON.stringify(this.props.data)}
-
 					<CombinedEncoding
 						id="combinedEncoding"
+						diagramWidth={500}
 						data={this.props.data}
 					/>
 
