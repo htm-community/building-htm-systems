@@ -19,10 +19,10 @@ class SpatialPooling extends React.Component {
 	render() {
 
 		const ToggleCombinedInput = <ToggleButton
-      options={['combined', 'split']}
-      value={this.state.combined}
-      onChange={(newValue) => this.setState({ combined: newValue })}
-    />
+			options={['combined', 'split']}
+			value={this.state.combined}
+			onChange={(newValue) => this.setState({ combined: newValue })}
+		/>
 
 		return (
 			<div>
