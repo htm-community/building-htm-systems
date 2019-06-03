@@ -4,6 +4,7 @@ import withScalarData from '../hoc/withScalarData';
 import ToggleButton from '../components/input/ToggleButton'
 
 import CombinedEncoding from '../components/diagrams/CombinedEncoding'
+import PotentialPools from '../components/diagrams/PotentialPools'
 
 
 class SpatialPooling extends React.Component {
@@ -29,6 +30,7 @@ class SpatialPooling extends React.Component {
 				<Layout>
 					<h2>Spatial Pooling Prototype Page</h2>
 					
+					{/* 
 					<h3>Combined Encoding</h3>
 
 					<CombinedEncoding
@@ -38,7 +40,19 @@ class SpatialPooling extends React.Component {
 						combined={this.state.combined}
 					/>
 
-					{ToggleCombinedInput}
+					{ToggleCombinedInput} 
+					*/}
+
+					
+					<h3>Potential Pools</h3>
+
+					<PotentialPools
+						id="potentialPools"
+						diagramWidth={500}
+						minicolumnCount={2048}
+						connectedPercent={0.85}
+						data={this.props.data}
+					/>
 
 				</Layout>
 			</div>

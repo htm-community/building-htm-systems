@@ -19,3 +19,7 @@ a {
 a.interactive {
 	text-decoration: dotted underline !important;
 }
+
+.debug {
+	border: solid red 1px;
+}
