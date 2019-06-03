@@ -30,7 +30,6 @@ class SpatialPooling extends React.Component {
 				<Layout>
 					<h2>Spatial Pooling Prototype Page</h2>
 					
-					{/* 
 					<h3>Combined Encoding</h3>
 
 					<CombinedEncoding
@@ -41,8 +40,6 @@ class SpatialPooling extends React.Component {
 					/>
 
 					{ToggleCombinedInput} 
-					*/}
-
 					
 					<h3>Potential Pools</h3>
 

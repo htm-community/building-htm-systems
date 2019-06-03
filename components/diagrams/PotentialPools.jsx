@@ -255,7 +255,7 @@ class PotentialPools extends React.Component {
 	render() {
 
 		return (
-			<svg className="debug" id={this.props.id}
+			<svg id={this.props.id}
 				ref={this.svgRef}>
 
 				<g className="minicolumns" onMouseMove={e => this.handleMouseMove(e)}></g>
