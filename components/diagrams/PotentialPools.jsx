@@ -66,6 +66,7 @@ class PotentialPools extends React.Component {
 			this.renderMinicolumns()
 			this.renderInputSpace()
 			this.renderPotentialPools()
+			this.renderOverlay()
 		}
 	}
 
@@ -111,7 +112,7 @@ class PotentialPools extends React.Component {
 				.attr('fill', d => d)
 				.attr('stroke', 'darkgrey')
 				.attr('stroke-width', 0.5)
-				.attr('fill-opacity', 0.5)
+				.attr('fill-opacity', 1)
 				.attr('x', (d, i) => {
 					return (i % cols) * cellWidth
 				})
@@ -182,7 +183,7 @@ class PotentialPools extends React.Component {
 			cell.attr('class', 'bit')
 				.attr('fill', ppColor)
 				.attr('stroke', 'none')
-				.attr('fill-opacity', 1.0)
+				.attr('fill-opacity', 0.5)
 				.attr('x', (d, i) => {
 					return (d % cols) * cellWidth
 				})
@@ -207,6 +208,45 @@ class PotentialPools extends React.Component {
 		rects.exit().remove()
 	}
 
+	renderOverlay() {
+		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
+		const g = this.root.select('.overlay')
+		const cols = Math.floor(Math.sqrt(this.encoding.length))
+		const cellWidth = diagramWidth / cols / 2
+		const potentialPool = this.minicolumns[this.selectedMinicolumn].potentialPool
+
+		function treatCells(cell) {
+			cell.attr('class', 'bit')
+				.attr('x', (d, i) => {
+					return (i % cols) * cellWidth + 2
+				})
+				.attr('y', (d, i) => {
+					return (Math.floor(i / cols)) * cellWidth + cellWidth - 2
+				})
+				.attr('font-size', 12)
+				.attr('font-weight', 'bolder')
+				.attr('fill', (d, i) => {
+					if(d !== offColor) return potentialPool.includes(i) ?  'green' : 'white'
+					return 'none'
+				})
+				.text((d, i) => {
+					if(d !== offColor) return potentialPool.includes(i) ?  '✓' : '✘'
+					return ''
+				})
+		}
+
+		// Update
+		const rects = g.selectAll('text').data(this.encoding)
+		treatCells(rects)
+
+		// Enter
+		const newRects = rects.enter().append('text')
+		treatCells(newRects)
+
+		// Exit
+		rects.exit().remove()
+	}
+
 	handleMouseMove(e) {
 		this.selectedMinicolumn = Number(e.target.getAttribute('data-index'))
 		this.update()
@@ -220,8 +260,9 @@ class PotentialPools extends React.Component {
 
 				<g className="minicolumns" onMouseMove={e => this.handleMouseMove(e)}></g>
 
-				<g className="potential-pool" transform="translate(250,0)"></g>
 				<g className="input-space" transform="translate(250,0)"></g>
+				<g className="potential-pool" transform="translate(250,0)"></g>
+				<g className="overlay" transform="translate(250,0)"></g>
 				
 			</svg>
 		)

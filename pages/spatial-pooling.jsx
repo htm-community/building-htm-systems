@@ -50,7 +50,7 @@ class SpatialPooling extends React.Component {
 						id="potentialPools"
 						diagramWidth={500}
 						minicolumnCount={2048}
-						connectedPercent={0.85}
+						connectedPercent={0.55}
 						data={this.props.data}
 					/>
 
