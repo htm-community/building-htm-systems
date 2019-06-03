@@ -10,20 +10,15 @@ const { BoundedScalarEncoder, CyclicEncoder, DayOfWeekCategoryEncoder, WeekendEn
 const offColor = '#FFF'
 const combinedColor = '#BBB'
 const ppColor = '#FDF542'
+const selectedColor = 'red'
 
 const diagramPadding = 40
 
+// given a percentage, return boolean that will be true that percent of the time
 const p = (percent) => Math.random() <= percent
 
-function createPotentialPool(connectedPerc, size) {
-	let pool = [];
-	[...Array(size)].forEach((v, i) => {
-		if (p(connectedPerc)) {
-			pool.push(i)
-		}
-	})
-	return pool
-}
+// given a connection percentage and input size, return subset of indices
+const getPotentialPool = (connectedPerc, size) => [...Array(size).keys()].filter(_ => p(connectedPerc))
 
 
 class PotentialPools extends React.Component {
@@ -31,6 +26,7 @@ class PotentialPools extends React.Component {
 
 	encoding = undefined
 	minicolumns = []
+	selectedMinicolumn = 0
 
 	scalarEncoder = new BoundedScalarEncoder({
 		w: 20, n: 100, min: 0, max: 1
@@ -67,6 +63,7 @@ class PotentialPools extends React.Component {
 			if(this.minicolumns.length === 0) {
 				this.setupPotentialPools()
 			}
+			this.renderMinicolumns()
 			this.renderInputSpace()
 			this.renderPotentialPools()
 		}
@@ -77,7 +74,7 @@ class PotentialPools extends React.Component {
 		let connectedPercent = this.props.connectedPercent
 		this.minicolumns = [...Array(this.props.minicolumnCount)].map(() => {
 			return {
-				potentialPool: createPotentialPool(connectedPercent, size)
+				potentialPool: getPotentialPool(connectedPercent, size)
 			}
 		})
 	}
@@ -107,7 +104,7 @@ class PotentialPools extends React.Component {
 		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
 		const g = this.root.select('.input-space')
 		const cols = Math.floor(Math.sqrt(this.encoding.length))
-		const cellWidth = diagramWidth / cols
+		const cellWidth = diagramWidth / cols / 2
 
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
@@ -137,11 +134,49 @@ class PotentialPools extends React.Component {
 		rects.exit().remove()
 	}
 
+	renderMinicolumns() {
+		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
+		const g = this.root.select('.minicolumns')
+		const cols = Math.floor(Math.sqrt(this.minicolumns.length))
+		const cellWidth = diagramWidth / cols / 2
+		const selectedMinicolumn = this.selectedMinicolumn
+
+		function treatCells(cell) {
+			cell.attr('class', 'bit')
+				.attr('fill', (d, i) => i === selectedMinicolumn ? selectedColor : 'none')
+				.attr('stroke', 'darkgrey')
+				.attr('stroke-width', 0.5)
+				.attr('fill-opacity', 0.5)
+				.attr('x', (d, i) => {
+					return (i % cols) * cellWidth
+				})
+				.attr('y', (d, i) => {
+					return (Math.floor(i / cols)) * cellWidth
+				})
+				.attr('width', cellWidth)
+				.attr('height', cellWidth)
+				.attr('data-index', (d, i) => i)
+		}
+
+		// Update
+		const rects = g.selectAll('rect').data(this.minicolumns)
+		treatCells(rects)
+
+		// Enter
+		const newRects = rects.enter().append('rect')
+		treatCells(newRects)
+
+		// Exit
+		rects.exit().remove()
+
+		
+	}
+
 	renderPotentialPools() {
 		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
 		const g = this.root.select('.potential-pool')
 		const cols = Math.floor(Math.sqrt(this.encoding.length))
-		const cellWidth = diagramWidth / cols
+		const cellWidth = diagramWidth / cols / 2
 
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
@@ -158,11 +193,9 @@ class PotentialPools extends React.Component {
 				.attr('height', cellWidth)
 		}
 
-		let selectedMinicolumn = 0
-
 		// Update
 		const rects = g.selectAll('rect').data(
-			this.minicolumns[selectedMinicolumn].potentialPool
+			this.minicolumns[this.selectedMinicolumn].potentialPool
 		)
 		treatCells(rects)
 
@@ -174,16 +207,21 @@ class PotentialPools extends React.Component {
 		rects.exit().remove()
 	}
 
+	handleMouseMove(e) {
+		this.selectedMinicolumn = Number(e.target.getAttribute('data-index'))
+		this.update()
+	}
+
 	render() {
 
 		return (
 			<svg className="debug" id={this.props.id}
 				ref={this.svgRef}>
 
-				<g className="minicolumns"></g>
+				<g className="minicolumns" onMouseMove={e => this.handleMouseMove(e)}></g>
 
-				<g className="potential-pool"></g>
-				<g className="input-space"></g>
+				<g className="potential-pool" transform="translate(250,0)"></g>
+				<g className="input-space" transform="translate(250,0)"></g>
 				
 			</svg>
 		)
