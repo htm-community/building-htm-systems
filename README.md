@@ -14,12 +14,12 @@ The HTM system running these visualization is called [simplehtm](https://github.
 
 Please use tabs. We are using Github [Issues](https://github.com/htm-community/building-htm-systems/issues) & [Kanban](https://github.com/htm-community/building-htm-systems/projects).
 
-### [Live On Twitch](https://www.twitch.tv/rhyolight_)
+### [Live On Twitch](https://www.twitch.tv/events/ICzqUgJZQAKCMsiAlCW2Rg)
 
-This project is being developed mostly [live on Twitch](https://www.twitch.tv/rhyolight_) with the help of the [HTM Community](https://discourse.numenta.org/categories) and others in [@rhyolight](https://github.com/rhyolight)'s Twitch channel.
+This project is being developed mostly [live on Twitch](https://www.twitch.tv/events/ICzqUgJZQAKCMsiAlCW2Rg) with the help of the [HTM Community](https://discourse.numenta.org/categories) and others in Matt's [Twitch channel](https://twitch.tv/rhyolight_).
 
 See the [archive of live-streams here](https://www.youtube.com/watch?v=vRSh3ceP6xE&list=PL3yXMgtrZmDr6hlnTDmsG4GFMv2htzArt).
 
-### Deployment
+### See it Live
 
-Temporary deployment to [heroku](https://building-htm-systems.herokuapp.com/) for development. Will eventually be released to https://buildinghtm.systems/.
+On every push to Github, changes are deployed to https://building-htm-systems.herokuapp.com/. We will eventually deploy to https://buildinghtm.systems/ (which currently displays an old implementation).
