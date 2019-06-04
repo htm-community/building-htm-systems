@@ -107,6 +107,9 @@ class PotentialPools extends React.Component {
 		const cols = Math.floor(Math.sqrt(this.encoding.length))
 		const cellWidth = diagramWidth / cols / 2
 
+		// Split screen, this goes to the right
+		g.attr('transform',  `translate(${this.props.diagramWidth / 2},0)`)
+
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
 				.attr('fill', d => d)
@@ -179,6 +182,9 @@ class PotentialPools extends React.Component {
 		const cols = Math.floor(Math.sqrt(this.encoding.length))
 		const cellWidth = diagramWidth / cols / 2
 
+		// Split screen, this goes to the right
+		g.attr('transform',  `translate(${this.props.diagramWidth / 2},0)`)
+
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
 				.attr('fill', ppColor)
@@ -215,6 +221,9 @@ class PotentialPools extends React.Component {
 		const cellWidth = diagramWidth / cols / 2
 		const potentialPool = this.minicolumns[this.selectedMinicolumn].potentialPool
 
+		// Split screen, this goes to the right
+		g.attr('transform',  `translate(${this.props.diagramWidth / 2},0)`)
+
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
 				.attr('x', (d, i) => {
@@ -223,7 +232,7 @@ class PotentialPools extends React.Component {
 				.attr('y', (d, i) => {
 					return (Math.floor(i / cols)) * cellWidth + cellWidth - 2
 				})
-				.attr('font-size', 12)
+				.attr('font-size', cellWidth * .95)
 				.attr('font-weight', 'bolder')
 				.attr('fill', (d, i) => {
 					if(d !== offColor) return potentialPool.includes(i) ?  'green' : 'white'
@@ -260,9 +269,9 @@ class PotentialPools extends React.Component {
 
 				<g className="minicolumns" onMouseMove={e => this.handleMouseMove(e)}></g>
 
-				<g className="input-space" transform="translate(250,0)"></g>
-				<g className="potential-pool" transform="translate(250,0)"></g>
-				<g className="overlay" transform="translate(250,0)"></g>
+				<g className="input-space"></g>
+				<g className="potential-pool"></g>
+				<g className="overlay"></g>
 				
 			</svg>
 		)
