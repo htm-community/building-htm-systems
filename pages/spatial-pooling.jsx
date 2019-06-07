@@ -5,6 +5,7 @@ import ToggleButton from '../components/input/ToggleButton'
 
 import CombinedEncoding from '../components/diagrams/CombinedEncoding'
 import PotentialPools from '../components/diagrams/PotentialPools'
+import Permanences from '../components/diagrams/Permanences'
 
 
 class SpatialPooling extends React.Component {
@@ -47,8 +48,19 @@ class SpatialPooling extends React.Component {
 						id="potentialPools"
 						diagramWidth={500}
 						minicolumnCount={2048}
-						connectedPercent={0.55}
+						connectedPercent={0.85}
 						data={this.props.data}
+					/>
+
+					<h3>Permanences</h3>
+
+					<Permanences
+						id="permanences"
+						diagramWidth={500}
+						minicolumnCount={2048}
+						connectedPercent={0.85}
+						connectionThreshold={0.85}
+						inputSpaceSize={400}
 					/>
 
 				</Layout>
