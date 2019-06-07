@@ -50,6 +50,7 @@ class Permanences extends React.Component {
 		this.renderMinicolumns()
 		this.renderPermanences()
 		this.renderConnections()
+		this.drawHistogram()
 	}
 
 	setupInitialConnectionStrengths() {
@@ -99,8 +100,6 @@ class Permanences extends React.Component {
 
 		// Exit
 		rects.exit().remove()
-
-		
 	}
 
 	renderPermanences() {
@@ -187,6 +186,73 @@ class Permanences extends React.Component {
 		circs.exit().remove()
 	}
 
+	drawHistogram() {
+		const g = this.root.select('.histogram')
+		const width = this.props.diagramWidth
+		const height = 200
+
+		const data = this.minicolumns[this.selectedMinicolumn]
+
+		// Split screen, this goes to the right
+		g.attr('transform',  `translate(0,240)`)
+
+		let x = d3.scaleLinear()
+				.range([0, width]);
+
+		let bins = d3.histogram()
+				.domain(x.domain())
+				.thresholds(x.ticks(50))
+				(data);
+
+		let maxBins = d3.max(bins, function(d) { return d.length; })
+		let y = d3.scaleLinear()
+				.domain([0, maxBins])
+				.range([0, height]);
+
+		function treatRects(rects) {
+				let rectWidth = x(bins[0].x1) - x(bins[0].x0)
+				rects
+						.attr('class', 'bar')
+						.attr('x', (d, i) => {
+								return i * rectWidth
+						})
+						.attr('y', (d, i) => {
+								return y(maxBins - bins[i].length)
+						})
+						.attr('height', (d, i) => {
+								return y(bins[i].length)
+						})
+						.attr('width', rectWidth)
+						.attr('fill', 'steelblue')
+		}
+
+		let rects = g.selectAll('rect.bar').data(bins)
+		treatRects(rects)
+
+		let newRects = rects.enter().insert('rect', ':first-child')
+		treatRects(newRects)
+
+		rects.exit().remove()
+
+		let connectionThreshold = this.props.connectionThreshold
+
+		g.select('line.threshold')
+			.attr('id', 'connectionThreshold')
+			.attr('x1', x(connectionThreshold))
+			.attr('x2', x(connectionThreshold))
+			.attr('y1', 0)
+			.attr('y2', 200)
+			.attr('stroke', 'red')
+			.attr('stroke-width', 4)
+
+		g.selectAll('g.axis')
+			.attr("class", "axis axis--x")
+			.attr("transform", "translate(0," + height + ")")
+			.call(d3.axisBottom(x))
+
+	}
+
+
 	handleMouseMove(e) {
 		this.selectedMinicolumn = Number(e.target.getAttribute('data-index'))
 		this.update()
@@ -196,6 +262,7 @@ class Permanences extends React.Component {
 
 		return (
 			<svg id={this.props.id}
+				className="debug"
 				ref={this.svgRef}>
 
 				<g className="minicolumns" onMouseMove={e => this.handleMouseMove(e)}></g>
@@ -203,6 +270,11 @@ class Permanences extends React.Component {
 				<g className="input-space"></g>
 				<g className="permanences"></g>
 				<g className="connections"></g>
+
+				<g className="histogram">
+					<line className="threshold" />
+					<g className="axis"/>
+				</g>
 				
 			</svg>
 		)

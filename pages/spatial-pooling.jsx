@@ -2,6 +2,7 @@ import React from 'react'
 import Layout from '../components/Layout'
 import withScalarData from '../hoc/withScalarData';
 import ToggleButton from '../components/input/ToggleButton'
+import NumberValue from '../components/input/NumberInput'
 
 import CombinedEncoding from '../components/diagrams/CombinedEncoding'
 import PotentialPools from '../components/diagrams/PotentialPools'
@@ -11,7 +12,8 @@ import Permanences from '../components/diagrams/Permanences'
 class SpatialPooling extends React.Component {
 
 	state = {
-		combined: 'combined'
+		combined: 'combined',
+		connectionThreshold: 0.5,
 	}
 
 	componentDidMount() {
@@ -24,6 +26,11 @@ class SpatialPooling extends React.Component {
 			options={['combined', 'split']}
 			value={this.state.combined}
 			onChange={(newValue) => this.setState({ combined: newValue })}
+		/>
+		const ConnectionThreshold = <NumberValue
+			name="connection-threshold" low={0} high={1.0} step={0.02}
+			value={this.state.connectionThreshold}
+			onUpdate={value => this.setState({ connectionThreshold: Number(value) })}
 		/>
 
 		return (
@@ -59,9 +66,11 @@ class SpatialPooling extends React.Component {
 						diagramWidth={500}
 						minicolumnCount={2048}
 						connectedPercent={0.85}
-						connectionThreshold={0.85}
+						connectionThreshold={this.state.connectionThreshold}
 						inputSpaceSize={400}
 					/>
+
+					{ConnectionThreshold}
 
 				</Layout>
 			</div>
