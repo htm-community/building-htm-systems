@@ -14,6 +14,8 @@ class SpatialPooling extends React.Component {
 	state = {
 		combined: 'combined',
 		connectionThreshold: 0.5,
+		connectionDistribution: 25,
+		distributionCenter: 0.5,
 	}
 
 	componentDidMount() {
@@ -31,6 +33,16 @@ class SpatialPooling extends React.Component {
 			name="connection-threshold" low={0} high={1.0} step={0.02}
 			value={this.state.connectionThreshold}
 			onUpdate={value => this.setState({ connectionThreshold: Number(value) })}
+		/>
+		const ConnectionDistribution = <NumberValue
+			name="connection-dist" low={1} high={50}
+			value={this.state.connectionDistribution}
+			onUpdate={value => this.setState({ connectionDistribution: Number(value) })}
+		/>
+		const DistributionCenter = <NumberValue
+			name="dist-center" low={0} high={1} step={0.02}
+			value={this.state.distributionCenter}
+			onUpdate={value => this.setState({ distributionCenter: Number(value) })}
 		/>
 
 		return (
@@ -67,10 +79,12 @@ class SpatialPooling extends React.Component {
 						minicolumnCount={2048}
 						connectedPercent={0.85}
 						connectionThreshold={this.state.connectionThreshold}
-						inputSpaceSize={400}
+						connectionDistribution={this.state.connectionDistribution}
+						distributionCenter={this.state.distributionCenter}
+						inputSpaceSize={500}
 					/>
 
-					{ConnectionThreshold}
+					{ConnectionThreshold}  {ConnectionDistribution} {DistributionCenter}
 
 				</Layout>
 			</div>

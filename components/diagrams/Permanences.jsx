@@ -32,7 +32,12 @@ class Permanences extends React.Component {
 
 	// setup any time params change
 	componentDidUpdate(prevProps) {
-		this.update()
+		if (this.minicolumns.length === 0
+			|| prevProps.connectionDistribution !== this.props.connectionDistribution
+			|| prevProps.distributionCenter !== this.props.distributionCenter) {
+			this.setupInitialConnectionStrengths()
+		}
+		this.update(prevProps)
 	}
 	// setup on initial mount
 	componentDidMount() {
@@ -44,27 +49,38 @@ class Permanences extends React.Component {
 	
 	// handle setting up when params are set/changed
 	update() {
-		if(this.minicolumns.length === 0) {
-			this.setupInitialConnectionStrengths()
-		}
 		this.renderMinicolumns()
 		this.renderPermanences()
 		this.renderConnections()
 		this.drawHistogram()
 	}
-
-	setupInitialConnectionStrengths() {
-		this.minicolumns = [...Array(this.props.minicolumnCount)].map(v => {
-			const perms = [...Array(this.props.inputSpaceSize)].map(v => {
-				let perm = undefined
-				if (p(this.props.connectedPercent)) {
-					perm = Math.random()
-				}
-				return perm
-			}, this)
-			return perms
-		}, this)
+	/*
+	function getRandomPerms() {
+		let independentVariables = uiValues['distr. spread']
+		let distributionCenter = uiValues['distr. center']
+		let selectedMiniColumn = ppds.get('selectedMiniColumn')
+		let potentialPool = ppds.get('potentialPools')[selectedMiniColumn]
+		let permanences = d3.range(potentialPool.length)
+				.map(d3.randomBates(independentVariables))
+				.map((val, i) => {
+						if (potentialPool[i] === 1) {
+								return val + distributionCenter - 0.5
+						} else {
+								return null
+						}
+				}).filter(v => v !== null)
+		return permanences
 	}
+
+	*/
+  
+	setupInitialConnectionStrengths() {
+		const batesFn = d3.randomBates(this.props.connectionDistribution)
+		const center = this.props.distributionCenter
+    this.minicolumns = [...Array(this.props.minicolumnCount)].map(_ => 
+      [...Array(this.props.inputSpaceSize)].map(_ => 
+        p(this.props.connectedPercent) ?  batesFn() + center - 0.5 : undefined, this), this)
+	} 
 
 	renderMinicolumns() {
 		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
