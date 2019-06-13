@@ -21,10 +21,14 @@ const SpatialPooler = simplehtm.algorithms.SpatialPooler
 class SpatialPooling extends React.Component {
 
 	state = {
+		// UI state
 		combined: 'combined',
+		// SP State
 		connectionThreshold: 0.5,
 		connectionDistribution: 25,
 		distributionCenter: 0.5,
+		connectedPercent: 0.85,
+		// Calculated updon automated data change
 		potentialPools: undefined,
 		permanences: undefined,
 		encoding: undefined,
@@ -46,25 +50,50 @@ class SpatialPooling extends React.Component {
 	})
 	weekendEncoder = new WeekendEncoder({ w: 11 })
 
+	sp = undefined
+
 	componentDidMount() {
 		this.props.startData()
 	}
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate(prevProps, prevState) {
 		if (this.props.data.value !== prevProps.data.value) {
+			// Automatic data feed upate
 			const encoding = this.encode()
-			const sp = new SpatialPooler({
-				inputCount: encoding.length,
-				size: 2048,
-				connectedPercent: 0.85,
-				connectionThreshold: 0.5,
-				winnerCount: 40,
-			})
+			if (!this.sp) {
+				// FIXME: clean up SP initialization
+				this.sp = new SpatialPooler({
+					inputCount: encoding.length,
+					size: 2048,
+					connectionThreshold: this.state.connectionThreshold,
+					batesIndependentVariables: this.state.connectionDistribution,
+					connectedPercent: this.state.connectedPercent,
+					distributionCenter: this.state.distributionCenter,
+					winnerCount: 40,
+				})
+			}
 			this.setState({
-				potentialPools: sp.getPotentialPools(),
-				permanences: sp.getPotentialPools(),
+				potentialPools: this.sp.getPotentialPools(),
+				permanences: this.sp.getPermanences(),
 				encoding: encoding,
 			})
+		} else {
+			if (prevState.connectionThreshold !== this.state.connectionThreshold
+				|| prevState.connectionDistribution !== this.state.connectionDistribution
+				|| prevState.connectedPercent !== this.state.connectedPercent
+				|| prevState.distributionCenter !== this.state.distributionCenter
+			) {
+				// FIXME: clean up SP initialization
+				this.sp = new SpatialPooler({
+					inputCount: this.state.encoding.length,
+					size: 2048,
+					connectionThreshold: this.state.connectionThreshold,
+					batesIndependentVariables: this.state.connectionDistribution,
+					connectedPercent: this.state.connectedPercent,
+					distributionCenter: this.state.distributionCenter,
+					winnerCount: 40,
+				})
+			}
 		}
 	}
 
@@ -139,11 +168,14 @@ class SpatialPooling extends React.Component {
 
 					<h3>Permanences</h3>
 
-					{/* <Permanences
+					<Permanences
 						id="permanences"
 						diagramWidth={500}
-						data={this.props.permanences}
-					/> */}
+						connectionThreshold={this.state.connectionThreshold}
+						encoding={this.state.encoding}
+						potentialPools={this.state.potentialPools}
+						permanences={this.state.permanences}
+					/>
 
 					{ConnectionThreshold}  {ConnectionDistribution} {DistributionCenter}
 
