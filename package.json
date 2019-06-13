@@ -21,7 +21,7 @@
     "react-dom": "^16.8.6",
     "react-latex": "^1.2.0",
     "react-syntax-highlighter": "^10.2.1",
-    "simplehtm": "0.2.2"
+    "simplehtm": "0.2.3"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

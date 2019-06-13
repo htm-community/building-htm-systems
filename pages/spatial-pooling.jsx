@@ -9,6 +9,7 @@ import NumberValue from '../components/input/NumberInput'
 import CombinedEncoding from '../components/diagrams/CombinedEncoding'
 import PotentialPools from '../components/diagrams/PotentialPools'
 import Permanences from '../components/diagrams/Permanences'
+import MinicolumnCompetition from '../components/diagrams/MinicolumnCompetition'
 
 const offColor = '#FFF'
 const combinedColor = '#BBB'
@@ -32,6 +33,8 @@ class SpatialPooling extends React.Component {
 		potentialPools: undefined,
 		permanences: undefined,
 		encoding: undefined,
+		overlaps: undefined,
+		winners: undefined,
 	}
 
 	scalarEncoder = new BoundedScalarEncoder({
@@ -72,9 +75,17 @@ class SpatialPooling extends React.Component {
 					winnerCount: 40,
 				})
 			}
+			// FIXME:
+			const binaryEncoding = encoding.map(color => {
+				if (color == '#BBB') return 1
+				return 0
+			})
+			const winners = this.sp.compete(binaryEncoding).map(w => w.index)
 			this.setState({
+				winners: winners,
 				potentialPools: this.sp.getPotentialPools(),
 				permanences: this.sp.getPermanences(),
+				overlaps: this.sp.getOverlaps(),
 				encoding: encoding,
 			})
 		} else {
@@ -100,6 +111,8 @@ class SpatialPooling extends React.Component {
 	encode() {
     const { data: { time, value }, combined } = this.props
 		const encoding = []
+
+		// FIXME: Don't process colors here, global encoding should be binary
 		function colorFn(bit) {
 			encoding.push(bit ? combinedColor : offColor)
 		}
@@ -178,6 +191,17 @@ class SpatialPooling extends React.Component {
 					/>
 
 					{ConnectionThreshold}  {ConnectionDistribution} {DistributionCenter}
+
+					<h3>Minicolumn Competition</h3>
+
+					<MinicolumnCompetition
+						id="minicolumnCompetition"
+						diagramWidth={500}
+						encoding={this.state.encoding}
+						potentialPools={this.state.potentialPools}
+						overlaps={this.state.overlaps}
+						winners={this.state.winners}
+					/>
 
 				</Layout>
 			</div>

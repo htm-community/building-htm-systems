@@ -308,7 +308,7 @@ class Permanences extends React.Component {
 Permanences.propTypes = {
 	id: PropTypes.string.isRequired,
 	diagramWidth: PropTypes.number,
-	minicolumnClount: PropTypes.number,
+	minicolumnCount: PropTypes.number,
 	connectedPercent: PropTypes.number,
 	data: PropTypes.object,
 }
