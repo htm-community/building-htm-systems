@@ -2,9 +2,11 @@ import React from 'react'
 import * as d3 from 'd3'
 import PropTypes from 'prop-types'
 
+// FIXME: consolidate color handling
 const ppColor = '#FDF542'
 const diagramPadding = 40
 const selectedColor = 'red'
+const connectionColor = 'blue'
 
 function getGreenToRed(percent) {
 	let r, g;
@@ -49,7 +51,7 @@ class MinicolumnCompetition extends React.Component {
 		const g = this.root.select('.input-space')
 		this.renderInput()
 		this.renderPotentialPools()
-		// this.renderConnections()
+		this.renderConnections()
 	}
 
 	renderInput() {
@@ -121,47 +123,52 @@ class MinicolumnCompetition extends React.Component {
 		rects.exit().remove()
 	}
 
-	// renderConnections() {
-	// 	const diagramWidth = this.props.diagramWidth - diagramPadding * 2
-	// 	const g = this.root.select('.connections')
-	// 	const cols = Math.floor(Math.sqrt(this.props.encoding.length))
-	// 	const cellWidth = diagramWidth / cols / 2
-	// 	const connectionThreshold = this.props.connectionThreshold
-	// 	const pools = this.props.potentialPools[this.selectedMinicolumn]
+	renderConnections() {
+		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
+		const g = this.root.select('.connections')
+		const encoding = this.props.binaryEncoding
+		const cols = Math.floor(Math.sqrt(encoding.length))
+		const cellWidth = diagramWidth / cols / 2
+		const connectionThreshold = this.props.connectionThreshold
+		const pools = this.props.potentialPools[this.selectedMinicolumn]
 
-	// 	// Split screen, this goes to the right
-	// 	g.attr('transform', `translate(${this.props.diagramWidth / 2},0)`)
+		function treatCells(cell) {
+			cell.attr('class', 'bit')
+				.attr('r', cellWidth / 3)
+				.attr('cx', (d, i) => {
+					return (pools[i] % cols) * cellWidth + (cellWidth / 2)
+				})
+				.attr('cy', (d, i) => {
+					return (Math.floor(pools[i] / cols)) * cellWidth + (cellWidth / 2)
+				})
+				.attr('stroke', (d, i) => {
+					let fill = 'none'
+					if (d > connectionThreshold) {
+						fill = connectionColor
+					}
+					return fill
+				})
+				.attr('fill', (d, i) => {
+					let fill = 'none'
+					if (d > connectionThreshold && encoding[pools[i]] === 1) {
+						fill = connectionColor
+					}
+					return fill
+				})
+		}
 
-	// 	function treatCells(cell) {
-	// 		cell.attr('class', 'bit')
-	// 			.attr('r', cellWidth / 3)
-	// 			.attr('cx', (d, i) => {
-	// 				return (pools[i] % cols) * cellWidth + (cellWidth / 2)
-	// 			})
-	// 			.attr('cy', (d, i) => {
-	// 				return (Math.floor(pools[i] / cols)) * cellWidth + (cellWidth / 2)
-	// 			})
-	// 			.attr('fill', (d, i) => {
-	// 				let fill = 'none'
-	// 				if (d > connectionThreshold) {
-	// 					fill = connectionColor
-	// 				}
-	// 				return fill
-	// 			})
-	// 	}
+		// Update
+		const circs = g.selectAll('circle')
+			.data(this.props.permanences[this.selectedMinicolumn])
+		treatCells(circs)
 
-	// 	// Update
-	// 	const circs = g.selectAll('circle')
-	// 		.data(this.props.permanences[this.selectedMinicolumn])
-	// 	treatCells(circs)
+		// Enter
+		const newRects = circs.enter().append('circle')
+		treatCells(newRects)
 
-	// 	// Enter
-	// 	const newRects = circs.enter().append('circle')
-	// 	treatCells(newRects)
-
-	// 	// Exit
-	// 	circs.exit().remove()
-	// }
+		// Exit
+		circs.exit().remove()
+	}
 
 	renderCompetition() {
 		const g = this.root.select('.competition')
@@ -193,7 +200,7 @@ class MinicolumnCompetition extends React.Component {
 				})
 				.attr('stroke', (d) => {
 					if (winners.includes(d.index)) return 'black'
-					if (d.index === selectedMinicolumn) return 'red'
+					if (d.index === selectedMinicolumn) return selectedColor
 					return 'darkgrey'
 				})
 				.attr('stroke-width', (d) => {

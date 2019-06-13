@@ -87,6 +87,7 @@ class SpatialPooling extends React.Component {
 				permanences: this.sp.getPermanences(),
 				overlaps: this.sp.getOverlaps(),
 				encoding: encoding,
+				binaryEncoding: binaryEncoding,
 			})
 		} else {
 			if (prevState.connectionThreshold !== this.state.connectionThreshold
@@ -198,9 +199,13 @@ class SpatialPooling extends React.Component {
 						id="minicolumnCompetition"
 						diagramWidth={500}
 						encoding={this.state.encoding}
+						// FIXME
+						binaryEncoding={this.state.binaryEncoding}
 						potentialPools={this.state.potentialPools}
 						overlaps={this.state.overlaps}
 						winners={this.state.winners}
+						connectionThreshold={this.state.connectionThreshold}
+						permanences={this.state.permanences}
 					/>
 
 				</Layout>
