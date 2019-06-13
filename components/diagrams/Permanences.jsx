@@ -32,12 +32,12 @@ class Permanences extends React.Component {
 
 	// setup any time params change
 	componentDidUpdate(prevProps) {
-		if (this.minicolumns.length === 0
-			|| prevProps.connectionDistribution !== this.props.connectionDistribution
-			|| prevProps.distributionCenter !== this.props.distributionCenter) {
-			this.setupInitialConnectionStrengths()
-		}
-		this.update(prevProps)
+		// if (this.minicolumns.length === 0
+		// 	|| prevProps.connectionDistribution !== this.props.connectionDistribution
+		// 	|| prevProps.distributionCenter !== this.props.distributionCenter) {
+		// 	this.setupInitialConnectionStrengths()
+		// }
+		this.update()
 	}
 	// setup on initial mount
 	componentDidMount() {
@@ -74,14 +74,6 @@ class Permanences extends React.Component {
 
 	*/
   
-	setupInitialConnectionStrengths() {
-		const batesFn = d3.randomBates(this.props.connectionDistribution)
-		const center = this.props.distributionCenter
-    this.minicolumns = [...Array(this.props.minicolumnCount)].map(_ => 
-      [...Array(this.props.inputSpaceSize)].map(_ => 
-        p(this.props.connectedPercent) ?  batesFn() + center - 0.5 : undefined, this), this)
-	} 
-
 	renderMinicolumns() {
 		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
 		const g = this.root.select('.minicolumns')

@@ -1,48 +1,18 @@
 import React from 'react'
 import * as d3 from 'd3'
 import PropTypes from 'prop-types'
-import simplehtm from 'simplehtm'
-
-var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-const { BoundedScalarEncoder, CyclicEncoder, DayOfWeekCategoryEncoder, WeekendEncoder } = simplehtm.encoders
 
 const offColor = '#FFF'
-const combinedColor = '#BBB'
 const ppColor = '#FDF542'
 const selectedColor = 'red'
 
 const diagramPadding = 40
 
-// given a percentage, return boolean that will be true that percent of the time
-const p = (percent) => Math.random() <= percent
-
-// given a connection percentage and input size, return subset of indices
-const getPotentialPool = (connectedPerc, size) => [...Array(size).keys()].filter(_ => p(connectedPerc))
-
 
 class PotentialPools extends React.Component {
 	svgRef = React.createRef() // this will give you reference to HTML DOM element
 
-	encoding = undefined
-	minicolumns = []
 	selectedMinicolumn = 0
-
-	scalarEncoder = new BoundedScalarEncoder({
-		w: 20, n: 100, min: 0, max: 1
-	})
-	dayOfWeekEncoder = new DayOfWeekCategoryEncoder({
-		w: 3
-	})
-	dayOfMonthEncoder = new CyclicEncoder({
-		w: 5, n: 40,
-		min: 1, max: 31,
-	})
-	hourOfDayEncoder = new CyclicEncoder({
-		w: 7, n: 100,
-		min: 0, max: 23,
-	})
-	weekendEncoder = new WeekendEncoder({ w: 11 })
 
 	// setup any time params change
 	componentDidUpdate(prevProps) {
@@ -58,11 +28,7 @@ class PotentialPools extends React.Component {
 	
 	// handle setting up when params are set/changed
 	update() {
-		if (this.props.data.time) {
-			this.encode()
-			if(this.minicolumns.length === 0) {
-				this.setupPotentialPools()
-			}
+		if (this.props.potentialPools) {
 			this.renderMinicolumns()
 			this.renderInputSpace()
 			this.renderPotentialPools()
@@ -70,41 +36,10 @@ class PotentialPools extends React.Component {
 		}
 	}
 
-	setupPotentialPools() {
-		let size = this.encoding.length
-		let connectedPercent = this.props.connectedPercent
-		this.minicolumns = [...Array(this.props.minicolumnCount)].map(() => {
-			return {
-				potentialPool: getPotentialPool(connectedPercent, size)
-			}
-		})
-	}
-
-	encode() {
-    const { data: { time, value }, combined } = this.props
-		const encoding = []
-		function colorFn(bit) {
-			encoding.push(bit ? combinedColor : offColor)
-		}
-
-		// scalar
-		this.scalarEncoder.encode(value).forEach(colorFn)
-		// day of week (discrete)
-		this.dayOfWeekEncoder.encode(days[time.getDay()]).forEach(colorFn)
-		// day of month
-		this.dayOfMonthEncoder.encode(time.getDate()).forEach(colorFn)
-		// hour of day
-		this.hourOfDayEncoder.encode(time.getHours()).forEach(colorFn)
-		// weekend
-		this.weekendEncoder.encode(time).forEach(colorFn)
-
-		this.encoding = encoding
-	}
-
 	renderInputSpace() {
 		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
 		const g = this.root.select('.input-space')
-		const cols = Math.floor(Math.sqrt(this.encoding.length))
+		const cols = Math.floor(Math.sqrt(this.props.encoding.length))
 		const cellWidth = diagramWidth / cols / 2
 
 		// Split screen, this goes to the right
@@ -127,7 +62,7 @@ class PotentialPools extends React.Component {
 		}
 
 		// Update
-		const rects = g.selectAll('rect').data(this.encoding)
+		const rects = g.selectAll('rect').data(this.props.encoding)
 		treatCells(rects)
 
 		// Enter
@@ -141,7 +76,7 @@ class PotentialPools extends React.Component {
 	renderMinicolumns() {
 		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
 		const g = this.root.select('.minicolumns')
-		const cols = Math.floor(Math.sqrt(this.minicolumns.length))
+		const cols = Math.floor(Math.sqrt(this.props.potentialPools.length))
 		const cellWidth = diagramWidth / cols / 2
 		const selectedMinicolumn = this.selectedMinicolumn
 
@@ -163,7 +98,7 @@ class PotentialPools extends React.Component {
 		}
 
 		// Update
-		const rects = g.selectAll('rect').data(this.minicolumns)
+		const rects = g.selectAll('rect').data(this.props.potentialPools)
 		treatCells(rects)
 
 		// Enter
@@ -172,14 +107,12 @@ class PotentialPools extends React.Component {
 
 		// Exit
 		rects.exit().remove()
-
-		
 	}
 
 	renderPotentialPools() {
 		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
 		const g = this.root.select('.potential-pool')
-		const cols = Math.floor(Math.sqrt(this.encoding.length))
+		const cols = Math.floor(Math.sqrt(this.props.encoding.length))
 		const cellWidth = diagramWidth / cols / 2
 
 		// Split screen, this goes to the right
@@ -202,7 +135,7 @@ class PotentialPools extends React.Component {
 
 		// Update
 		const rects = g.selectAll('rect').data(
-			this.minicolumns[this.selectedMinicolumn].potentialPool
+			this.props.potentialPools[this.selectedMinicolumn]
 		)
 		treatCells(rects)
 
@@ -217,9 +150,9 @@ class PotentialPools extends React.Component {
 	renderOverlay() {
 		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
 		const g = this.root.select('.overlay')
-		const cols = Math.floor(Math.sqrt(this.encoding.length))
+		const cols = Math.floor(Math.sqrt(this.props.encoding.length))
 		const cellWidth = diagramWidth / cols / 2
-		const potentialPool = this.minicolumns[this.selectedMinicolumn].potentialPool
+		const potentialPool = this.props.potentialPools[this.selectedMinicolumn]
 
 		// Split screen, this goes to the right
 		g.attr('transform',  `translate(${this.props.diagramWidth / 2},0)`)
@@ -245,7 +178,7 @@ class PotentialPools extends React.Component {
 		}
 
 		// Update
-		const rects = g.selectAll('text').data(this.encoding)
+		const rects = g.selectAll('text').data(this.props.encoding)
 		treatCells(rects)
 
 		// Enter
