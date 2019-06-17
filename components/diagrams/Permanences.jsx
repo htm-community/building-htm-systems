@@ -24,8 +24,6 @@ function rgbToHex(r, g, b) {
 class Permanences extends React.Component {
 	svgRef = React.createRef() // this will give you reference to HTML DOM element
 
-	selectedMinicolumn = 0
-
 	// setup any time params change
 	componentDidUpdate(prevProps) {
 		this.update()
@@ -54,7 +52,7 @@ class Permanences extends React.Component {
 		const g = this.root.select('.minicolumns')
 		const cols = Math.floor(Math.sqrt(this.props.permanences.length))
 		const cellWidth = diagramWidth / cols / 2
-		const selectedMinicolumn = this.selectedMinicolumn
+		const selectedMinicolumn = this.props.selectedMinicolumn
 
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
@@ -91,7 +89,8 @@ class Permanences extends React.Component {
 		const g = this.root.select('.permanences')
 		const cols = Math.floor(Math.sqrt(this.props.encoding.length))
 		const cellWidth = diagramWidth / cols / 2
-		const pools = this.props.potentialPools[this.selectedMinicolumn]
+		const selectedMinicolumn = this.props.selectedMinicolumn
+		const pools = this.props.potentialPools[selectedMinicolumn]
 
 		// Split screen, this goes to the right
 		g.attr('transform', `translate(${this.props.diagramWidth / 2},0)`)
@@ -119,7 +118,7 @@ class Permanences extends React.Component {
 
 		// Update
 		const rects = g.selectAll('rect').data(
-			this.props.permanences[this.selectedMinicolumn]
+			this.props.permanences[selectedMinicolumn]
 		)
 		treatCells(rects)
 
@@ -137,7 +136,8 @@ class Permanences extends React.Component {
 		const cols = Math.floor(Math.sqrt(this.props.encoding.length))
 		const cellWidth = diagramWidth / cols / 2
 		const connectionThreshold = this.props.connectionThreshold
-		const pools = this.props.potentialPools[this.selectedMinicolumn]
+		const selectedMinicolumn = this.props.selectedMinicolumn
+		const pools = this.props.potentialPools[selectedMinicolumn]
 
 		// Split screen, this goes to the right
 		g.attr('transform', `translate(${this.props.diagramWidth / 2},0)`)
@@ -162,7 +162,7 @@ class Permanences extends React.Component {
 
 		// Update
 		const circs = g.selectAll('circle')
-			.data(this.props.permanences[this.selectedMinicolumn])
+			.data(this.props.permanences[selectedMinicolumn])
 		treatCells(circs)
 
 		// Enter
@@ -215,7 +215,7 @@ class Permanences extends React.Component {
 		const width = this.props.diagramWidth
 		const height = 200
 
-		const data = this.props.permanences[this.selectedMinicolumn]
+		const data = this.props.permanences[this.props.selectedMinicolumn]
 
 		// Split screen, this goes to the right
 		g.attr('transform', `translate(0,240)`)
@@ -278,8 +278,8 @@ class Permanences extends React.Component {
 
 
 	handleMouseMove(e) {
-		this.selectedMinicolumn = Number(e.target.getAttribute('data-index'))
-		this.update()
+		const selectedMinicolumn = Number(e.target.getAttribute('data-index'))
+		this.props.onUpdate(selectedMinicolumn)
 	}
 
 	render() {

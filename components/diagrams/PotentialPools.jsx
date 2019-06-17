@@ -12,8 +12,6 @@ const diagramPadding = 40
 class PotentialPools extends React.Component {
 	svgRef = React.createRef() // this will give you reference to HTML DOM element
 
-	selectedMinicolumn = 0
-
 	// setup any time params change
 	componentDidUpdate(prevProps) {
 		this.update()
@@ -78,7 +76,7 @@ class PotentialPools extends React.Component {
 		const g = this.root.select('.minicolumns')
 		const cols = Math.floor(Math.sqrt(this.props.potentialPools.length))
 		const cellWidth = diagramWidth / cols / 2
-		const selectedMinicolumn = this.selectedMinicolumn
+		const selectedMinicolumn = this.props.selectedMinicolumn
 
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
@@ -135,7 +133,7 @@ class PotentialPools extends React.Component {
 
 		// Update
 		const rects = g.selectAll('rect').data(
-			this.props.potentialPools[this.selectedMinicolumn]
+			this.props.potentialPools[this.props.selectedMinicolumn]
 		)
 		treatCells(rects)
 
@@ -152,7 +150,7 @@ class PotentialPools extends React.Component {
 		const g = this.root.select('.overlay')
 		const cols = Math.floor(Math.sqrt(this.props.encoding.length))
 		const cellWidth = diagramWidth / cols / 2
-		const potentialPool = this.props.potentialPools[this.selectedMinicolumn]
+		const potentialPool = this.props.potentialPools[this.props.selectedMinicolumn]
 
 		// Split screen, this goes to the right
 		g.attr('transform',  `translate(${this.props.diagramWidth / 2},0)`)
@@ -190,8 +188,8 @@ class PotentialPools extends React.Component {
 	}
 
 	handleMouseMove(e) {
-		this.selectedMinicolumn = Number(e.target.getAttribute('data-index'))
-		this.update()
+		const selectedMinicolumn = Number(e.target.getAttribute('data-index'))
+		this.props.onUpdate(selectedMinicolumn)
 	}
 
 	render() {

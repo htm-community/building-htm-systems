@@ -1,3 +1,4 @@
+import moment from 'moment'
 import simplehtm from 'simplehtm'
 
 import React from 'react'
@@ -35,6 +36,9 @@ class SpatialPooling extends React.Component {
 		encoding: undefined,
 		overlaps: undefined,
 		winners: undefined,
+		currentDataValue: undefined,
+		currentDataTime: undefined,
+		selectedMinicolumn: 0,
 	}
 
 	scalarEncoder = new BoundedScalarEncoder({
@@ -88,10 +92,12 @@ class SpatialPooling extends React.Component {
 				overlaps: this.sp.getOverlaps(),
 				encoding: encoding,
 				binaryEncoding: binaryEncoding,
+				currentDataValue: this.props.data.value,
+				currentDataTime: moment(this.props.data.time)
+					           			.format('dddd, MMMM Do YYYY, h:mm:ss a'),
 			})
 		} else {
-			if (prevState.connectionThreshold !== this.state.connectionThreshold
-				|| prevState.connectionDistribution !== this.state.connectionDistribution
+			if (prevState.connectionDistribution !== this.state.connectionDistribution
 				|| prevState.connectedPercent !== this.state.connectedPercent
 				|| prevState.distributionCenter !== this.state.distributionCenter
 			) {
@@ -105,6 +111,9 @@ class SpatialPooling extends React.Component {
 					distributionCenter: this.state.distributionCenter,
 					winnerCount: 40,
 				})
+			} else if (prevState.connectionThreshold !== this.state.connectionThreshold) {
+				// FIXME: simplehtm SP needs to provide API to change this
+				this.sp.opts.connectionThreshold = this.state.connectionThreshold
 			}
 		}
 	}
@@ -159,6 +168,10 @@ class SpatialPooling extends React.Component {
 			<div>
 				<Layout>
 					<h2>Spatial Pooling Prototype Page</h2>
+
+					<div>
+						{this.state.currentDataTime}: {this.state.currentDataValue}
+					</div>
 					
 					<h3>Combined Encoding</h3>
 
@@ -178,7 +191,9 @@ class SpatialPooling extends React.Component {
 						diagramWidth={500}
 						encoding={this.state.encoding}
 						potentialPools={this.state.potentialPools}
-					/>
+						selectedMinicolumn={this.state.selectedMinicolumn}
+						onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
+						/>
 
 					<h3>Permanences</h3>
 
@@ -189,9 +204,15 @@ class SpatialPooling extends React.Component {
 						encoding={this.state.encoding}
 						potentialPools={this.state.potentialPools}
 						permanences={this.state.permanences}
+						selectedMinicolumn={this.state.selectedMinicolumn}
+						onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
 					/>
 
-					{ConnectionThreshold}  {ConnectionDistribution} {DistributionCenter}
+					<ul>
+						<li>Connection threshold: {ConnectionThreshold}</li>
+						<li>Connection distribution: {ConnectionDistribution}</li>
+						<li>Center of disribution: {DistributionCenter}</li>
+					</ul>
 
 					<h3>Minicolumn Competition</h3>
 
@@ -206,6 +227,8 @@ class SpatialPooling extends React.Component {
 						winners={this.state.winners}
 						connectionThreshold={this.state.connectionThreshold}
 						permanences={this.state.permanences}
+						selectedMinicolumn={this.state.selectedMinicolumn}
+						onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
 					/>
 
 				</Layout>

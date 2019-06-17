@@ -24,8 +24,6 @@ function rgbToHex(r, g, b) {
 class MinicolumnCompetition extends React.Component {
 	svgRef = React.createRef() // this will give you reference to HTML DOM element
 
-	selectedMinicolumn = 0
-
 	// setup any time params change
 	componentDidUpdate(prevProps) {
 		this.update()
@@ -49,6 +47,8 @@ class MinicolumnCompetition extends React.Component {
 
 	renderInputSpace() {
 		const g = this.root.select('.input-space')
+		// Split screen, this goes to the right
+		g.attr('transform',  `translate(${this.props.diagramWidth / 2},0)`)
 		this.renderInput()
 		this.renderPotentialPools()
 		this.renderConnections()
@@ -111,7 +111,7 @@ class MinicolumnCompetition extends React.Component {
 
 		// Update
 		const rects = g.selectAll('rect').data(
-			this.props.potentialPools[this.selectedMinicolumn]
+			this.props.potentialPools[this.props.selectedMinicolumn]
 		)
 		treatCells(rects)
 
@@ -130,7 +130,8 @@ class MinicolumnCompetition extends React.Component {
 		const cols = Math.floor(Math.sqrt(encoding.length))
 		const cellWidth = diagramWidth / cols / 2
 		const connectionThreshold = this.props.connectionThreshold
-		const pools = this.props.potentialPools[this.selectedMinicolumn]
+		const selectedMinicolumn = this.props.selectedMinicolumn
+		const pools = this.props.potentialPools[selectedMinicolumn]
 
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
@@ -159,7 +160,7 @@ class MinicolumnCompetition extends React.Component {
 
 		// Update
 		const circs = g.selectAll('circle')
-			.data(this.props.permanences[this.selectedMinicolumn])
+			.data(this.props.permanences[selectedMinicolumn])
 		treatCells(circs)
 
 		// Enter
@@ -172,9 +173,6 @@ class MinicolumnCompetition extends React.Component {
 
 	renderCompetition() {
 		const g = this.root.select('.competition')
-		// Split screen, this goes to the right
-		g.attr('transform',  `translate(${this.props.diagramWidth / 2},0)`)
-
 		if (this.props.overlaps) {
 			this.renderMinicolumns()
 		}
@@ -185,7 +183,7 @@ class MinicolumnCompetition extends React.Component {
 		const g = this.root.select('.minicolumns')
 		const cols = Math.floor(Math.sqrt(this.props.overlaps.length))
 		const cellWidth = diagramWidth / cols / 2
-		const selectedMinicolumn = this.selectedMinicolumn
+		const selectedMinicolumn = this.props.selectedMinicolumn
 
 		const maxOverlap = Math.max(...this.props.overlaps.map(o => o.overlap.length))
 		const minOverlap = Math.min(...this.props.overlaps.map(o => o.overlap.length))
@@ -237,8 +235,8 @@ class MinicolumnCompetition extends React.Component {
 
 
 	handleMouseMove(e) {
-		this.selectedMinicolumn = Number(e.target.getAttribute('data-index'))
-		this.update()
+		const selectedMinicolumn = Number(e.target.getAttribute('data-index'))
+		this.props.onUpdate(selectedMinicolumn)
 	}
 
 	render() {
