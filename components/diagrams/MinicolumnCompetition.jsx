@@ -7,6 +7,7 @@ const ppColor = '#FDF542'
 const diagramPadding = 40
 const selectedColor = 'red'
 const connectionColor = 'blue'
+const inputColor = '#AAA'
 
 function getGreenToRed(percent) {
 	let r, g;
@@ -62,7 +63,9 @@ class MinicolumnCompetition extends React.Component {
 
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
-				.attr('fill', d => d)
+				.attr('fill', d => {
+					return d === 1 ? inputColor : 'none'
+				})
 				.attr('stroke', 'darkgrey')
 				.attr('stroke-width', 0.5)
 				.attr('fill-opacity', 1)
@@ -126,7 +129,7 @@ class MinicolumnCompetition extends React.Component {
 	renderConnections() {
 		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
 		const g = this.root.select('.connections')
-		const encoding = this.props.binaryEncoding
+		const encoding = this.props.encoding
 		const cols = Math.floor(Math.sqrt(encoding.length))
 		const cellWidth = diagramWidth / cols / 2
 		const connectionThreshold = this.props.connectionThreshold

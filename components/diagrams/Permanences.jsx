@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 const offColor = '#FFF'
 const selectedColor = 'red'
 const connectionColor = 'blue'
+const inputColor = '#AAA'
 
 const diagramPadding = 40
 
@@ -184,7 +185,9 @@ class Permanences extends React.Component {
 
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
-				.attr('fill', d => d)
+				.attr('fill', d => {
+					return d === 1 ? inputColor : 'none'
+				})
 				.attr('stroke', 'darkgrey')
 				.attr('stroke-width', 0.5)
 				.attr('fill-opacity', 1)

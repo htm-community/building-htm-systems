@@ -12,13 +12,17 @@ import PotentialPools from '../components/diagrams/PotentialPools'
 import Permanences from '../components/diagrams/Permanences'
 import MinicolumnCompetition from '../components/diagrams/MinicolumnCompetition'
 
-const offColor = '#FFF'
-const combinedColor = '#BBB'
-
 var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const { BoundedScalarEncoder, CyclicEncoder, DayOfWeekCategoryEncoder, WeekendEncoder } = simplehtm.encoders
 
 const SpatialPooler = simplehtm.algorithms.SpatialPooler
+
+const minicolumnCount = 400
+const winnerCount = 20
+
+const learn = false
+const permanenceInc = 0.05
+const permanenceDec = 0.025
 
 class SpatialPooling extends React.Component {
 
@@ -42,20 +46,20 @@ class SpatialPooling extends React.Component {
 	}
 
 	scalarEncoder = new BoundedScalarEncoder({
-		w: 20, n: 100, min: 0, max: 1
+		w: 10, n: 50, min: -1, max: 1
 	})
 	dayOfWeekEncoder = new DayOfWeekCategoryEncoder({
 		w: 3
 	})
 	dayOfMonthEncoder = new CyclicEncoder({
-		w: 5, n: 40,
+		w: 5, n: 20,
 		min: 1, max: 31,
 	})
 	hourOfDayEncoder = new CyclicEncoder({
-		w: 7, n: 100,
+		w: 7, n: 50,
 		min: 0, max: 23,
 	})
-	weekendEncoder = new WeekendEncoder({ w: 11 })
+	weekendEncoder = new WeekendEncoder({ w: 7 })
 
 	sp = undefined
 
@@ -64,34 +68,20 @@ class SpatialPooling extends React.Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
+
 		if (this.props.data.value !== prevProps.data.value) {
 			// Automatic data feed upate
 			const encoding = this.encode()
 			if (!this.sp) {
-				// FIXME: clean up SP initialization
-				this.sp = new SpatialPooler({
-					inputCount: encoding.length,
-					size: 2048,
-					connectionThreshold: this.state.connectionThreshold,
-					batesIndependentVariables: this.state.connectionDistribution,
-					connectedPercent: this.state.connectedPercent,
-					distributionCenter: this.state.distributionCenter,
-					winnerCount: 40,
-				})
+				this.initializeSpatialPooler(encoding.length)
 			}
-			// FIXME:
-			const binaryEncoding = encoding.map(color => {
-				if (color == '#BBB') return 1
-				return 0
-			})
-			const winners = this.sp.compete(binaryEncoding).map(w => w.index)
+			const winners = this.sp.compete(encoding).map(w => w.index)
 			this.setState({
 				winners: winners,
 				potentialPools: this.sp.getPotentialPools(),
 				permanences: this.sp.getPermanences(),
 				overlaps: this.sp.getOverlaps(),
 				encoding: encoding,
-				binaryEncoding: binaryEncoding,
 				currentDataValue: this.props.data.value,
 				currentDataTime: moment(this.props.data.time)
 					           			.format('dddd, MMMM Do YYYY, h:mm:ss a'),
@@ -101,16 +91,7 @@ class SpatialPooling extends React.Component {
 				|| prevState.connectedPercent !== this.state.connectedPercent
 				|| prevState.distributionCenter !== this.state.distributionCenter
 			) {
-				// FIXME: clean up SP initialization
-				this.sp = new SpatialPooler({
-					inputCount: this.state.encoding.length,
-					size: 2048,
-					connectionThreshold: this.state.connectionThreshold,
-					batesIndependentVariables: this.state.connectionDistribution,
-					connectedPercent: this.state.connectedPercent,
-					distributionCenter: this.state.distributionCenter,
-					winnerCount: 40,
-				})
+				this.initializeSpatialPooler(this.state.encoding.length)
 			} else if (prevState.connectionThreshold !== this.state.connectionThreshold) {
 				// FIXME: simplehtm SP needs to provide API to change this
 				this.sp.opts.connectionThreshold = this.state.connectionThreshold
@@ -118,25 +99,38 @@ class SpatialPooling extends React.Component {
 		}
 	}
 
-	encode() {
-    const { data: { time, value }, combined } = this.props
-		const encoding = []
+	initializeSpatialPooler(inputCount) {
+		this.sp = new SpatialPooler({
+			inputCount: inputCount,
+			size: minicolumnCount,
+			connectionThreshold: this.state.connectionThreshold,
+			batesIndependentVariables: this.state.connectionDistribution,
+			connectedPercent: this.state.connectedPercent,
+			distributionCenter: this.state.distributionCenter,
+			winnerCount: winnerCount,
+			learn: learn,
+			permanenceInc: permanenceInc,
+			permanenceDec: permanenceDec,
+		})
+	}
 
-		// FIXME: Don't process colors here, global encoding should be binary
-		function colorFn(bit) {
-			encoding.push(bit ? combinedColor : offColor)
-		}
+	encode() {
+    const { data: { time, value } } = this.props
+		let encoding = []
 
 		// scalar
-		this.scalarEncoder.encode(value).forEach(colorFn)
+		encoding = encoding.concat(this.scalarEncoder.encode(value))
+		console.log(value)
 		// day of week (discrete)
-		this.dayOfWeekEncoder.encode(days[time.getDay()]).forEach(colorFn)
+		encoding = encoding.concat(this.dayOfWeekEncoder.encode(days[time.getDay()]))
 		// day of month
-		this.dayOfMonthEncoder.encode(time.getDate()).forEach(colorFn)
+		encoding = encoding.concat(this.dayOfMonthEncoder.encode(time.getDate()))
 		// hour of day
-		this.hourOfDayEncoder.encode(time.getHours()).forEach(colorFn)
+		encoding = encoding.concat(this.hourOfDayEncoder.encode(time.getHours()))
 		// weekend
-		this.weekendEncoder.encode(time).forEach(colorFn)
+		encoding = encoding.concat(this.weekendEncoder.encode(time))
+
+		console.log(encoding)
 
 		return encoding
 	}
@@ -169,9 +163,14 @@ class SpatialPooling extends React.Component {
 				<Layout>
 					<h2>Spatial Pooling Prototype Page</h2>
 
-					<div>
-						{this.state.currentDataTime}: {this.state.currentDataValue}
-					</div>
+					<table cellPadding="10px">
+						<tbody>
+						<tr>
+							<td width="50%">{this.state.currentDataValue}</td>
+							<td>{this.state.currentDataTime}</td>
+						</tr>
+						</tbody>
+					</table>
 					
 					<h3>Combined Encoding</h3>
 
@@ -220,8 +219,6 @@ class SpatialPooling extends React.Component {
 						id="minicolumnCompetition"
 						diagramWidth={500}
 						encoding={this.state.encoding}
-						// FIXME
-						binaryEncoding={this.state.binaryEncoding}
 						potentialPools={this.state.potentialPools}
 						overlaps={this.state.overlaps}
 						winners={this.state.winners}
@@ -237,4 +234,4 @@ class SpatialPooling extends React.Component {
 	}
 
 }
- export default withScalarData({ updateRate: 1000 })(SpatialPooling)
+ export default withScalarData({ updateRate: 500 })(SpatialPooling)

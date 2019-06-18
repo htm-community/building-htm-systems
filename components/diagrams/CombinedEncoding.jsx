@@ -23,20 +23,20 @@ class CombinedEncoding extends React.Component {
 	encoding = undefined
 
 	scalarEncoder = new BoundedScalarEncoder({
-		w: 20, n: 100, min: 0, max: 1
+		w: 10, n: 50, min: -1, max: 1
 	})
 	dayOfWeekEncoder = new DayOfWeekCategoryEncoder({
 		w: 3
 	})
 	dayOfMonthEncoder = new CyclicEncoder({
-		w: 5, n: 40,
+		w: 5, n: 20,
 		min: 1, max: 31,
 	})
 	hourOfDayEncoder = new CyclicEncoder({
-		w: 7, n: 100,
+		w: 7, n: 50,
 		min: 0, max: 23,
 	})
-	weekendEncoder = new WeekendEncoder({ w: 11 })
+	weekendEncoder = new WeekendEncoder({ w: 7 })
 
 	// handle setting up when params are set/changed
 	update() {

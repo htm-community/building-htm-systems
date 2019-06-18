@@ -29,13 +29,11 @@ const withScalarData = (props) => (WrappedComponent) => {
 			const dataStep = period / slicesPerPeriod // radians
 			let value = Math.sin(this.counter)
 			this.counter += dataStep
-			const min = 0.0
-			const max = 0.25
+			const min = -0.5
+			const max = 0.5
 			const jitter = Math.random() * (max - min) + min
 			if (Math.random() > 0.5) {
-				value += jitter
-			} else {
-				value -= jitter
+				value = value + jitter
 			}
 			this.timeMarker = new Date(this.timeMarker.getTime() + timeStep)
 			// I could add artificial temporal patterns here.

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 
 const offColor = '#FFF'
 const ppColor = '#FDF542'
+const inputColor = '#AAA'
 const selectedColor = 'red'
 
 const diagramPadding = 40
@@ -45,14 +46,16 @@ class PotentialPools extends React.Component {
 
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
-				.attr('fill', d => d)
+				.attr('fill', d => {
+					return d === 1 ? inputColor : offColor
+				})
 				.attr('stroke', 'darkgrey')
 				.attr('stroke-width', 0.5)
 				.attr('fill-opacity', 1)
-				.attr('x', (d, i) => {
+				.attr('x', (_, i) => {
 					return (i % cols) * cellWidth
 				})
-				.attr('y', (d, i) => {
+				.attr('y', (_, i) => {
 					return (Math.floor(i / cols)) * cellWidth
 				})
 				.attr('width', cellWidth)
@@ -157,16 +160,16 @@ class PotentialPools extends React.Component {
 
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
-				.attr('x', (d, i) => {
+				.attr('x', (_, i) => {
 					return (i % cols) * cellWidth + 2
 				})
-				.attr('y', (d, i) => {
+				.attr('y', (_, i) => {
 					return (Math.floor(i / cols)) * cellWidth + cellWidth - 2
 				})
 				.attr('font-size', cellWidth * .95)
 				.attr('font-weight', 'bolder')
 				.attr('fill', (d, i) => {
-					if(d !== offColor) return potentialPool.includes(i) ?  'green' : 'white'
+					if(d == 1) return potentialPool.includes(i) ?  'green' : 'white'
 					return 'none'
 				})
 				.text((d, i) => {
