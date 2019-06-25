@@ -11,6 +11,7 @@ import CombinedEncoding from '../components/diagrams/CombinedEncoding'
 import PotentialPools from '../components/diagrams/PotentialPools'
 import Permanences from '../components/diagrams/Permanences'
 import MinicolumnCompetition from '../components/diagrams/MinicolumnCompetition'
+import ActiveDutyCycles from '../components/diagrams/ActiveDutyCycles'
 
 var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const { BoundedScalarEncoder, CyclicEncoder, DayOfWeekCategoryEncoder, WeekendEncoder } = simplehtm.encoders
@@ -20,7 +21,7 @@ const SpatialPooler = simplehtm.algorithms.SpatialPooler
 const minicolumnCount = 400
 const winnerCount = 20
 
-const learn = false
+const learn = true
 const permanenceInc = 0.05
 const permanenceDec = 0.025
 
@@ -39,6 +40,7 @@ class SpatialPooling extends React.Component {
 		permanences: undefined,
 		encoding: undefined,
 		overlaps: undefined,
+		activeDutyCycles: undefined,
 		winners: undefined,
 		currentDataValue: undefined,
 		currentDataTime: undefined,
@@ -75,12 +77,14 @@ class SpatialPooling extends React.Component {
 			if (!this.sp) {
 				this.initializeSpatialPooler(encoding.length)
 			}
-			const winners = this.sp.compete(encoding).map(w => w.index)
+			const winners = this.sp.compete(encoding)
+			const winnerIndices = winners.map(w => w.index)
 			this.setState({
-				winners: winners,
+				winners: winnerIndices,
 				potentialPools: this.sp.getPotentialPools(),
 				permanences: this.sp.getPermanences(),
 				overlaps: this.sp.getOverlaps(),
+				activeDutyCycles: this.sp.computeActiveDutyCycles(winners),
 				encoding: encoding,
 				currentDataValue: this.props.data.value,
 				currentDataTime: moment(this.props.data.time)
@@ -120,7 +124,6 @@ class SpatialPooling extends React.Component {
 
 		// scalar
 		encoding = encoding.concat(this.scalarEncoder.encode(value))
-		console.log(value)
 		// day of week (discrete)
 		encoding = encoding.concat(this.dayOfWeekEncoder.encode(days[time.getDay()]))
 		// day of month
@@ -129,8 +132,6 @@ class SpatialPooling extends React.Component {
 		encoding = encoding.concat(this.hourOfDayEncoder.encode(time.getHours()))
 		// weekend
 		encoding = encoding.concat(this.weekendEncoder.encode(time))
-
-		console.log(encoding)
 
 		return encoding
 	}
@@ -228,10 +229,25 @@ class SpatialPooling extends React.Component {
 						onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
 					/>
 
+					<h3>Active Duty Cycles</h3>
+					
+					<ActiveDutyCycles
+						id="activeDutyCycles"
+						diagramWidth={500}
+						encoding={this.state.encoding}
+						potentialPools={this.state.potentialPools}
+						activeDutyCycles={this.state.activeDutyCycles}
+						winners={this.state.winners}
+						connectionThreshold={this.state.connectionThreshold}
+						permanences={this.state.permanences}
+						selectedMinicolumn={this.state.selectedMinicolumn}
+						onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
+					/>
+
 				</Layout>
 			</div>
 		)
 	}
 
 }
- export default withScalarData({ updateRate: 500 })(SpatialPooling)
+ export default withScalarData({ updateRate: 100 })(SpatialPooling)
