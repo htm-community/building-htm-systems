@@ -29,9 +29,6 @@ const SpatialPooler = simplehtm.algorithms.SpatialPooler
 const minicolumnCount = 400
 const winnerCount = 20
 
-const permanenceInc = 0.05
-const permanenceDec = 0.025
-
 class SpatialPooling extends React.Component {
 
 	state = {
@@ -53,6 +50,8 @@ class SpatialPooling extends React.Component {
 		currentDataTime: undefined,
 		selectedMinicolumn: 0,
 		learning: 'off',
+		permanenceInc: 0.05,
+		permanenceDec: 0.025,
 	}
 
 	scalarEncoder = new BoundedScalarEncoder({
@@ -85,8 +84,11 @@ class SpatialPooling extends React.Component {
 			if (!this.sp) {
 				this.initializeSpatialPooler(encoding.length)
 			}
-			if (this.state.learning === 'on') this.sp.enableLearning()
-			else this.sp.disableLearning()
+			if (this.state.learning === 'on') {
+				this.sp.enableLearning()
+				this.sp.opts.permanenceInc = this.state.permanenceInc
+				this.sp.opts.permanenceDec = this.state.permanenceDec
+			} else this.sp.disableLearning()
 			const winners = this.sp.compete(encoding)
 			const winnerIndices = winners.map(w => w.index)
 			this.setState({
@@ -123,8 +125,8 @@ class SpatialPooling extends React.Component {
 			distributionCenter: this.state.distributionCenter,
 			winnerCount: winnerCount,
 			learn: this.state.learning === 'on',
-			permanenceInc: permanenceInc,
-			permanenceDec: permanenceDec,
+			permanenceInc: this.state.permanenceInc,
+			permanenceDec: this.state.permanenceDec,
 		})
 	}
 
@@ -180,6 +182,17 @@ class SpatialPooling extends React.Component {
 			value={this.state.learning}
 			onChange={(value) => this.setState({ learning: value })}
 		/>
+		const PermanenceIncrement = <NumberValue
+			name="perm-inc" low={0.0} high={1.0} step={0.025}
+			value={this.state.permanenceInc}
+			onUpdate={value => this.setState({ permanenceInc: Number(value) })}
+		/>
+		const PermanenceDecrement = <NumberValue
+			name="perm-inc" low={0.0} high={1.0} step={0.025}
+			value={this.state.permanenceDec}
+			onUpdate={value => this.setState({ permanenceDec: Number(value) })}
+		/>
+
 
 
 		return (
@@ -240,7 +253,11 @@ class SpatialPooling extends React.Component {
 
 					<h3>Minicolumn Competition</h3>
 
-					<div>Learning is {ToggleLearning}</div>
+					<ul>
+						<li>Learning is {ToggleLearning}</li>
+						<li>Permanence Increment: {PermanenceIncrement}</li>
+						<li>Permanence Decrement: {PermanenceDecrement}</li>
+					</ul>
 
 					<MinicolumnCompetition
 						id="minicolumnCompetition"
