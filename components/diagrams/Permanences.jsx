@@ -183,7 +183,7 @@ class Permanences extends React.Component {
 
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
-				.attr('fill', (d, i) => i === selectedMinicolumn ? selectedColor : 'none')
+				.attr('fill', (d, i) => i === selectedMinicolumn ? selectedColor : offColor)
 				.attr('stroke', 'darkgrey')
 				.attr('stroke-width', 0.5)
 				.attr('fill-opacity', 0.5)
@@ -290,7 +290,7 @@ class Permanences extends React.Component {
 			<svg id={this.props.id}
 				ref={this.svgRef}>
 
-				<g className="minicolumns" onMouseMove={e => this.selectMinicolumn(e)}></g>
+				<g className="minicolumns" onClick={e => this.selectMinicolumn(e)}></g>
 
 				<g className="input-space">
 					<g className="input"></g>
