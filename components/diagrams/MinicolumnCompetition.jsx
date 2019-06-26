@@ -35,7 +35,7 @@ class MinicolumnCompetition extends React.Component {
 		// Sets up the d3 diagram on an SVG element.
 		this.root = d3.select(`svg#${this.props.id}`)
 			.attr('width', this.props.diagramWidth)
-			.attr('height', this.props.diagramWidth)
+			.attr('height', this.props.diagramWidth / 2)
 	}
 
 	// handle setting up when params are set/changed
@@ -49,7 +49,7 @@ class MinicolumnCompetition extends React.Component {
 	renderInputSpace() {
 		const g = this.root.select('.input-space')
 		// Split screen, this goes to the right
-		g.attr('transform',  `translate(${this.props.diagramWidth / 2},0)`)
+		g.attr('transform', `translate(${this.props.diagramWidth / 2},0)`)
 		this.renderInput()
 		this.renderPotentialPools()
 		this.renderConnections()
@@ -175,7 +175,6 @@ class MinicolumnCompetition extends React.Component {
 	}
 
 	renderCompetition() {
-		const g = this.root.select('.competition')
 		if (this.props.overlaps) {
 			this.renderMinicolumns()
 		}
@@ -236,8 +235,8 @@ class MinicolumnCompetition extends React.Component {
 		rects.exit().remove()
 	}
 
-
-	handleMouseMove(e) {
+	// Triggers consistently
+	selectMinicolumn(e) {
 		const selectedMinicolumn = Number(e.target.getAttribute('data-index'))
 		this.props.onUpdate(selectedMinicolumn)
 	}
@@ -246,17 +245,14 @@ class MinicolumnCompetition extends React.Component {
 
 		return (
 			<svg id={this.props.id}
-				className="debug"
 				ref={this.svgRef}>
+
+				<g className="minicolumns" onClick={e => this.selectMinicolumn(e)}></g>
 
 				<g className="input-space">
 					<g className="input"></g>
 					<g className="potential-pool"></g>
 					<g className="connections"></g>
-				</g>
-				
-				<g className="competition">
-					<g className="minicolumns" onMouseMove={e => this.handleMouseMove(e)}></g>
 				</g>
 
 			</svg>

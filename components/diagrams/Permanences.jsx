@@ -42,25 +42,33 @@ class Permanences extends React.Component {
 		if (this.props.permanences) {
 			this.renderMinicolumns()
 			this.renderInputSpace()
-			this.renderPermanences()
-			this.renderConnections()
 			this.drawHistogram()
 		}
 	}
 
-	renderMinicolumns() {
+	renderInputSpace() {
+		const g = this.root.select('.input-space')
+		// Split screen, this goes to the right
+		g.attr('transform', `translate(${this.props.diagramWidth / 2},0)`)
+		this.renderInput()
+		this.renderPermanences()
+		this.renderConnections()
+	}
+
+	renderInput() {
 		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
-		const g = this.root.select('.minicolumns')
-		const cols = Math.floor(Math.sqrt(this.props.permanences.length))
+		const g = this.root.select('.input')
+		const cols = Math.floor(Math.sqrt(this.props.encoding.length))
 		const cellWidth = diagramWidth / cols / 2
-		const selectedMinicolumn = this.props.selectedMinicolumn
 
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
-				.attr('fill', (d, i) => i === selectedMinicolumn ? selectedColor : 'none')
+				.attr('fill', d => {
+					return d === 1 ? inputColor : 'none'
+				})
 				.attr('stroke', 'darkgrey')
 				.attr('stroke-width', 0.5)
-				.attr('fill-opacity', 0.5)
+				.attr('fill-opacity', 1)
 				.attr('x', (d, i) => {
 					return (i % cols) * cellWidth
 				})
@@ -69,12 +77,10 @@ class Permanences extends React.Component {
 				})
 				.attr('width', cellWidth)
 				.attr('height', cellWidth)
-				.attr('data-index', (d, i) => i)
 		}
 
 		// Update
-		const rects = g.selectAll('rect')
-			.data(this.props.permanences)
+		const rects = g.selectAll('rect').data(this.props.encoding)
 		treatCells(rects)
 
 		// Enter
@@ -92,9 +98,6 @@ class Permanences extends React.Component {
 		const cellWidth = diagramWidth / cols / 2
 		const selectedMinicolumn = this.props.selectedMinicolumn
 		const pools = this.props.potentialPools[selectedMinicolumn]
-
-		// Split screen, this goes to the right
-		g.attr('transform', `translate(${this.props.diagramWidth / 2},0)`)
 
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
@@ -140,9 +143,6 @@ class Permanences extends React.Component {
 		const selectedMinicolumn = this.props.selectedMinicolumn
 		const pools = this.props.potentialPools[selectedMinicolumn]
 
-		// Split screen, this goes to the right
-		g.attr('transform', `translate(${this.props.diagramWidth / 2},0)`)
-
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
 				.attr('r', cellWidth / 3)
@@ -174,23 +174,19 @@ class Permanences extends React.Component {
 		circs.exit().remove()
 	}
 
-	renderInputSpace() {
+	renderMinicolumns() {
 		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
-		const g = this.root.select('.input-space')
-		const cols = Math.floor(Math.sqrt(this.props.encoding.length))
+		const g = this.root.select('.minicolumns')
+		const cols = Math.floor(Math.sqrt(this.props.permanences.length))
 		const cellWidth = diagramWidth / cols / 2
-
-		// Split screen, this goes to the right
-		g.attr('transform',  `translate(${this.props.diagramWidth / 2},0)`)
+		const selectedMinicolumn = this.props.selectedMinicolumn
 
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
-				.attr('fill', d => {
-					return d === 1 ? inputColor : 'none'
-				})
+				.attr('fill', (d, i) => i === selectedMinicolumn ? selectedColor : 'none')
 				.attr('stroke', 'darkgrey')
 				.attr('stroke-width', 0.5)
-				.attr('fill-opacity', 1)
+				.attr('fill-opacity', 0.5)
 				.attr('x', (d, i) => {
 					return (i % cols) * cellWidth
 				})
@@ -199,10 +195,12 @@ class Permanences extends React.Component {
 				})
 				.attr('width', cellWidth)
 				.attr('height', cellWidth)
+				.attr('data-index', (d, i) => i)
 		}
 
 		// Update
-		const rects = g.selectAll('rect').data(this.props.encoding)
+		const rects = g.selectAll('rect')
+			.data(this.props.permanences)
 		treatCells(rects)
 
 		// Enter
@@ -280,7 +278,8 @@ class Permanences extends React.Component {
 	}
 
 
-	handleMouseMove(e) {
+	// Triggers inconsistently!!
+	selectMinicolumn(e) {
 		const selectedMinicolumn = Number(e.target.getAttribute('data-index'))
 		this.props.onUpdate(selectedMinicolumn)
 	}
@@ -289,14 +288,15 @@ class Permanences extends React.Component {
 
 		return (
 			<svg id={this.props.id}
-				className="debug"
 				ref={this.svgRef}>
 
-				<g className="minicolumns" onMouseMove={e => this.handleMouseMove(e)}></g>
+				<g className="minicolumns" onClick={e => this.selectMinicolumn(e)}></g>
 
-				<g className="input-space"></g>
-				<g className="permanences"></g>
-				<g className="connections"></g>
+				<g className="input-space">
+					<g className="input"></g>
+					<g className="permanences"></g>
+					<g className="connections"></g>
+				</g>
 
 				<g className="histogram">
 					<line className="threshold" />

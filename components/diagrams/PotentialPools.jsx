@@ -22,27 +22,31 @@ class PotentialPools extends React.Component {
 		// Sets up the d3 diagram on an SVG element.
 		this.root = d3.select(`svg#${this.props.id}`)
 			.attr('width', this.props.diagramWidth)
-			.attr('height', this.props.diagramWidth)
+			.attr('height', this.props.diagramWidth / 2)
 	}
-	
+
 	// handle setting up when params are set/changed
 	update() {
 		if (this.props.potentialPools) {
 			this.renderMinicolumns()
 			this.renderInputSpace()
-			this.renderPotentialPools()
-			this.renderOverlay()
 		}
 	}
 
 	renderInputSpace() {
-		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
 		const g = this.root.select('.input-space')
+		// Split screen, this goes to the right
+		g.attr('transform', `translate(${this.props.diagramWidth / 2},0)`)
+		this.renderInput()
+		this.renderPotentialPools()
+		this.renderOverlay()
+	}
+
+	renderInput() {
+		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
+		const g = this.root.select('.input')
 		const cols = Math.floor(Math.sqrt(this.props.encoding.length))
 		const cellWidth = diagramWidth / cols / 2
-
-		// Split screen, this goes to the right
-		g.attr('transform',  `translate(${this.props.diagramWidth / 2},0)`)
 
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
@@ -116,9 +120,6 @@ class PotentialPools extends React.Component {
 		const cols = Math.floor(Math.sqrt(this.props.encoding.length))
 		const cellWidth = diagramWidth / cols / 2
 
-		// Split screen, this goes to the right
-		g.attr('transform',  `translate(${this.props.diagramWidth / 2},0)`)
-
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
 				.attr('fill', ppColor)
@@ -155,9 +156,6 @@ class PotentialPools extends React.Component {
 		const cellWidth = diagramWidth / cols / 2
 		const potentialPool = this.props.potentialPools[this.props.selectedMinicolumn]
 
-		// Split screen, this goes to the right
-		g.attr('transform',  `translate(${this.props.diagramWidth / 2},0)`)
-
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
 				.attr('x', (_, i) => {
@@ -169,11 +167,11 @@ class PotentialPools extends React.Component {
 				.attr('font-size', cellWidth * .95)
 				.attr('font-weight', 'bolder')
 				.attr('fill', (d, i) => {
-					if(d == 1) return potentialPool.includes(i) ?  'green' : 'white'
+					if (d == 1) return potentialPool.includes(i) ? 'green' : 'white'
 					return 'none'
 				})
 				.text((d, i) => {
-					if(d !== offColor) return potentialPool.includes(i) ?  '✓' : '✘'
+					if (d !== offColor) return potentialPool.includes(i) ? '✓' : '✘'
 					return ''
 				})
 		}
@@ -190,7 +188,8 @@ class PotentialPools extends React.Component {
 		rects.exit().remove()
 	}
 
-	handleMouseMove(e) {
+	// Triggers inconsistently!!
+	selectMinicolumn(e) {
 		const selectedMinicolumn = Number(e.target.getAttribute('data-index'))
 		this.props.onUpdate(selectedMinicolumn)
 	}
@@ -201,12 +200,14 @@ class PotentialPools extends React.Component {
 			<svg id={this.props.id}
 				ref={this.svgRef}>
 
-				<g className="minicolumns" onMouseMove={e => this.handleMouseMove(e)}></g>
+				<g className="minicolumns" onClick={e => this.selectMinicolumn(e)}></g>
 
-				<g className="input-space"></g>
-				<g className="potential-pool"></g>
-				<g className="overlay"></g>
-				
+				<g className="input-space">
+					<g className="input"></g>
+					<g className="potential-pool"></g>
+					<g className="overlay"></g>
+				</g>
+
 			</svg>
 		)
 	}

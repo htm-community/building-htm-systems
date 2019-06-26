@@ -214,7 +214,7 @@ class SpatialPooling extends React.Component {
 
 					<CombinedEncoding
 						id="combinedEncoding"
-						diagramWidth={500}
+						diagramWidth={200}
 						data={this.props.data}
 						combined={this.state.combined}
 					/>
@@ -246,18 +246,15 @@ class SpatialPooling extends React.Component {
 					/>
 
 					<ul>
+						<li>Learning is {ToggleLearning}</li>
+						<li>Permanence Increment: {PermanenceIncrement}</li>
+						<li>Permanence Decrement: {PermanenceDecrement}</li>
 						<li>Connection threshold: {ConnectionThreshold}</li>
 						<li>Connection distribution: {ConnectionDistribution}</li>
 						<li>Center of disribution: {DistributionCenter}</li>
 					</ul>
 
 					<h3>Minicolumn Competition</h3>
-
-					<ul>
-						<li>Learning is {ToggleLearning}</li>
-						<li>Permanence Increment: {PermanenceIncrement}</li>
-						<li>Permanence Decrement: {PermanenceDecrement}</li>
-					</ul>
 
 					<MinicolumnCompetition
 						id="minicolumnCompetition"
