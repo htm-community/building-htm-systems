@@ -290,7 +290,7 @@ class SpatialPooling extends React.Component {
 					</figure>
 
 					<div>
-						Selected minicolumn overlap: {this.state.overlaps ? this.state.overlaps[this.state.selectedMinicolumn].overlap.length : ''}
+						Selected minicolumn overlap: {this.state.overlaps ? this.state.overlaps[this.state.selectedMinicolumn].length : ''}
 					</div>
 
 					<h3>Active Duty Cycles</h3>

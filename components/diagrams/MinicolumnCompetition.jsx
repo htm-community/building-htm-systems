@@ -187,8 +187,8 @@ class MinicolumnCompetition extends React.Component {
 		const cellWidth = diagramWidth / cols / 2
 		const selectedMinicolumn = this.props.selectedMinicolumn
 
-		const maxOverlap = Math.max(...this.props.overlaps.map(o => o.overlap.length))
-		const minOverlap = Math.min(...this.props.overlaps.map(o => o.overlap.length))
+		const maxOverlap = Math.max(...this.props.overlaps.map(o => o.length))
+		const minOverlap = Math.min(...this.props.overlaps.map(o => o.length))
 		const colorScale = d3.scaleLinear([minOverlap, maxOverlap], [0, 100])
 
 		const winners = this.props.winners
@@ -196,30 +196,30 @@ class MinicolumnCompetition extends React.Component {
 		function treatCells(cell) {
 			cell.attr('class', 'bit')
 				.attr('fill', (overlap, i) => {
-					return '#' + getGreenToRed(colorScale(overlap.overlap.length))
+					return '#' + getGreenToRed(colorScale(overlap.length))
 				})
-				.attr('stroke', (d) => {
-					if (winners.includes(d.index)) return 'black'
-					if (d.index === selectedMinicolumn) return selectedColor
+				.attr('stroke', (d, i) => {
+					if (winners.includes(i)) return 'black'
+					if (i === selectedMinicolumn) return selectedColor
 					return 'darkgrey'
 				})
-				.attr('stroke-width', (d) => {
-					if (winners.includes(d.index) || d.index === selectedMinicolumn) return 1.5
+				.attr('stroke-width', (d, i) => {
+					if (winners.includes(i) || i === selectedMinicolumn) return 1.5
 					return 0.5
 				})
-				.attr('fill-opacity', (d) => {
-					if (d.index === selectedMinicolumn) return 1.0
+				.attr('fill-opacity', (d, i) => {
+					if (i === selectedMinicolumn) return 1.0
 					return 0.5
 				})
-				.attr('x', (d) => {
-					return (d.index % cols) * cellWidth
+				.attr('x', (d, i) => {
+					return (i % cols) * cellWidth
 				})
-				.attr('y', (d) => {
-					return (Math.floor(d.index / cols)) * cellWidth
+				.attr('y', (d, i) => {
+					return (Math.floor(i / cols)) * cellWidth
 				})
 				.attr('width', cellWidth)
 				.attr('height', cellWidth)
-				.attr('data-index', (d) => d.index)
+				.attr('data-index', (d, i) => i)
 		}
 
 		// Update

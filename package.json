@@ -1,33 +1,33 @@
 {
-  "name": "building-htm-systems",
-  "version": "0.2.15",
-  "description": "Supporting code for Building HTM Systems document.",
-  "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "start": "next start -p $PORT",
-    "heroku-postbuild": "npm run build",
-    "fix-code": "prettier-eslint --write 'src/**/*.{js,jsx}' "
-  },
-  "author": "matt@numenta.org",
-  "license": "AGPL-3.0",
-  "dependencies": {
-    "@zeit/next-css": "^1.0.1",
-    "d3": "^5.9.2",
-    "dat.gui": "^0.7.2",
-    "moment": "^2.22.2",
-    "next": "^8.0.4",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-latex": "^1.2.0",
-    "react-syntax-highlighter": "^10.2.1",
-    "simplehtm": "0.2.7"
-  },
-  "devDependencies": {
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.16.0",
-    "eslint-plugin-react": "^7.13.0",
-    "prettier-eslint": "^8.8.2",
-    "prettier-eslint-cli": "^4.7.1"
-  }
+	"name": "building-htm-systems",
+	"version": "0.2.15",
+	"description": "Supporting code for Building HTM Systems document.",
+	"scripts": {
+		"dev": "next",
+		"build": "next build",
+		"start": "next start -p $PORT",
+		"heroku-postbuild": "npm run build",
+		"fix-code": "prettier-eslint --write 'src/**/*.{js,jsx}' "
+	},
+	"author": "matt@numenta.org",
+	"license": "AGPL-3.0",
+	"dependencies": {
+		"@zeit/next-css": "^1.0.1",
+		"d3": "^5.9.2",
+		"dat.gui": "^0.7.2",
+		"moment": "^2.22.2",
+		"next": "^8.0.4",
+		"react": "^16.8.6",
+		"react-dom": "^16.8.6",
+		"react-latex": "^1.2.0",
+		"react-syntax-highlighter": "^10.2.1",
+		"simplehtm": "0.2.8"
+	},
+	"devDependencies": {
+		"babel-eslint": "^10.0.1",
+		"eslint": "^5.16.0",
+		"eslint-plugin-react": "^7.13.0",
+		"prettier-eslint": "^8.8.2",
+		"prettier-eslint-cli": "^4.7.1"
+	}
 }
