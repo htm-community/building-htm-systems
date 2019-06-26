@@ -23,3 +23,7 @@ a.interactive {
 .debug {
 	border: solid red 1px;
 }
+
+.player {
+	width: 20px;
+}

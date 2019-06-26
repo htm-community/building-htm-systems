@@ -2,11 +2,19 @@ import moment from 'moment'
 import simplehtm from 'simplehtm'
 
 import React from 'react'
+
+// Layout
 import Layout from '../components/Layout'
+
+// Data Stream
 import withScalarData from '../hoc/withScalarData';
+
+// Inputs
 import ToggleButton from '../components/input/ToggleButton'
 import NumberValue from '../components/input/NumberInput'
+import Player from '../components/input/Player'
 
+// Diagrams
 import CombinedEncoding from '../components/diagrams/CombinedEncoding'
 import PotentialPools from '../components/diagrams/PotentialPools'
 import Permanences from '../components/diagrams/Permanences'
@@ -88,7 +96,7 @@ class SpatialPooling extends React.Component {
 				encoding: encoding,
 				currentDataValue: this.props.data.value,
 				currentDataTime: moment(this.props.data.time)
-					           			.format('dddd, MMMM Do YYYY, h:mm:ss a'),
+					.format('dddd, MMMM Do YYYY, h:mm:ss a'),
 			})
 		} else {
 			if (prevState.connectionDistribution !== this.state.connectionDistribution
@@ -119,7 +127,7 @@ class SpatialPooling extends React.Component {
 	}
 
 	encode() {
-    const { data: { time, value } } = this.props
+		const { data: { time, value } } = this.props
 		let encoding = []
 
 		// scalar
@@ -158,6 +166,13 @@ class SpatialPooling extends React.Component {
 			value={this.state.distributionCenter}
 			onUpdate={value => this.setState({ distributionCenter: Number(value) })}
 		/>
+		const DataPlayer = <Player
+			name="data-player"
+			onUpdate={value => {
+				if (value) this.props.startData()
+				else this.props.stopData()
+			}}
+		/>
 
 		return (
 			<div>
@@ -166,13 +181,14 @@ class SpatialPooling extends React.Component {
 
 					<table cellPadding="10px">
 						<tbody>
-						<tr>
-							<td width="50%">{this.state.currentDataValue}</td>
-							<td>{this.state.currentDataTime}</td>
-						</tr>
+							<tr>
+								<td>{DataPlayer}</td>
+								<td width="50%">{this.state.currentDataValue ? this.state.currentDataValue.toFixed(3) : ''}</td>
+								<td>{this.state.currentDataTime}</td>
+							</tr>
 						</tbody>
 					</table>
-					
+
 					<h3>Combined Encoding</h3>
 
 					<CombinedEncoding
@@ -182,8 +198,8 @@ class SpatialPooling extends React.Component {
 						combined={this.state.combined}
 					/>
 
-					{ToggleCombinedInput} 
-					
+					{ToggleCombinedInput}
+
 					<h3>Potential Pools</h3>
 
 					<PotentialPools
@@ -193,7 +209,7 @@ class SpatialPooling extends React.Component {
 						potentialPools={this.state.potentialPools}
 						selectedMinicolumn={this.state.selectedMinicolumn}
 						onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
-						/>
+					/>
 
 					<h3>Permanences</h3>
 
@@ -230,7 +246,7 @@ class SpatialPooling extends React.Component {
 					/>
 
 					<h3>Active Duty Cycles</h3>
-					
+
 					<ActiveDutyCycles
 						id="activeDutyCycles"
 						diagramWidth={500}
@@ -250,4 +266,4 @@ class SpatialPooling extends React.Component {
 	}
 
 }
- export default withScalarData({ updateRate: 100 })(SpatialPooling)
+export default withScalarData({ updateRate: 1000 })(SpatialPooling)
