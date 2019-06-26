@@ -212,38 +212,53 @@ class SpatialPooling extends React.Component {
 
 					<h3>Combined Encoding</h3>
 
-					<CombinedEncoding
-						id="combinedEncoding"
-						diagramWidth={200}
-						data={this.props.data}
-						combined={this.state.combined}
-					/>
+					<figure>
+						<CombinedEncoding
+							id="combinedEncoding"
+							diagramWidth={250}
+							data={this.props.data}
+							combined={this.state.combined}
+						/>
+						<figcaption className="figure-caption">
+							<span><a href="#combinedEncoding">¶</a>Figure 1:</span> Combined encoding.
+						</figcaption>
+					</figure>
 
 					{ToggleCombinedInput}
 
 					<h3>Potential Pools</h3>
 
-					<PotentialPools
-						id="potentialPools"
-						diagramWidth={500}
-						encoding={this.state.encoding}
-						potentialPools={this.state.potentialPools}
-						selectedMinicolumn={this.state.selectedMinicolumn}
-						onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
-					/>
+					<figure>
+						<PotentialPools
+							id="potentialPools"
+							diagramWidth={500}
+							encoding={this.state.encoding}
+							potentialPools={this.state.potentialPools}
+							selectedMinicolumn={this.state.selectedMinicolumn}
+							onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
+						/>
+						<figcaption className="figure-caption">
+							<span><a href="#potentialPools">¶</a>Figure 2:</span> Potential Pools.
+						</figcaption>
+					</figure>
 
 					<h3>Permanences</h3>
 
-					<Permanences
-						id="permanences"
-						diagramWidth={500}
-						connectionThreshold={this.state.connectionThreshold}
-						encoding={this.state.encoding}
-						potentialPools={this.state.potentialPools}
-						permanences={this.state.permanences}
-						selectedMinicolumn={this.state.selectedMinicolumn}
-						onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
-					/>
+					<figure>
+						<Permanences
+							id="permanences"
+							diagramWidth={500}
+							connectionThreshold={this.state.connectionThreshold}
+							encoding={this.state.encoding}
+							potentialPools={this.state.potentialPools}
+							permanences={this.state.permanences}
+							selectedMinicolumn={this.state.selectedMinicolumn}
+							onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
+						/>
+						<figcaption className="figure-caption">
+							<span><a href="#permanences">¶</a>Figure 3:</span> Permanence values.
+						</figcaption>
+					</figure>
 
 					<ul>
 						<li>Learning is {ToggleLearning}</li>
@@ -256,33 +271,51 @@ class SpatialPooling extends React.Component {
 
 					<h3>Minicolumn Competition</h3>
 
-					<MinicolumnCompetition
-						id="minicolumnCompetition"
-						diagramWidth={500}
-						encoding={this.state.encoding}
-						potentialPools={this.state.potentialPools}
-						overlaps={this.state.overlaps}
-						winners={this.state.winners}
-						connectionThreshold={this.state.connectionThreshold}
-						permanences={this.state.permanences}
-						selectedMinicolumn={this.state.selectedMinicolumn}
-						onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
-					/>
+					<figure>
+						<MinicolumnCompetition
+							id="minicolumnCompetition"
+							diagramWidth={500}
+							encoding={this.state.encoding}
+							potentialPools={this.state.potentialPools}
+							overlaps={this.state.overlaps}
+							winners={this.state.winners}
+							connectionThreshold={this.state.connectionThreshold}
+							permanences={this.state.permanences}
+							selectedMinicolumn={this.state.selectedMinicolumn}
+							onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
+						/>
+						<figcaption className="figure-caption">
+							<span><a href="#minicolumnCompetition">¶</a>Figure 4:</span> Minicolumn competition.
+						</figcaption>
+					</figure>
+
+					<div>
+						Selected minicolumn overlap: {this.state.overlaps ? this.state.overlaps[this.state.selectedMinicolumn].overlap.length : ''}
+					</div>
 
 					<h3>Active Duty Cycles</h3>
 
-					<ActiveDutyCycles
-						id="activeDutyCycles"
-						diagramWidth={500}
-						encoding={this.state.encoding}
-						potentialPools={this.state.potentialPools}
-						activeDutyCycles={this.state.activeDutyCycles}
-						winners={this.state.winners}
-						connectionThreshold={this.state.connectionThreshold}
-						permanences={this.state.permanences}
-						selectedMinicolumn={this.state.selectedMinicolumn}
-						onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
-					/>
+					<figure>
+						<ActiveDutyCycles
+							id="activeDutyCycles"
+							diagramWidth={500}
+							encoding={this.state.encoding}
+							potentialPools={this.state.potentialPools}
+							activeDutyCycles={this.state.activeDutyCycles}
+							winners={this.state.winners}
+							connectionThreshold={this.state.connectionThreshold}
+							permanences={this.state.permanences}
+							selectedMinicolumn={this.state.selectedMinicolumn}
+							onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
+						/>
+						<figcaption className="figure-caption">
+							<span><a href="#activeDutyCycles">¶</a>Figure 5:</span> Active duty cycles.
+						</figcaption>
+					</figure>
+
+					<div>
+						Selected minicolumn ADC: {this.state.activeDutyCycles ? Math.round(this.state.activeDutyCycles[this.state.selectedMinicolumn] * 100) : ''}%
+					</div>
 
 				</Layout>
 			</div>

@@ -290,7 +290,7 @@ class Permanences extends React.Component {
 			<svg id={this.props.id}
 				ref={this.svgRef}>
 
-				<g className="minicolumns" onClick={e => this.selectMinicolumn(e)}></g>
+				<g className="minicolumns" onMouseMove={e => this.selectMinicolumn(e)}></g>
 
 				<g className="input-space">
 					<g className="input"></g>

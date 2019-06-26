@@ -27,3 +27,7 @@ a.interactive {
 .player {
 	width: 20px;
 }
+
+figure {
+	width: 500px;
+}

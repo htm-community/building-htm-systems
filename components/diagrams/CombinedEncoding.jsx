@@ -45,7 +45,7 @@ class CombinedEncoding extends React.Component {
 	}
 
 	encode() {
-    const { data: { time, value }, combined } = this.props
+		const { data: { time, value }, combined } = this.props
 		const encoding = []
 		const jointColor = combined == 'combined' ? combinedColor : undefined;
 		// scalar
@@ -80,7 +80,7 @@ class CombinedEncoding extends React.Component {
 		// Sets up the d3 diagram on an SVG element.
 		this.root = d3.select(`svg#${this.props.id}`)
 			.attr('width', this.props.diagramWidth)
-			.attr('height', this.props.diagramWidth)
+			.attr('height', this.props.diagramWidth * .8)
 	}
 
 	renderOutputCells() {
@@ -123,7 +123,7 @@ class CombinedEncoding extends React.Component {
 				ref={this.svgRef}>
 
 				<g className="output-cells"></g>
-				
+
 			</svg>
 		)
 	}
