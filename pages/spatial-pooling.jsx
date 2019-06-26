@@ -29,7 +29,6 @@ const SpatialPooler = simplehtm.algorithms.SpatialPooler
 const minicolumnCount = 400
 const winnerCount = 20
 
-const learn = true
 const permanenceInc = 0.05
 const permanenceDec = 0.025
 
@@ -53,6 +52,7 @@ class SpatialPooling extends React.Component {
 		currentDataValue: undefined,
 		currentDataTime: undefined,
 		selectedMinicolumn: 0,
+		learning: 'off',
 	}
 
 	scalarEncoder = new BoundedScalarEncoder({
@@ -85,6 +85,8 @@ class SpatialPooling extends React.Component {
 			if (!this.sp) {
 				this.initializeSpatialPooler(encoding.length)
 			}
+			if (this.state.learning === 'on') this.sp.enableLearning()
+			else this.sp.disableLearning()
 			const winners = this.sp.compete(encoding)
 			const winnerIndices = winners.map(w => w.index)
 			this.setState({
@@ -120,7 +122,7 @@ class SpatialPooling extends React.Component {
 			connectedPercent: this.state.connectedPercent,
 			distributionCenter: this.state.distributionCenter,
 			winnerCount: winnerCount,
-			learn: learn,
+			learn: this.state.learning === 'on',
 			permanenceInc: permanenceInc,
 			permanenceDec: permanenceDec,
 		})
@@ -149,7 +151,7 @@ class SpatialPooling extends React.Component {
 		const ToggleCombinedInput = <ToggleButton
 			options={['combined', 'split']}
 			value={this.state.combined}
-			onChange={(newValue) => this.setState({ combined: newValue })}
+			onChange={(value) => this.setState({ combined: value })}
 		/>
 		const ConnectionThreshold = <NumberValue
 			name="connection-threshold" low={0} high={1.0} step={0.02}
@@ -173,6 +175,12 @@ class SpatialPooling extends React.Component {
 				else this.props.stopData()
 			}}
 		/>
+		const ToggleLearning = <ToggleButton
+			options={['on', 'off']}
+			value={this.state.learning}
+			onChange={(value) => this.setState({ learning: value })}
+		/>
+
 
 		return (
 			<div>
@@ -232,6 +240,8 @@ class SpatialPooling extends React.Component {
 
 					<h3>Minicolumn Competition</h3>
 
+					<div>Learning is {ToggleLearning}</div>
+
 					<MinicolumnCompetition
 						id="minicolumnCompetition"
 						diagramWidth={500}
@@ -266,4 +276,4 @@ class SpatialPooling extends React.Component {
 	}
 
 }
-export default withScalarData({ updateRate: 1000 })(SpatialPooling)
+export default withScalarData({ updateRate: 200 })(SpatialPooling)
