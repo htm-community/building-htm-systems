@@ -124,7 +124,7 @@ class EncodingNumbers extends React.Component {
 
 					<p>Using only the code shown above, we can create an interactive visualization of this encoder. If you hover over the "scalar value" axis in the <strong><a href="#simpleScalarEncoder">Figure 1</a></strong> below, the red line moves and the current value being encoded changes. As the value changes, the encoding beneath it also changes, showing which bits are <em>on</em> (the blue ones) vs <em>off</em>. Also hover your mouse over the rectangles representing bits in the output encoding and see the range within the scalar input domain that activates that bit.</p>
 
-					<figure>
+					<figure className="figure">
 						<SimpleScalarEncoder
 							id="simpleScalarEncoder"
 							diagramWidth={500}
@@ -155,7 +155,7 @@ class EncodingNumbers extends React.Component {
 
 					<p>Now when you hover near the min and max values, you'll see that the size of the representation remains consistent. You might also notice that some bits will now <a>represent more values than others</a>.</p>
 
-					<figure>
+					<figure className="figure">
 						<SimpleScalarEncoder
 							id="boundedScalarEncoder"
 							bounded
@@ -183,7 +183,7 @@ class EncodingNumbers extends React.Component {
 						<span><a href="#code-example-3">¶</a>Code Example 3:</span>An example of the creation of an encoder and its usage.
 					</div>
 
-					<figure>
+					<figure className="figure">
 						<SimpleScalarEncoder
 							id="exampleBoundedScalarEncoder"
 							bounded
@@ -203,7 +203,7 @@ class EncodingNumbers extends React.Component {
 					<h3 id="output-parameters">Output Parameters<a href="#output-parameters">¶</a></h3>
 					<p>Encoders should give users control over the size and sparsity of encoders they create. Given constant values for the input range of 0-100, change the <code>w</code>{ParameterW} and <code>n</code>{ParameterN} values in the visualization below and observe how the output encoding changes. </p>
 
-					<figure>
+					<figure className="figure">
 						<SimpleScalarEncoder
 							id="outputRange"
 							bounded
@@ -223,7 +223,7 @@ class EncodingNumbers extends React.Component {
 					<h3 id="encoding-by-min-max">Encoding by min / max<a href="#encoding-by-min-max">¶</a></h3>
 					<p>If you know the input domain for an encoder will remain constant, the easiest way to create an encoder is by defining a minimum and maximum input range. Once an encoder is created, these values cannot be changed or else encodings will be inconsistent. To see what an encoder configuration by min/max values might be like, change the <code>min</code>{ParameterMin} and <code>max</code>{ParameterMax}.</p>
 
-					<figure>
+					<figure className="figure">
 						<SimpleScalarEncoder
 							id="byMinMaxScalarEncoder"
 							bounded
@@ -243,7 +243,7 @@ class EncodingNumbers extends React.Component {
 					<h3 id="encoding-by-bit-resolution">Encoding by bit resolution<a href="#encoding-by-bit-resolution">¶</a></h3>
 					<p>It might make more sense to create an encoder based upon the range of values each bit in the output array can represent. That is what we mean by <code>resolution</code>, the range of input values one bit represents in the output space.</p>
 
-					<figure>
+					<figure className="figure">
 						<SimpleScalarEncoder
 							id="byResolutionScalarEncoder"
 							bounded
@@ -270,7 +270,7 @@ class EncodingNumbers extends React.Component {
 
 					<p>Wow, our <code><a href="https://github.com/htm-community/simplehtm/blob/master/src/encoders/cyclicScalar.js" target="_blank">CyclicScalarEncoder</a></code> is the simplest one so far! As a value starts to approach the end of the encoding space, bits in the beginning of the array will activate and the value will <a>loop through the array as a value changes</a>. In the figure below, mouse over the line towards the max value and watch as the bits wrap to the beginning of the array.</p>
 
-					<figure>
+					<figure className="figure">
 						<CyclicScalarEncoder
 							id="cyclicEncoder"
 							diagramWidth={500}
@@ -297,7 +297,7 @@ class EncodingNumbers extends React.Component {
 
 					<p>All the examples shown so far have been of continuous encodings, because all our input ranges have been a continuous scale of numeric values. This also means that numbers near one another on the number line have been represented similarly. For example, in <strong>Figure 8</strong> below you can see encodings for two numbers: <code>4</code> and <code>5</code>. Given the encoding parameters defined below, you can see the overlapping bits in green.</p>
 
-					<figure>
+					<figure className="figure">
 						<ScalarOverlap
 							id="continuousOverlap"
 							diagramWidth={500}
@@ -326,7 +326,7 @@ class EncodingNumbers extends React.Component {
             </h3>
 					</div>
 
-					<figure>
+					<figure className="figure">
 						<DiscreteEncodingDiagram
 							id="discreteEncoding"
 							diagramWidth={500}

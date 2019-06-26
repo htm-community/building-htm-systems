@@ -212,7 +212,7 @@ class SpatialPooling extends React.Component {
 
 					<h3>Combined Encoding</h3>
 
-					<figure>
+					<figure className="figure">
 						<CombinedEncoding
 							id="combinedEncoding"
 							diagramWidth={250}
@@ -228,7 +228,7 @@ class SpatialPooling extends React.Component {
 
 					<h3>Potential Pools</h3>
 
-					<figure>
+					<figure className="figure">
 						<PotentialPools
 							id="potentialPools"
 							diagramWidth={500}
@@ -244,7 +244,7 @@ class SpatialPooling extends React.Component {
 
 					<h3>Permanences</h3>
 
-					<figure>
+					<figure className="figure">
 						<Permanences
 							id="permanences"
 							diagramWidth={500}
@@ -271,7 +271,7 @@ class SpatialPooling extends React.Component {
 
 					<h3>Minicolumn Competition</h3>
 
-					<figure>
+					<figure className="figure">
 						<MinicolumnCompetition
 							id="minicolumnCompetition"
 							diagramWidth={500}
@@ -295,7 +295,7 @@ class SpatialPooling extends React.Component {
 
 					<h3>Active Duty Cycles</h3>
 
-					<figure>
+					<figure className="figure">
 						<ActiveDutyCycles
 							id="activeDutyCycles"
 							diagramWidth={500}
@@ -323,4 +323,4 @@ class SpatialPooling extends React.Component {
 	}
 
 }
-export default withScalarData({ updateRate: 200 })(SpatialPooling)
+export default withScalarData({ updateRate: 500 })(SpatialPooling)
