@@ -5,9 +5,13 @@ import React from 'react'
 
 // Layout
 import Layout from '../components/Layout'
+import CodeSyntax from '../components/CodeSyntax'
 
 // Data Stream
 import withScalarData from '../hoc/withScalarData';
+
+// Code examples
+import examples from '../examples/spatial-pooling'
 
 // Inputs
 import ToggleButton from '../components/input/ToggleButton'
@@ -155,6 +159,11 @@ class SpatialPooling extends React.Component {
 			value={this.state.combined}
 			onChange={(value) => this.setState({ combined: value })}
 		/>
+		const ConnectedPercent = <NumberValue
+			name="connected-percent" low={0} high={1.0} step={0.05}
+			value={this.state.connectedPercent}
+			onUpdate={value => this.setState({ connectedPercent: Number(value) })}
+		/>
 		const ConnectionThreshold = <NumberValue
 			name="connection-threshold" low={0} high={1.0} step={0.02}
 			value={this.state.connectionThreshold}
@@ -193,12 +202,43 @@ class SpatialPooling extends React.Component {
 			onUpdate={value => this.setState({ permanenceDec: Number(value) })}
 		/>
 
-
-
 		return (
 			<div>
 				<Layout>
-					<h2>Spatial Pooling Prototype Page</h2>
+
+					<h1>Spatial Pooling</h1>
+
+					<p>
+						Spatial Pooling is a process that extracts semantic information from input to provide a controlled space to perform further operations. Additionally, input is converted into a sparse distributed representation (SDR), which provides further computational benefits (citation needed). Even though information is lost during this transformation, stability is gained and semantics are preserved through redundancy.
+					</p>
+
+					<p>
+						The neocortex is a homogenous sheet of neurons. It is separated into individual processing units called <a href="https://en.wikipedia.org/wiki/Cortical_column">"cortical columns"</a>. Each cortical column performs essentially the same computations, and is separated into many <a href="https://en.wikipedia.org/wiki/Cerebral_cortex#Layers_of_neocortex">layers of different types of neurons</a>. Different layers perform different processes. They can be wired to receive input from different locations in the brain, or sensory input. 
+					</p>
+
+					<p>
+						Spatial Pooling is a process that occurs in at least one of these cortical layers, throughout the neocortex, in every cortical column. A layer performing Spatial Pooling receives <em>feed forward</em> input to a population of neurons. This <em>feed forward</em> input may be sensory input, or input from other cortical areas. This input drives or causes neurons in the layer to activate.
+					</p>
+
+					<h2>Minicolumns</h2>
+
+					<p>
+						In cortical layers performing Spatial Pooling, there are structures called <a href="https://en.wikipedia.org/wiki/Cortical_minicolumn">minicolumns</a>. These structures group together neurons and force them to pay attention to the same subset of the input. The <em> feed forward input space</em> for a layer of cortex performing Spatial Pooling is the complete set of neurons that it may be connected to. This input space contains a massive amount of information. Each minicolumn receieves a unique subset of the input. We'll refer to this subset of the input as a minicolumn's <em>potential pool</em>.
+					</p>
+
+					<p>
+						Neurons simulated by Spatial Pooling can be either excitatory or inhibitory. Excitatory neurons activate to represent semantic information. Inhibitory neurons enforce minicolumn groupings for the Spatial Pooling process.
+					</p>
+
+					<p>
+						There may be thousands of minicolumn structures within a layer of a cortical column. Spatial Pooling is a competition between minicolumns to represent the information in the input space. As neuronal activations in the input space change, different minicolumns represent different input.
+					</p>
+
+					<h2>Input Space</h2>
+
+					<p>
+						Let's imagine a single scalar value changing over time. Based on previous examples of encodings, we might encoding this value in different semantic ways. For example, the scalar value could be encoded separately from the time semantics, as visualized below.
+					</p>
 
 					<table cellPadding="10px">
 						<tbody>
@@ -209,6 +249,12 @@ class SpatialPooling extends React.Component {
 							</tr>
 						</tbody>
 					</table>
+
+					<img src="/static/images/streaming-diagram-tmp.jpeg"/>
+
+					<p>
+						These semantics can be combined into one encoding that spans the entire input space for a population of neurons performing Spatial Pooling. 
+					</p>
 
 					<h3>Combined Encoding</h3>
 
@@ -224,9 +270,15 @@ class SpatialPooling extends React.Component {
 						</figcaption>
 					</figure>
 
-					{ToggleCombinedInput}
+					<p>
+						As you can see by toggling ({ToggleCombinedInput}), many different semantics of information are being encoded into the input space. However, the Spatial Pooling operation has no knowledge of these semantics or where the input comes from. Spatial Pooling uses overlapping <em>potential pools</em> of different minicolumns to extract the semantics of the input <strong>without prior knowledge</strong> of its structure.
+					</p>
 
-					<h3>Potential Pools</h3>
+					<h2>Potential Pools</h2>
+
+					<p>
+						Each minicolumn has a unique potential pool of connections to the input space. Its neurons will only ever connect to input cells that fall within this potential pool. In the diagrams below, the percent of input minicolumns could connect to is {ConnectedPercent}. In the diagram below, click on different minicolumns on the left to display their different potential pools of connections on the right. As input passes through the input space, you can see how each minicolumn is restricted to seeing only a portion of the input information. Notice the green checkmarks and white x's in the input space. These indicate input that is observed and ignored by the selected minicolumn, respectively. As you decrease the {ConnectedPercent}, you should notice that more input is ignored by each minicolumn.
+					</p>
 
 					<figure className="figure">
 						<PotentialPools
@@ -242,12 +294,33 @@ class SpatialPooling extends React.Component {
 						</figcaption>
 					</figure>
 
-					<h3>Permanences</h3>
+					<p>
+						Setting up minicolumn potential pools is not complicated. Upon initialization, each minicolumn's potential pool of connections is established using a simple random number generator. For each cell in the input space, a minicolumn either has a possibility of connecting, or not. The code below defines a minicolumn's potential pool as an array of indices of the input space to which it might connect.
+					</p>
+
+					<span>
+						<a href="#code-example-1">¶</a>Code Example 1: Establishing minicolumn potential pools.
+					</span>
+					<div id="code-example-1">
+						<CodeSyntax>{examples.code[0]}</CodeSyntax>
+					</div>
+
+					<h2>Permanences</h2>
+
+					<p>
+						The memory of all neural networks is stored in the connections between cells, called <a href="https://en.wikipedia.org/wiki/Synapse">synapses</a>. We model synapses as scalar <em>permanence values</em>. If they breach a <em>connection threshold</em>, they are connected.
+					</p>
+
+					<p>
+						Within each minicolumn's potential pool, we must establish an initial state for each connection. This represents the strength of a synapse. In the diagram below, connection permanences are displayed in a "heat map" where green is less connected and red is more connected. 
+					</p>
 
 					<figure className="figure">
 						<Permanences
 							id="permanences"
 							diagramWidth={500}
+							showConnections={false}
+							showDistribution={false}
 							connectionThreshold={this.state.connectionThreshold}
 							encoding={this.state.encoding}
 							potentialPools={this.state.potentialPools}
@@ -256,7 +329,49 @@ class SpatialPooling extends React.Component {
 							onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
 						/>
 						<figcaption className="figure-caption">
-							<span><a href="#permanences">¶</a>Figure 3:</span> Permanence values.
+							<span><a href="#permanences">¶</a>Figure 3.1:</span> Permanence values.
+						</figcaption>
+					</figure>
+
+					<p>
+						If a permanence breaches a connection threshold ({ConnectionThreshold}), we say that the connection is established, and the neuron is "connected" to the input cell. 
+					</p>
+
+					<figure className="figure">
+						<Permanences
+							id="permanences-and-connections"
+							diagramWidth={500}
+							showConnections={true}
+							showDistribution={false}
+							connectionThreshold={this.state.connectionThreshold}
+							encoding={this.state.encoding}
+							potentialPools={this.state.potentialPools}
+							permanences={this.state.permanences}
+							selectedMinicolumn={this.state.selectedMinicolumn}
+							onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
+						/>
+						<figcaption className="figure-caption">
+							<span><a href="#permanences-and-connections">¶</a>Figure 3.2:</span> Permanence values and connections.
+						</figcaption>
+					</figure>
+
+					<p>
+						In the diagrams shown above, connections are initially established in a normal disribution around a center point ({DistributionCenter}). For the initial permanences, the connection threshold ({ConnectionThreshold}) should be near the distribution center. This ensures that synapses are primed to either connect or disconnect quickly when <em>learning</em>, ensuring more entropy in the initial state of the system.
+					</p>
+					<figure className="figure">
+						<Permanences
+							id="permanences-distributions"
+							diagramWidth={500}
+							showDistribution={true}
+							connectionThreshold={this.state.connectionThreshold}
+							encoding={this.state.encoding}
+							potentialPools={this.state.potentialPools}
+							permanences={this.state.permanences}
+							selectedMinicolumn={this.state.selectedMinicolumn}
+							onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
+						/>
+						<figcaption className="figure-caption">
+							<span><a href="#permanences-distributions">¶</a>Figure 3.3:</span>Permanence values, connections, and permanence distributions.
 						</figcaption>
 					</figure>
 
