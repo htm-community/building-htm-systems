@@ -31,18 +31,22 @@ class Permanences extends React.Component {
 	}
 	// setup on initial mount
 	componentDidMount() {
+		const diagramHeight = this.props.diagramWidth / 2
 		// Sets up the d3 diagram on an SVG element.
 		this.root = d3.select(`svg#${this.props.id}`)
 			.attr('width', this.props.diagramWidth)
-			.attr('height', this.props.diagramWidth)
+			.attr('height', diagramHeight)
 	}
 
 	// handle setting up when params are set/changed
 	update() {
 		if (this.props.permanences) {
-			this.renderMinicolumns()
-			this.renderInputSpace()
-			this.drawHistogram()
+			if (!this.props.showDistribution) {
+				this.renderMinicolumns()
+				this.renderInputSpace()
+			} else {
+				this.drawHistogram()
+			}
 		}
 	}
 
@@ -52,7 +56,9 @@ class Permanences extends React.Component {
 		g.attr('transform', `translate(${this.props.diagramWidth / 2},0)`)
 		this.renderInput()
 		this.renderPermanences()
-		this.renderConnections()
+		if (this.props.showConnections) {
+			this.renderConnections()
+		}
 	}
 
 	renderInput() {
@@ -217,9 +223,6 @@ class Permanences extends React.Component {
 		const height = 200
 
 		const data = this.props.permanences[this.props.selectedMinicolumn]
-
-		// Split screen, this goes to the right
-		g.attr('transform', `translate(0,240)`)
 
 		let x = d3.scaleLinear()
 			.range([0, width]);

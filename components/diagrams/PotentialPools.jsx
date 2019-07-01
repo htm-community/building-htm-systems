@@ -216,8 +216,6 @@ class PotentialPools extends React.Component {
 PotentialPools.propTypes = {
 	id: PropTypes.string.isRequired,
 	diagramWidth: PropTypes.number,
-	minicolumnClount: PropTypes.number,
-	connectedPercent: PropTypes.number,
 	data: PropTypes.object,
 }
 
