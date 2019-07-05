@@ -11,8 +11,26 @@ for (let i = 0; i < minicolumnCount; i++) {
 return pools
 `
 
+const codeExampleTwo = `const pools = getPotentialPools()
+const allPerms = []
+// Permanence arrays match the potential pool
+pools.forEach(pool => {
+	const perms = []
+	pool.forEach(_ => {
+		let perm = randomBates()
+		// Permence must be between 0 and 1
+		if (perm > 1) perm = 1
+		if (perm < 0) perm = 0
+		perms.push(perm)
+	})
+	allPerms.push(perms)
+})
+return allPerms
+`
+
 module.exports = {
 	code: [
 		codeExampleOne,
+		codeExampleTwo,
 	]
 }

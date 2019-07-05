@@ -24,6 +24,7 @@ import PotentialPools from '../components/diagrams/PotentialPools'
 import Permanences from '../components/diagrams/Permanences'
 import MinicolumnCompetition from '../components/diagrams/MinicolumnCompetition'
 import ActiveDutyCycles from '../components/diagrams/ActiveDutyCycles'
+import DiagramStub from '../components/diagrams/DiagramStub'
 
 var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const { BoundedScalarEncoder, CyclicEncoder, DayOfWeekCategoryEncoder, WeekendEncoder } = simplehtm.encoders
@@ -31,7 +32,6 @@ const { BoundedScalarEncoder, CyclicEncoder, DayOfWeekCategoryEncoder, WeekendEn
 const SpatialPooler = simplehtm.algorithms.SpatialPooler
 
 const minicolumnCount = 400
-const winnerCount = 20
 
 class SpatialPooling extends React.Component {
 
@@ -56,6 +56,7 @@ class SpatialPooling extends React.Component {
 		learning: 'off',
 		permanenceInc: 0.05,
 		permanenceDec: 0.025,
+		kWinnerCount: 20,
 	}
 
 	scalarEncoder = new BoundedScalarEncoder({
@@ -87,6 +88,9 @@ class SpatialPooling extends React.Component {
 			const encoding = this.encode()
 			if (!this.sp) {
 				this.initializeSpatialPooler(encoding.length)
+			} else {
+				// FIXME: inappropriate intimacy
+				this.sp.opts.winnerCount = this.state.kWinnerCount
 			}
 			if (this.state.learning === 'on') {
 				this.sp.enableLearning()
@@ -127,7 +131,7 @@ class SpatialPooling extends React.Component {
 			batesIndependentVariables: this.state.connectionDistribution,
 			connectedPercent: this.state.connectedPercent,
 			distributionCenter: this.state.distributionCenter,
-			winnerCount: winnerCount,
+			winnerCount: this.state.kWinnerCount,
 			learn: this.state.learning === 'on',
 			permanenceInc: this.state.permanenceInc,
 			permanenceDec: this.state.permanenceDec,
@@ -201,6 +205,12 @@ class SpatialPooling extends React.Component {
 			value={this.state.permanenceDec}
 			onUpdate={value => this.setState({ permanenceDec: Number(value) })}
 		/>
+		const KWinnerCount = <NumberValue
+			name="k-winners" low={1} high={100}
+			value={this.state.kWinnerCount}
+			onUpdate={value => this.setState({ kWinnerCount: Number(value) })}
+		/>
+
 
 		return (
 			<div>
@@ -358,6 +368,26 @@ class SpatialPooling extends React.Component {
 					<p>
 						In the diagrams shown above, connections are initially established in a normal disribution around a center point ({DistributionCenter}). For the initial permanences, the connection threshold ({ConnectionThreshold}) should be near the distribution center. This ensures that synapses are primed to either connect or disconnect quickly when <em>learning</em>, ensuring more entropy in the initial state of the system.
 					</p>
+
+					<p>
+						There are many ways we might establish initial permanences, but the important thing is to establish most of the permanences close to the connection threshold. We will use a <a href="https://en.wikipedia.org/wiki/Bates_distribution">Bates distribution</a>, which gives us a variable to change the intensity of the distribution curve. As you increase the number of "independent variables" in the Bates distribution, the peak of the curve becomes more prominent. See this in actino by changing this value here: {ConnectionDistribution}. (See also <a href="https://en.wikipedia.org/wiki/Kurtosis">kurtosis</a>.)
+					</p>
+
+					<p>
+						Initial permanence values are established once, when the Spatial Pooler is initialized. These values will only change if learning is enabled (more on this later). The logic below uses the <a href="https://github.com/d3/d3-random#randomBates">D3JS <code>randomBates</code> function</a> to establish the values.
+					</p>
+
+					<span>
+						<a href="#code-example-2">¶</a>Code Example 2: Establishing minicolumn initial permanence values using a Random Bates distribution.
+					</span>
+					<div id="code-example-2">
+						<CodeSyntax>{examples.code[1]}</CodeSyntax>
+					</div>
+
+					<p>
+						This function returns an array of permanence values for each minicolumn. Each array defines how connected that minicolumn is toward the input space. These arrays do not cover the entire input space, but only the minicolumn's potential pool. To get a permanence value's input space cell, you must access the minicolumn's potential pool.
+					</p>
+
 					<figure className="figure">
 						<Permanences
 							id="permanences-distributions"
@@ -375,16 +405,54 @@ class SpatialPooling extends React.Component {
 						</figcaption>
 					</figure>
 
-					<ul>
-						<li>Learning is {ToggleLearning}</li>
-						<li>Permanence Increment: {PermanenceIncrement}</li>
-						<li>Permanence Decrement: {PermanenceDecrement}</li>
-						<li>Connection threshold: {ConnectionThreshold}</li>
-						<li>Connection distribution: {ConnectionDistribution}</li>
-						<li>Center of disribution: {DistributionCenter}</li>
-					</ul>
-
 					<h3>Minicolumn Competition</h3>
+
+					{DataPlayer}
+					
+					<p>
+						For each input, minicolumns compete to represent the semantics of the input. They do this by comparing their <em>overlap scores</em>. 
+					</p>
+
+					<p>
+						An <strong>overlap score</strong> denotes how strongly a minicolumn matches the current input. Press this pause button {DataPlayer} and inspect the diagram below by selecting minicolumns in the left chart. The redder minicolumns have more overlap with the current input value than the green minicolumns. As you click around the space, notice the <em>overlap score</em> changing. This is the number of connected synapses that overlap the <em>on</em> bits in the input space at this time step. You can verify this score is correct by counting the number of solid blue circles in the input space. Notice they are all on top of the a grey input box, which represents an on bit. Connected synapses that do not overlap the current input (empty circles) are not counted in the overlap score.
+					</p>
+	
+					<figure className="figure">
+						<MinicolumnCompetition
+							id="minicolumnOverlap"
+							diagramWidth={500}
+							encoding={this.state.encoding}
+							potentialPools={this.state.potentialPools}
+							overlaps={this.state.overlaps}
+							winners={this.state.winners}
+							connectionThreshold={this.state.connectionThreshold}
+							permanences={this.state.permanences}
+							selectedMinicolumn={this.state.selectedMinicolumn}
+							showCompetition={false}
+							onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
+						/>
+						<figcaption className="figure-caption">
+							<span><a href="#minicolumnOverlap">¶</a>Figure 4.1:</span> Minicolumn competition.
+						</figcaption>
+					</figure>
+
+					<p>
+						Here is another view of the minicolumns, ordered by their overlap scores. Those with higher overlap scores are at the left of the diagram. During the competition, 
+						minicolumns with the highest overlap scores should represent the input data. To choose the "winners" of the competition, we decide how many minicolumns we want to represent the data, and cut the stack at that point. In machine learning terms, this is called a <em><a href="https://en.wikipedia.org/wiki/Winner-take-all_(computing)">k-winners-take-all</a></em> operation. We can easily control the sparsity of this new representation by changing k. Try changing k here: {KWinnerCount}.
+					</p>
+
+					<figure className="figure">
+						<DiagramStub
+							id="stackRank"
+							diagramWidth={500}
+							// onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
+						/>
+						<figcaption className="figure-caption">
+							<span><a href="#stackRank">¶</a>Figure 4.2:</span> Stack ranking of minicolumns by overlap score.
+						</figcaption>
+					</figure>
+
+
 
 					<figure className="figure">
 						<MinicolumnCompetition
@@ -397,12 +465,23 @@ class SpatialPooling extends React.Component {
 							connectionThreshold={this.state.connectionThreshold}
 							permanences={this.state.permanences}
 							selectedMinicolumn={this.state.selectedMinicolumn}
+							showCompetition={true}
 							onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
 						/>
 						<figcaption className="figure-caption">
-							<span><a href="#minicolumnCompetition">¶</a>Figure 4:</span> Minicolumn competition.
+							<span><a href="#minicolumnCompetition">¶</a>Figure 4.3:</span> Minicolumn competition.
 						</figcaption>
 					</figure>
+
+					<ul>
+						<li>Learning is {ToggleLearning}</li>
+						<li>Permanence Increment: {PermanenceIncrement}</li>
+						<li>Permanence Decrement: {PermanenceDecrement}</li>
+						<li>Connection threshold: {ConnectionThreshold}</li>
+						<li>Connection distribution: {ConnectionDistribution}</li>
+						<li>Center of disribution: {DistributionCenter}</li>
+					</ul>
+
 
 					<div>
 						Selected minicolumn overlap: {this.state.overlaps ? this.state.overlaps[this.state.selectedMinicolumn].length : ''}
