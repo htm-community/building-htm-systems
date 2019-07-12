@@ -23,7 +23,7 @@ import CombinedEncoding from '../components/diagrams/CombinedEncoding'
 import PotentialPools from '../components/diagrams/PotentialPools'
 import Permanences from '../components/diagrams/Permanences'
 import MinicolumnCompetition from '../components/diagrams/MinicolumnCompetition'
-import ActiveDutyCycles from '../components/diagrams/ActiveDutyCycles'
+import DutyCycles from '../components/diagrams/DutyCycles'
 import DiagramStub from '../components/diagrams/DiagramStub'
 
 var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -49,6 +49,7 @@ class SpatialPooling extends React.Component {
 		encoding: undefined,
 		overlaps: undefined,
 		activeDutyCycles: undefined,
+		overlapDutyCycles: undefined,
 		winners: undefined,
 		currentDataValue: undefined,
 		currentDataTime: undefined,
@@ -57,6 +58,7 @@ class SpatialPooling extends React.Component {
 		permanenceInc: 0.05,
 		permanenceDec: 0.025,
 		kWinnerCount: 20,
+		dutyCyclePeriod: 100,
 	}
 
 	scalarEncoder = new BoundedScalarEncoder({
@@ -88,15 +90,7 @@ class SpatialPooling extends React.Component {
 			const encoding = this.encode()
 			if (!this.sp) {
 				this.initializeSpatialPooler(encoding.length)
-			} else {
-				// FIXME: inappropriate intimacy
-				this.sp.opts.winnerCount = this.state.kWinnerCount
 			}
-			if (this.state.learning === 'on') {
-				this.sp.enableLearning()
-				this.sp.opts.permanenceInc = this.state.permanenceInc
-				this.sp.opts.permanenceDec = this.state.permanenceDec
-			} else this.sp.disableLearning()
 			const winners = this.sp.compete(encoding)
 			const winnerIndices = winners.map(w => w.index)
 			this.setState({
@@ -104,7 +98,8 @@ class SpatialPooling extends React.Component {
 				potentialPools: this.sp.getPotentialPools(),
 				permanences: this.sp.getPermanences(),
 				overlaps: this.sp.getOverlaps(),
-				activeDutyCycles: this.sp.computeActiveDutyCycles(winners),
+				activeDutyCycles: this.sp.getMeanActiveDutyCycles(),
+				overlapDutyCycles: this.sp.getMeanOverlapDutyCycles(),
 				encoding: encoding,
 				currentDataValue: this.props.data.value,
 				currentDataTime: moment(this.props.data.time)
@@ -115,15 +110,24 @@ class SpatialPooling extends React.Component {
 				|| prevState.connectedPercent !== this.state.connectedPercent
 				|| prevState.distributionCenter !== this.state.distributionCenter
 			) {
+				// User changed something that will require an SP re-initialization
 				this.initializeSpatialPooler(this.state.encoding.length)
-			} else if (prevState.connectionThreshold !== this.state.connectionThreshold) {
-				// FIXME: simplehtm SP needs to provide API to change this
+			} else {
+				// For any other SP param changes, we won't even check, we'll just update them all
+				console.log('Updating SP params')
+				// FIXME: inappropriate intimacy
+				this.sp.opts.permanenceInc = this.state.permanenceInc
+				this.sp.opts.permanenceDec = this.state.permanenceDec
+				this.sp.opts.winnerCount = this.state.kWinnerCount
 				this.sp.opts.connectionThreshold = this.state.connectionThreshold
+				this.sp.opts.dutyCyclePeriod = this.state.dutyCyclePeriod
+				this.sp.opts.learn = this.state.learning === 'on'
 			}
 		}
 	}
 
 	initializeSpatialPooler(inputCount) {
+		console.warn('Reninitializing SP')
 		this.sp = new SpatialPooler({
 			inputCount: inputCount,
 			size: minicolumnCount,
@@ -135,6 +139,7 @@ class SpatialPooling extends React.Component {
 			learn: this.state.learning === 'on',
 			permanenceInc: this.state.permanenceInc,
 			permanenceDec: this.state.permanenceDec,
+			dutyCyclePeriod: this.state.dutyCyclePeriod,
 		})
 	}
 
@@ -210,6 +215,11 @@ class SpatialPooling extends React.Component {
 			value={this.state.kWinnerCount}
 			onUpdate={value => this.setState({ kWinnerCount: Number(value) })}
 		/>
+		const DutyCyclePeriod = <NumberValue
+			name="duty-cycle-period" low={1} high={1000}
+			value={this.state.dutyCyclePeriod}
+			onUpdate={value => this.setState({ dutyCyclePeriod: Number(value) })}
+		/>
 
 
 		return (
@@ -223,7 +233,7 @@ class SpatialPooling extends React.Component {
 					</p>
 
 					<p>
-						The neocortex is a homogenous sheet of neurons. It is separated into individual processing units called <a href="https://en.wikipedia.org/wiki/Cortical_column">"cortical columns"</a>. Each cortical column performs essentially the same computations, and is separated into many <a href="https://en.wikipedia.org/wiki/Cerebral_cortex#Layers_of_neocortex">layers of different types of neurons</a>. Different layers perform different processes. They can be wired to receive input from different locations in the brain, or sensory input. 
+						The neocortex is a homogenous sheet of neurons. It is separated into individual processing units called <a href="https://en.wikipedia.org/wiki/Cortical_column">"cortical columns"</a>. Each cortical column performs essentially the same computations, and is separated into many <a href="https://en.wikipedia.org/wiki/Cerebral_cortex#Layers_of_neocortex">layers of different types of neurons</a>. Different layers perform different processes. They can be wired to receive input from different locations in the brain, or sensory input.
 					</p>
 
 					<p>
@@ -260,10 +270,10 @@ class SpatialPooling extends React.Component {
 						</tbody>
 					</table>
 
-					<img src="/static/images/streaming-diagram-tmp.jpeg"/>
+					<img src="/static/images/streaming-diagram-tmp.jpeg" />
 
 					<p>
-						These semantics can be combined into one encoding that spans the entire input space for a population of neurons performing Spatial Pooling. 
+						These semantics can be combined into one encoding that spans the entire input space for a population of neurons performing Spatial Pooling.
 					</p>
 
 					<h3>Combined Encoding</h3>
@@ -322,7 +332,7 @@ class SpatialPooling extends React.Component {
 					</p>
 
 					<p>
-						Within each minicolumn's potential pool, we must establish an initial state for each connection. This represents the strength of a synapse. In the diagram below, connection permanences are displayed in a "heat map" where green is less connected and red is more connected. 
+						Within each minicolumn's potential pool, we must establish an initial state for each connection. This represents the strength of a synapse. In the diagram below, connection permanences are displayed in a "heat map" where green is less connected and red is more connected.
 					</p>
 
 					<figure className="figure">
@@ -344,7 +354,7 @@ class SpatialPooling extends React.Component {
 					</figure>
 
 					<p>
-						If a permanence breaches a connection threshold ({ConnectionThreshold}), we say that the connection is established, and the neuron is "connected" to the input cell. 
+						If a permanence breaches a connection threshold ({ConnectionThreshold}), we say that the connection is established, and the neuron is "connected" to the input cell.
 					</p>
 
 					<figure className="figure">
@@ -408,15 +418,15 @@ class SpatialPooling extends React.Component {
 					<h3>Minicolumn Competition</h3>
 
 					{DataPlayer}
-					
+
 					<p>
-						For each input, minicolumns compete to represent the semantics of the input. They do this by comparing their <em>overlap scores</em>. 
+						For each input, minicolumns compete to represent the semantics of the input. They do this by comparing their <em>overlap scores</em>.
 					</p>
 
 					<p>
-						An <strong>overlap score</strong> denotes how strongly a minicolumn matches the current input. Press this pause button {DataPlayer} and inspect the diagram below by selecting minicolumns in the left chart. The redder minicolumns have more overlap with the current input value than the green minicolumns. As you click around the space, notice the <em>overlap score</em> changing. This is the number of connected synapses that overlap the <em>on</em> bits in the input space at this time step. You can verify this score is correct by counting the number of solid blue circles in the input space. Notice they are all on top of the a grey input box, which represents an on bit. Connected synapses that do not overlap the current input (empty circles) are not counted in the overlap score.
+						An <strong>overlap score</strong> denotes how strongly a minicolumn matches the current input. Press this pause button above and inspect the diagram below by selecting minicolumns in the left chart. The redder minicolumns have more overlap with the current input value than the green minicolumns. As you click around the space, notice the <em>overlap score</em> changing. This is the number of connected synapses that overlap the <em>on</em> bits in the input space at this time step. You can verify this score is correct by counting the number of solid blue circles in the input space. Notice they are all on top of the a grey input box, which represents an on bit. Connected synapses that do not overlap the current input (empty circles) are not counted in the overlap score.
 					</p>
-	
+
 					<figure className="figure">
 						<MinicolumnCompetition
 							id="minicolumnOverlap"
@@ -437,7 +447,7 @@ class SpatialPooling extends React.Component {
 					</figure>
 
 					<p>
-						Here is another view of the minicolumns, ordered by their overlap scores. Those with higher overlap scores are at the left of the diagram. During the competition, 
+						Here is another view of the minicolumns, ordered by their overlap scores. Those with higher overlap scores are at the left of the diagram. During the competition,
 						minicolumns with the highest overlap scores should represent the input data. To choose the "winners" of the competition, we decide how many minicolumns we want to represent the data, and cut the stack at that point. In machine learning terms, this is called a <em><a href="https://en.wikipedia.org/wiki/Winner-take-all_(computing)">k-winners-take-all</a></em> operation. We can easily control the sparsity of this new representation by changing k. Try changing k here: {KWinnerCount}.
 					</p>
 
@@ -445,7 +455,7 @@ class SpatialPooling extends React.Component {
 						<DiagramStub
 							id="stackRank"
 							diagramWidth={500}
-							// onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
+						// onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
 						/>
 						<figcaption className="figure-caption">
 							<span><a href="#stackRank">¶</a>Figure 4.2:</span> Stack ranking of minicolumns by overlap score.
@@ -480,22 +490,24 @@ class SpatialPooling extends React.Component {
 						<li>Connection threshold: {ConnectionThreshold}</li>
 						<li>Connection distribution: {ConnectionDistribution}</li>
 						<li>Center of disribution: {DistributionCenter}</li>
+						<li>Duty Cycle Period: {DutyCyclePeriod}</li>
 					</ul>
-
 
 					<div>
 						Selected minicolumn overlap: {this.state.overlaps ? this.state.overlaps[this.state.selectedMinicolumn].length : ''}
 					</div>
 
-					<h3>Active Duty Cycles</h3>
+					<h3>Duty Cycles</h3>
+
+					<h4>Active Duty Cycles</h4>
 
 					<figure className="figure">
-						<ActiveDutyCycles
+						<DutyCycles
 							id="activeDutyCycles"
 							diagramWidth={500}
 							encoding={this.state.encoding}
 							potentialPools={this.state.potentialPools}
-							activeDutyCycles={this.state.activeDutyCycles}
+							dutyCycles={this.state.activeDutyCycles}
 							winners={this.state.winners}
 							connectionThreshold={this.state.connectionThreshold}
 							permanences={this.state.permanences}
@@ -510,6 +522,31 @@ class SpatialPooling extends React.Component {
 					<div>
 						Selected minicolumn ADC: {this.state.activeDutyCycles ? Math.round(this.state.activeDutyCycles[this.state.selectedMinicolumn] * 100) : ''}%
 					</div>
+
+					<h4>Overlap Duty Cycles</h4>
+
+					<figure className="figure">
+						<DutyCycles
+							id="overlapDutyCycles"
+							diagramWidth={500}
+							encoding={this.state.encoding}
+							potentialPools={this.state.potentialPools}
+							dutyCycles={this.state.overlapDutyCycles}
+							winners={this.state.winners}
+							connectionThreshold={this.state.connectionThreshold}
+							permanences={this.state.permanences}
+							selectedMinicolumn={this.state.selectedMinicolumn}
+							onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
+						/>
+						<figcaption className="figure-caption">
+							<span><a href="#overlapDutyCycles">¶</a>Figure 6:</span> Overlap duty cycles.
+						</figcaption>
+					</figure>
+
+					<div>
+						Selected minicolumn ODC: {this.state.overlapDutyCycles ? Math.round(this.state.overlapDutyCycles[this.state.selectedMinicolumn]) : ''}
+					</div>
+
 
 				</Layout>
 			</div>
