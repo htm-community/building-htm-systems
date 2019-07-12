@@ -133,6 +133,7 @@ class MinicolumnCompetition extends React.Component {
 		const encoding = this.props.encoding
 		const cols = Math.floor(Math.sqrt(encoding.length))
 		const cellWidth = diagramWidth / cols / 2
+		const halfCellWidth = cellWidth / 2
 		const connectionThreshold = this.props.connectionThreshold
 		const selectedMinicolumn = this.props.selectedMinicolumn
 		const pools = this.props.potentialPools[selectedMinicolumn]
@@ -141,10 +142,10 @@ class MinicolumnCompetition extends React.Component {
 			cell.attr('class', 'bit')
 				.attr('r', cellWidth / 3)
 				.attr('cx', (d, i) => {
-					return (pools[i] % cols) * cellWidth + (cellWidth / 2)
+					return (pools[i] % cols) * cellWidth + (halfCellWidth)
 				})
 				.attr('cy', (d, i) => {
-					return (Math.floor(pools[i] / cols)) * cellWidth + (cellWidth / 2)
+					return (Math.floor(pools[i] / cols)) * cellWidth + (halfCellWidth)
 				})
 				.attr('stroke', (d, i) => {
 					let stroke = 'none'
@@ -186,6 +187,7 @@ class MinicolumnCompetition extends React.Component {
 	renderCompetition() {
 		if (this.props.overlaps) {
 			this.renderMinicolumns()
+			this.renderSelectedMinicolumn()
 		}
 	}
 
@@ -194,7 +196,6 @@ class MinicolumnCompetition extends React.Component {
 		const g = this.root.select('.minicolumns')
 		const cols = Math.floor(Math.sqrt(this.props.overlaps.length))
 		const cellWidth = diagramWidth / cols / 2
-		const selectedMinicolumn = this.props.selectedMinicolumn
 		const showCompetition = this.props.showCompetition
 
 		const maxOverlap = Math.max(...this.props.overlaps.map(o => o.length))
@@ -211,18 +212,14 @@ class MinicolumnCompetition extends React.Component {
 				.attr('stroke', (d, i) => {
 					// FIXME: Refactor out winners into another group
 					if (showCompetition && winners.includes(i)) return 'black'
-					if (i === selectedMinicolumn) return selectedColor
 					return 'darkgrey'
 				})
 				.attr('stroke-width', (d, i) => {
 					// FIXME: Refactor out winners into another group
-					if (showCompetition && (winners.includes(i) || i === selectedMinicolumn)) return 1.5
+					if (showCompetition && (winners.includes(i))) return 1.5
 					return 0.5
 				})
-				.attr('fill-opacity', (d, i) => {
-					if (i === selectedMinicolumn) return 1.0
-					return 0.5
-				})
+				.attr('fill-opacity', 0.5)
 				.attr('x', (d, i) => {
 					return (i % cols) * cellWidth
 				})
@@ -245,6 +242,30 @@ class MinicolumnCompetition extends React.Component {
 
 		// Exit
 		rects.exit().remove()
+	}
+
+	renderSelectedMinicolumn() {
+		const cols = Math.floor(Math.sqrt(this.props.overlaps.length))
+		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
+
+		const circlePadding = 2
+
+		const cellWidth = diagramWidth / cols / 2
+		const halfCellWidth = cellWidth / 2
+		const radius = halfCellWidth + circlePadding
+
+		const selectedMinicolumn = this.props.selectedMinicolumn
+
+		const x = (selectedMinicolumn % cols) * cellWidth + halfCellWidth
+		const y = (Math.floor(selectedMinicolumn / cols)) * cellWidth + halfCellWidth
+
+		const highlight = this.root.select('#highlightedMinicolumn')
+		highlight.attr('cx', x)
+		highlight.attr('cy', y)
+		highlight.attr('r', radius)
+		.attr('stroke', 'red')
+		.attr('fill', 'none')
+		.attr('stroke-width', 2)
 	}
 
 	renderOverlapScore() {
@@ -276,7 +297,12 @@ class MinicolumnCompetition extends React.Component {
 			<svg id={this.props.id}
 				ref={this.svgRef}>
 
-				<g className="minicolumns" onClick={e => this.selectMinicolumn(e)}></g>
+				<g className="spatialPooler">
+					<g className="minicolumns" onClick={e => this.selectMinicolumn(e)}></g>
+					<g className="selectedMinicolumn">
+						<circle id="highlightedMinicolumn"></circle>
+					</g>
+				</g>
 
 				<text className="overlap"></text>
 

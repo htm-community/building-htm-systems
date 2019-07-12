@@ -22,7 +22,7 @@ function rgbToHex(r, g, b) {
 	return ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
 
-class ActiveDutyCycles extends React.Component {
+class DutyCycles extends React.Component {
 	svgRef = React.createRef() // this will give you reference to HTML DOM element
 
 	// setup any time params change
@@ -40,7 +40,7 @@ class ActiveDutyCycles extends React.Component {
 
 	// handle setting up when params are set/changed
 	update() {
-		if (this.props.activeDutyCycles) {
+		if (this.props.dutyCycles) {
 			this.renderInputSpace()
 			this.renderCompetition()
 		}
@@ -175,7 +175,7 @@ class ActiveDutyCycles extends React.Component {
 	}
 
 	renderCompetition() {
-		if (this.props.activeDutyCycles) {
+		if (this.props.dutyCycles) {
 			this.renderMinicolumns()
 		}
 	}
@@ -183,12 +183,12 @@ class ActiveDutyCycles extends React.Component {
 	renderMinicolumns() {
 		const diagramWidth = this.props.diagramWidth - diagramPadding * 2
 		const g = this.root.select('.minicolumns')
-		const cols = Math.floor(Math.sqrt(this.props.activeDutyCycles.length))
+		const cols = Math.floor(Math.sqrt(this.props.dutyCycles.length))
 		const cellWidth = diagramWidth / cols / 2
 		const selectedMinicolumn = this.props.selectedMinicolumn
 
-		const maxOverlap = Math.max(...this.props.activeDutyCycles)
-		const minOverlap = Math.min(...this.props.activeDutyCycles)
+		const maxOverlap = Math.max(...this.props.dutyCycles)
+		const minOverlap = Math.min(...this.props.dutyCycles)
 		// const maxOverlap = 1.0
 		// const minOverlap = 0.0
 		const colorScale = d3.scaleLinear([minOverlap, maxOverlap], [0, 100])
@@ -226,7 +226,7 @@ class ActiveDutyCycles extends React.Component {
 
 		// Update
 		const rects = g.selectAll('rect')
-			.data(this.props.activeDutyCycles)
+			.data(this.props.dutyCycles)
 		treatCells(rects)
 
 		// Enter
@@ -262,7 +262,7 @@ class ActiveDutyCycles extends React.Component {
 	}
 }
 
-ActiveDutyCycles.propTypes = {
+DutyCycles.propTypes = {
 	id: PropTypes.string.isRequired,
 	diagramWidth: PropTypes.number,
 	minicolumnCount: PropTypes.number,
@@ -270,4 +270,4 @@ ActiveDutyCycles.propTypes = {
 	data: PropTypes.object,
 }
 
-export default ActiveDutyCycles
+export default DutyCycles

@@ -23,7 +23,7 @@ import CombinedEncoding from '../components/diagrams/CombinedEncoding'
 import PotentialPools from '../components/diagrams/PotentialPools'
 import Permanences from '../components/diagrams/Permanences'
 import MinicolumnCompetition from '../components/diagrams/MinicolumnCompetition'
-import ActiveDutyCycles from '../components/diagrams/ActiveDutyCycles'
+import DutyCycles from '../components/diagrams/DutyCycles'
 import DiagramStub from '../components/diagrams/DiagramStub'
 
 var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -49,6 +49,7 @@ class SpatialPooling extends React.Component {
 		encoding: undefined,
 		overlaps: undefined,
 		activeDutyCycles: undefined,
+		overlapDutyCycles: undefined,
 		winners: undefined,
 		currentDataValue: undefined,
 		currentDataTime: undefined,
@@ -98,6 +99,7 @@ class SpatialPooling extends React.Component {
 				permanences: this.sp.getPermanences(),
 				overlaps: this.sp.getOverlaps(),
 				activeDutyCycles: this.sp.getMeanActiveDutyCycles(),
+				overlapDutyCycles: this.sp.getMeanOverlapDutyCycles(),
 				encoding: encoding,
 				currentDataValue: this.props.data.value,
 				currentDataTime: moment(this.props.data.time)
@@ -214,7 +216,7 @@ class SpatialPooling extends React.Component {
 			onUpdate={value => this.setState({ kWinnerCount: Number(value) })}
 		/>
 		const DutyCyclePeriod = <NumberValue
-			name="duty-cycle-period" low={10} high={1000}
+			name="duty-cycle-period" low={1} high={1000}
 			value={this.state.dutyCyclePeriod}
 			onUpdate={value => this.setState({ dutyCyclePeriod: Number(value) })}
 		/>
@@ -495,15 +497,17 @@ class SpatialPooling extends React.Component {
 						Selected minicolumn overlap: {this.state.overlaps ? this.state.overlaps[this.state.selectedMinicolumn].length : ''}
 					</div>
 
-					<h3>Active Duty Cycles</h3>
+					<h3>Duty Cycles</h3>
+
+					<h4>Active Duty Cycles</h4>
 
 					<figure className="figure">
-						<ActiveDutyCycles
+						<DutyCycles
 							id="activeDutyCycles"
 							diagramWidth={500}
 							encoding={this.state.encoding}
 							potentialPools={this.state.potentialPools}
-							activeDutyCycles={this.state.activeDutyCycles}
+							dutyCycles={this.state.activeDutyCycles}
 							winners={this.state.winners}
 							connectionThreshold={this.state.connectionThreshold}
 							permanences={this.state.permanences}
@@ -518,6 +522,31 @@ class SpatialPooling extends React.Component {
 					<div>
 						Selected minicolumn ADC: {this.state.activeDutyCycles ? Math.round(this.state.activeDutyCycles[this.state.selectedMinicolumn] * 100) : ''}%
 					</div>
+
+					<h4>Overlap Duty Cycles</h4>
+
+					<figure className="figure">
+						<DutyCycles
+							id="overlapDutyCycles"
+							diagramWidth={500}
+							encoding={this.state.encoding}
+							potentialPools={this.state.potentialPools}
+							dutyCycles={this.state.overlapDutyCycles}
+							winners={this.state.winners}
+							connectionThreshold={this.state.connectionThreshold}
+							permanences={this.state.permanences}
+							selectedMinicolumn={this.state.selectedMinicolumn}
+							onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
+						/>
+						<figcaption className="figure-caption">
+							<span><a href="#overlapDutyCycles">¶</a>Figure 6:</span> Overlap duty cycles.
+						</figcaption>
+					</figure>
+
+					<div>
+						Selected minicolumn ODC: {this.state.overlapDutyCycles ? Math.round(this.state.overlapDutyCycles[this.state.selectedMinicolumn]) : ''}
+					</div>
+
 
 				</Layout>
 			</div>
