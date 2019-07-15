@@ -24,7 +24,8 @@ import PotentialPools from '../components/diagrams/PotentialPools'
 import Permanences from '../components/diagrams/Permanences'
 import MinicolumnCompetition from '../components/diagrams/MinicolumnCompetition'
 import DutyCycles from '../components/diagrams/DutyCycles'
-import DiagramStub from '../components/diagrams/DiagramStub'
+import CompetitionStackRank from '../components/diagrams/CompetitionStackRank'
+// import DiagramStub from '../components/diagrams/DiagramStub'
 
 var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const { BoundedScalarEncoder, CyclicEncoder, DayOfWeekCategoryEncoder, WeekendEncoder } = simplehtm.encoders
@@ -451,18 +452,21 @@ class SpatialPooling extends React.Component {
 						minicolumns with the highest overlap scores should represent the input data. To choose the "winners" of the competition, we decide how many minicolumns we want to represent the data, and cut the stack at that point. In machine learning terms, this is called a <em><a href="https://en.wikipedia.org/wiki/Winner-take-all_(computing)">k-winners-take-all</a></em> operation. We can easily control the sparsity of this new representation by changing k. Try changing k here: {KWinnerCount}.
 					</p>
 
+					{DataPlayer}
+
 					<figure className="figure">
-						<DiagramStub
+						<CompetitionStackRank
 							id="stackRank"
 							diagramWidth={500}
-						// onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
+							overlaps={this.state.overlaps}
+							winners={this.state.winners}
+							selectedMinicolumn={this.state.selectedMinicolumn}
+							onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
 						/>
 						<figcaption className="figure-caption">
 							<span><a href="#stackRank">¶</a>Figure 4.2:</span> Stack ranking of minicolumns by overlap score.
 						</figcaption>
 					</figure>
-
-
 
 					<figure className="figure">
 						<MinicolumnCompetition

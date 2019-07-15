@@ -317,6 +317,7 @@ class MinicolumnCompetition extends React.Component {
 	}
 }
 
+// FIXME: This is all wrong at this point
 MinicolumnCompetition.propTypes = {
 	id: PropTypes.string.isRequired,
 	diagramWidth: PropTypes.number,
