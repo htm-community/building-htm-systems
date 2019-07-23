@@ -3,11 +3,6 @@ import * as d3 from 'd3'
 
 const offColor = '#FFF'
 const combinedColor = '#BBB'
-const scalarColor = '#68228B'
-const dayOfWeekColor = '#F3C300'
-const dayOfMonthColor = '#DF0024'
-const hourOfDayColor = '#2E6DB4'
-const weekendColor = '#00AC9F'
 
 const diagramPadding = 40
 
@@ -27,19 +22,19 @@ class CombinedEncoding extends React.Component {
 		const encoding = []
 		const jointColor = this.props.combined == 'combined' ? combinedColor : undefined;
 		this.props.scalarEncoding.forEach(bit => {
-			encoding.push(bit ? jointColor || scalarColor : offColor)
+			encoding.push(bit ? jointColor || this.props.scalarColor : offColor)
 		})
 		this.props.dayOfWeekEncoding.forEach(bit => {
-			encoding.push(bit ? jointColor || dayOfWeekColor : offColor)
+			encoding.push(bit ? jointColor || this.props.dayOfWeekColor : offColor)
 		})
 		this.props.dayOfMonthEncoding.forEach(bit => {
-			encoding.push(bit ? jointColor || dayOfMonthColor : offColor)
+			encoding.push(bit ? jointColor || this.props.dayOfMonthColor : offColor)
 		})
 		this.props.hourOfDayEncoding.forEach(bit => {
-			encoding.push(bit ? jointColor || hourOfDayColor : offColor)
+			encoding.push(bit ? jointColor || this.props.hourOfDayColor : offColor)
 		})
 		this.props.weekendEncoding.forEach(bit => {
-			encoding.push(bit ? jointColor || weekendColor : offColor)
+			encoding.push(bit ? jointColor || this.props.weekendColor : offColor)
 		})
 		this.encoding = encoding
 	}

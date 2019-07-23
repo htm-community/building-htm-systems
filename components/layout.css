@@ -31,3 +31,11 @@ a.interactive {
 figure {
 	width: 500px;
 }
+
+table.streaming tr.section {
+	border: solid 3px black;
+}
+
+foreignObject.label {
+	box-shadow: 4px 4px 5px -4px rgba(0,0,0,0.75);
+}

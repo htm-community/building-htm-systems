@@ -26,6 +26,7 @@ import Permanences from '../components/diagrams/Permanences'
 import MinicolumnCompetition from '../components/diagrams/MinicolumnCompetition'
 import DutyCycles from '../components/diagrams/DutyCycles'
 import CompetitionStackRank from '../components/diagrams/CompetitionStackRank'
+import StreamingScalarDiagram from '../components/diagrams/StreamingScalarDiagram'
 // import DiagramStub from '../components/diagrams/DiagramStub'
 
 var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -35,13 +36,17 @@ const { BoundedScalarEncoder, CyclicEncoder, DayOfWeekCategoryEncoder, WeekendEn
 const SpatialPooler = simplehtm.algorithms.SpatialPooler
 
 const minicolumnCount = 400
+const scalarColor = '#80bfff'
+const scalarEncodingColor = '#037ffc'
 const dayOfWeekColor = '#F3C300'
 const dayOfMonthColor = '#DF0024'
 const hourOfDayColor = '#2E6DB4'
 const weekendColor = '#00AC9F'
 
+const diagramWidth = 500
+
 const encodingParams = {
-	scalar: { n: 50, w: 10 , min: -1, max: 1 },
+	scalar: { n: 80, w: 17 , min: -1, max: 1 },
 	dayOfWeek: { n: 17, w: 5 },
 	dayOfMonth: { n: 20, w: 3, min: 1, max: 31 },
 	hourOfDay: { n: 21, w: 5, min: 0, max: 23  },
@@ -52,7 +57,7 @@ class SpatialPooling extends React.Component {
 
 	state = {
 		// UI state
-		combined: 'combined',
+		combined: 'split',
 		// SP State
 		connectionThreshold: 0.5,
 		connectionDistribution: 25,
@@ -308,63 +313,75 @@ class SpatialPooling extends React.Component {
 					</table>
 
 					<figure className="figure">
-						<table>
+						<table className="streaming">
 							<tbody>
-								<tr>
-									<td colSpan="2">
-										scalar stream placeholder
-									</td>
-								</tr>
-								<tr>
+								<tr className="section">
 									<td>
-										<SimpleCyclicEncoder
-											id="dayOfWeek"
-											diagramWidth={250}
-											label="day of week"
-											color={dayOfWeekColor}
-											encoding={this.state.dayOfWeekEncoding}
-										/>
-									</td>
-									<td>
-										<SimpleCyclicEncoder
-											id="weekend"
-											diagramWidth={250}
-											label="weekend"
-											color={weekendColor}
-											encoding={this.state.weekendEncoding}
+										<StreamingScalarDiagram
+											id="streamingScalar"
+											diagramWidth={diagramWidth}
+											diagramHeight={200}
+											windowSize={200}
+											color={scalarColor}
+											cellColor={scalarEncodingColor}
+											value={this.state.currentDataValue}
+											time={this.state.currentDataTime}
+											encoding={this.state.scalarEncoding}
 										/>
 									</td>
 								</tr>
-								<tr>
-									<td>
-										<SimpleCyclicEncoder
-											id="dayOfMonth"
-											diagramWidth={250}
-											label="day of month"
-											color={dayOfMonthColor}
-											encoding={this.state.dayOfMonthEncoding}
-										/>
-									</td>
-									<td>
-										<SimpleCyclicEncoder
-											id="hourOfDay"
-											diagramWidth={250}
-											label="hour of day"
-											color={hourOfDayColor}
-											encoding={this.state.hourOfDayEncoding}
-										/>
-									</td>
+								<tr className="section">
+									<table>
+										<tbody>
+											<tr>
+												<td>
+													<SimpleCyclicEncoder
+														id="dayOfWeek"
+														diagramWidth={diagramWidth / 2}
+														label="day of week"
+														color={dayOfWeekColor}
+														encoding={this.state.dayOfWeekEncoding}
+													/>
+												</td>
+												<td>
+													<SimpleCyclicEncoder
+														id="weekend"
+														diagramWidth={diagramWidth / 2}
+														label="weekend"
+														color={weekendColor}
+														encoding={this.state.weekendEncoding}
+													/>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<SimpleCyclicEncoder
+														id="dayOfMonth"
+														diagramWidth={diagramWidth / 2}
+														label="day of month"
+														color={dayOfMonthColor}
+														encoding={this.state.dayOfMonthEncoding}
+													/>
+												</td>
+												<td>
+													<SimpleCyclicEncoder
+														id="hourOfDay"
+														diagramWidth={diagramWidth / 2}
+														label="hour of day"
+														color={hourOfDayColor}
+														encoding={this.state.hourOfDayEncoding}
+													/>
+												</td>
+											</tr>
+										</tbody>
+									</table>
 								</tr>
 							</tbody>
 						</table>
 						<figcaption className="figure-caption">
-							<span><a href="#simpleCyclicEncoder">¶</a>Figure 7.1:</span> Simple diagram of cyclic encoder.
+							<span><a href="#streamingScalar">¶</a>Figure 1:</span> Timestamped scalar data being streamed and encoded.
 						</figcaption>
 					</figure>
-
-					<br/>
-					<img src="/static/images/streaming-diagram-tmp.jpeg" />
-					<br/>
 
 					<p>
 						These semantics can be combined into one encoding that spans the entire input space for a population of neurons performing Spatial Pooling.
@@ -375,14 +392,19 @@ class SpatialPooling extends React.Component {
 					<figure className="figure">
 						<CombinedEncoding
 							id="combinedEncoding"
-							diagramWidth={250}
+							diagramWidth={diagramWidth / 2}
 							params={encodingParams}
 							combined={this.state.combined}
 							scalarEncoding={this.state.scalarEncoding}
+							scalarColor={scalarEncodingColor}
 							dayOfWeekEncoding={this.state.dayOfWeekEncoding}
+							dayOfWeekColor={dayOfWeekColor}
 							weekendEncoding={this.state.weekendEncoding}
+							weekendColor={weekendColor}
 							dayOfMonthEncoding={this.state.dayOfMonthEncoding}
+							dayOfMonthColor={dayOfMonthColor}
 							hourOfDayEncoding={this.state.hourOfDayEncoding}
+							hourOfDayColor={hourOfDayColor}
 						/>
 						<figcaption className="figure-caption">
 							<span><a href="#combinedEncoding">¶</a>Figure 1:</span> Combined encoding.
@@ -402,7 +424,7 @@ class SpatialPooling extends React.Component {
 					<figure className="figure">
 						<PotentialPools
 							id="potentialPools"
-							diagramWidth={500}
+							diagramWidth={diagramWidth}
 							encoding={this.state.encoding}
 							potentialPools={this.state.potentialPools}
 							selectedMinicolumn={this.state.selectedMinicolumn}
@@ -437,7 +459,7 @@ class SpatialPooling extends React.Component {
 					<figure className="figure">
 						<Permanences
 							id="permanences"
-							diagramWidth={500}
+							diagramWidth={diagramWidth}
 							showConnections={false}
 							showDistribution={false}
 							connectionThreshold={this.state.connectionThreshold}
@@ -459,7 +481,7 @@ class SpatialPooling extends React.Component {
 					<figure className="figure">
 						<Permanences
 							id="permanences-and-connections"
-							diagramWidth={500}
+							diagramWidth={diagramWidth}
 							showConnections={true}
 							showDistribution={false}
 							connectionThreshold={this.state.connectionThreshold}
@@ -500,7 +522,7 @@ class SpatialPooling extends React.Component {
 					<figure className="figure">
 						<Permanences
 							id="permanences-distributions"
-							diagramWidth={500}
+							diagramWidth={diagramWidth}
 							showDistribution={true}
 							connectionThreshold={this.state.connectionThreshold}
 							encoding={this.state.encoding}
@@ -529,7 +551,7 @@ class SpatialPooling extends React.Component {
 					<figure className="figure">
 						<MinicolumnCompetition
 							id="minicolumnOverlap"
-							diagramWidth={500}
+							diagramWidth={diagramWidth}
 							encoding={this.state.encoding}
 							potentialPools={this.state.potentialPools}
 							overlaps={this.state.overlaps}
@@ -555,7 +577,7 @@ class SpatialPooling extends React.Component {
 					<figure className="figure">
 						<CompetitionStackRank
 							id="stackRank"
-							diagramWidth={500}
+							diagramWidth={diagramWidth}
 							overlaps={this.state.overlaps}
 							winners={this.state.winners}
 							selectedMinicolumn={this.state.selectedMinicolumn}
@@ -566,10 +588,12 @@ class SpatialPooling extends React.Component {
 						</figcaption>
 					</figure>
 
+					<br/>
+
 					<figure className="figure">
 						<MinicolumnCompetition
 							id="minicolumnCompetition"
-							diagramWidth={500}
+							diagramWidth={diagramWidth}
 							encoding={this.state.encoding}
 							potentialPools={this.state.potentialPools}
 							overlaps={this.state.overlaps}
@@ -606,7 +630,7 @@ class SpatialPooling extends React.Component {
 					<figure className="figure">
 						<DutyCycles
 							id="activeDutyCycles"
-							diagramWidth={500}
+							diagramWidth={diagramWidth}
 							encoding={this.state.encoding}
 							potentialPools={this.state.potentialPools}
 							dutyCycles={this.state.activeDutyCycles}
@@ -630,7 +654,7 @@ class SpatialPooling extends React.Component {
 					<figure className="figure">
 						<DutyCycles
 							id="overlapDutyCycles"
-							diagramWidth={500}
+							diagramWidth={diagramWidth}
 							encoding={this.state.encoding}
 							potentialPools={this.state.potentialPools}
 							dutyCycles={this.state.overlapDutyCycles}

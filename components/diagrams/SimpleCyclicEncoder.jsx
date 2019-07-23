@@ -53,8 +53,8 @@ class SimpleCyclicEncoder extends React.Component {
 					if (d.bit) return color
 					else return offColor
 				})
-				.attr('stroke', 'darkgrey')
-				.attr('stroke-width', 0.5)
+				.attr('stroke', 'black')
+				.attr('stroke-width', 1)
 				.attr('fill-opacity', 1)
 				.attr('cx', (d) => {
 					return d.cx
@@ -110,7 +110,7 @@ class SimpleCyclicEncoder extends React.Component {
 			.attr('stroke', 'black')
 			.attr('stroke-width', 2)
 			.attr('fill', 'white')
-			.attr('fill-opacity', 0.7)
+			.attr('fill-opacity', 0.9)
 
 		textWrapper
 			.attr('x', x)
@@ -130,7 +130,7 @@ class SimpleCyclicEncoder extends React.Component {
 				<g className="output-cells"></g>
 				<g className="label">
 					<rect></rect>
-					<foreignObject >
+					<foreignObject className="label">
 						<p xmlns="http://www.w3.org/1999/xhtml" style={{
 							padding: "0px 14px",
 							fontSize: "22pt",
