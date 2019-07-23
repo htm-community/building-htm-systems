@@ -24,7 +24,7 @@ class CyclicScalarEncoder extends React.Component {
 	encoder = undefined
 	value = this.props.value
 	animationHandle = undefined
-	
+
 	// handle setting up when params are set/changed
 	update() {
 		this.resetEncoder(this.value)
@@ -49,10 +49,10 @@ class CyclicScalarEncoder extends React.Component {
 			this.animationHandle = setInterval(() => {
 				me._transition = count / cuts
 				if (count++ >= cuts) {
-						clearInterval(me.animationHandle)
-						delete me._transition
+					clearInterval(me.animationHandle)
+					delete me._transition
 				}
-				me.renderOutputCells() 
+				me.renderOutputCells()
 			}, speed)
 		}
 	}
@@ -128,7 +128,7 @@ class CyclicScalarEncoder extends React.Component {
 	}
 
 	renderOutputCells() {
-		const { diagramWidth, displayState, n } = this.props 
+		const { diagramWidth, displayState, n } = this.props
 		const g = this.root.select('.output-cells')
 		const buckets = this.encoder.n
 		const bucketSpread = (2 * Math.PI) / buckets
@@ -183,12 +183,12 @@ class CyclicScalarEncoder extends React.Component {
 					Math.min(diagramWidth / n / 2, maxCircleRadius),
 					Math.min(circumference / n / 2, maxCircleRadius),
 				])(this._transition)
-			// Circle
+				// Circle
 			} else if (displayState === 'circle') {
 				out.cx = circleRight
 				out.cy = circleBottom
 				out.radius = Math.min(circumference / n / 2, maxCircleRadius)
-			// Circle To Line
+				// Circle To Line
 			} else if (displayState === 'line' && transitioning) {
 				out.cx = d3.scaleLinear().domain([0, 1]).range([
 					circleRight,
@@ -202,7 +202,7 @@ class CyclicScalarEncoder extends React.Component {
 					Math.min(circumference / n / 2, maxCircleRadius),
 					Math.min(diagramWidth / n / 2, maxCircleRadius),
 				])(this._transition)
-			// Line
+				// Line
 			} else if (displayState === 'line') {
 				out.cx = this.bitsToOutputDisplay(i)
 				out.cy = outputCellsTop
@@ -244,7 +244,7 @@ class CyclicScalarEncoder extends React.Component {
 			}
 		}
 	}
-				
+
 	render() {
 		return (
 			<svg id={this.props.id}
@@ -262,7 +262,7 @@ class CyclicScalarEncoder extends React.Component {
 				</g>
 
 				<g className="output-cells"></g>
-				
+
 			</svg>
 		)
 	}

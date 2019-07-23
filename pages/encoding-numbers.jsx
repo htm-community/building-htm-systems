@@ -4,6 +4,7 @@ import NumberValue from '../components/input/NumberInput'
 import ToggleButton from '../components/input/ToggleButton'
 import SimpleScalarEncoder from '../components/diagrams/SimpleScalarEncoder'
 import CyclicScalarEncoder from '../components/diagrams/CyclicScalarEncoder'
+import SimpleCyclicEncoder from '../components/diagrams/SimpleCyclicEncoder'
 import DiscreteEncodingDiagram from '../components/diagrams/DiscreteEncodingDiagram'
 import CodeSyntax from '../components/CodeSyntax'
 import examples from '../examples/encoding-numbers'
@@ -135,7 +136,7 @@ class EncodingNumbers extends React.Component {
 							w={this.state.w}
 							onUpdate={value => this.setState({ value })}
 						/>
-						<figcaption class="figure-caption">
+						<figcaption className="figure-caption">
 							<span><a href="#simpleScalarEncoder">¶</a>Figure 1:</span> A value between <code>{this.state.min}</code> and <code>{this.state.max}</code> is encoded into bits above. Move your mouse over the number line to see the encoding update. Hover over the bits in the encoding to see the value range each bit can represent.
 						</figcaption>
 					</figure>
@@ -168,7 +169,7 @@ class EncodingNumbers extends React.Component {
 							onUpdate={value => this.setState({ value })}
 						/>
 
-						<figcaption class="figure-caption">
+						<figcaption className="figure-caption">
 							<span><a href="#boundedScalarEncoder">¶</a>Figure 2:</span> Unlike the encodings in <em>Figure 1</em>, the size of all output encodings in this example will be the same because we have manually bounded the edges to force the representation to have a constant sparsity.
 						</figcaption>
 					</figure>
@@ -195,7 +196,7 @@ class EncodingNumbers extends React.Component {
 							w={10}
 						/>
 
-						<figcaption class="figure-caption">
+						<figcaption className="figure-caption">
 							<span><a href="#exampleBoundedScalarEncoder">¶</a>Figure 3:</span> The behavior of a bounded encoder with a continuous input range of <code>0</code>-<code>50</code> into a bit range of <code>10</code> on bits in a <code>100</code>-bit array.
 						</figcaption>
 					</figure>
@@ -215,7 +216,7 @@ class EncodingNumbers extends React.Component {
 							w={this.state.w}
 							onUpdate={value => this.setState({ value })}
 						/>
-						<figcaption class="figure-caption">
+						<figcaption className="figure-caption">
 							<span><a href="#outputRange">¶</a>Figure 4:</span> This visual allows you to change the number of bits in the entire encoding {ParameterN} and the number of bits on {ParameterW} .
 						</figcaption>
 					</figure>
@@ -235,7 +236,7 @@ class EncodingNumbers extends React.Component {
 							w={this.state.w}
 							onUpdate={value => this.setState({ value })}
 						/>
-						<figcaption class="figure-caption">
+						<figcaption className="figure-caption">
 							<span><a href="#byMinMaxScalarEncoder">¶</a>Figure 5:</span> Define the input range with <code>min</code>: {ParameterMin} and <code>max</code>: {ParameterMax}.
 						</figcaption>
 					</figure>
@@ -253,7 +254,7 @@ class EncodingNumbers extends React.Component {
 							n={100}
 							w={10}
 						/>
-						<figcaption class="figure-caption">
+						<figcaption className="figure-caption">
 							<span><a href="#byResolutionScalarEncoder">¶</a>Figure 6:</span> The <code>resolution</code> is the range of values that one output bit represents.
 						</figcaption>
 					</figure>
@@ -282,7 +283,7 @@ class EncodingNumbers extends React.Component {
 							displayState={this.state.cyclicEncoderState}
 							onUpdate={value => this.setState({ value })}
 						/>
-						<figcaption class="figure-caption">
+						<figcaption className="figure-caption">
 							<span><a href="#cyclicEncoder">¶</a>Figure 7:</span> Because the block of on bits wraps as you approach the end of this array, it is natural to view this as a circle by choosing the `circle` display option above.
 						</figcaption>
 					</figure>
@@ -309,7 +310,7 @@ class EncodingNumbers extends React.Component {
 							valueB={this.state.valueB}
 							onUpdate={value => this.setState(value)}
 						/>
-						<figcaption class="figure-caption">
+						<figcaption className="figure-caption">
 							<span><a href="#continuousOverlap">¶</a>Figure 8:</span> The encoding of <code>{this.state.valueA}</code> is in blue and <code>{this.state.valueB}</code> is in yellow. The overlapping bits are green.
 						</figcaption>
 					</figure>
@@ -336,7 +337,7 @@ class EncodingNumbers extends React.Component {
 							valueB={this.state.valueC}
 							onUpdate={value => this.setState({ valueC: Object.values(value)[0] })}
 						/>
-						<figcaption class="figure-caption">
+						<figcaption className="figure-caption">
 							<span><a href="#discreteEncoding">¶</a>Figure 9:</span> By limiting the input to discrete values and making <code>n</code> an even multiple of <code>w</code>, it is easy to encode discrete scalar values with a <code>CyclicScalarEncoder</code>.
 						</figcaption>
 					</figure>
