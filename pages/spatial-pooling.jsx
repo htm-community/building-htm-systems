@@ -19,6 +19,7 @@ import NumberValue from '../components/input/NumberInput'
 import Player from '../components/input/Player'
 
 // Diagrams
+import SimpleCyclicEncoder from '../components/diagrams/SimpleCyclicEncoder'
 import CombinedEncoding from '../components/diagrams/CombinedEncoding'
 import PotentialPools from '../components/diagrams/PotentialPools'
 import Permanences from '../components/diagrams/Permanences'
@@ -33,6 +34,10 @@ const { BoundedScalarEncoder, CyclicEncoder, DayOfWeekCategoryEncoder, WeekendEn
 const SpatialPooler = simplehtm.algorithms.SpatialPooler
 
 const minicolumnCount = 400
+const dayOfWeekColor = '#F3C300'
+const dayOfMonthColor = '#DF0024'
+const hourOfDayColor = '#2E6DB4'
+const weekendColor = '#00AC9F'
 
 class SpatialPooling extends React.Component {
 
@@ -270,6 +275,77 @@ class SpatialPooling extends React.Component {
 							</tr>
 						</tbody>
 					</table>
+
+					<figure className="figure">
+						<table>
+							<tbody>
+								<tr>
+									<td colspan="2">
+										placeholder
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<SimpleCyclicEncoder
+											id="dayOfWeek"
+											diagramWidth={250}
+											label="day of week"
+											value={this.state.value}
+											max={this.state.max}
+											min={this.state.min}
+											color={dayOfWeekColor}
+											n={20}
+											w={5}
+										/>
+									</td>
+									<td>
+										<SimpleCyclicEncoder
+											id="weekend"
+											diagramWidth={250}
+											label="weekend"
+											value={this.state.value}
+											max={this.state.max}
+											min={this.state.min}
+											color={weekendColor}
+											n={15}
+											w={4}
+										/>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<SimpleCyclicEncoder
+											id="dayOfMonth"
+											diagramWidth={250}
+											label="day of month"
+											value={this.state.value}
+											max={this.state.max}
+											min={this.state.min}
+											color={dayOfMonthColor}
+											n={20}
+											w={5}
+										/>
+									</td>
+									<td>
+										<SimpleCyclicEncoder
+											id="hourOfDay"
+											diagramWidth={250}
+											label="hour of day"
+											value={this.state.value}
+											max={this.state.max}
+											min={this.state.min}
+											color={hourOfDayColor}
+											n={15}
+											w={4}
+										/>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<figcaption className="figure-caption">
+							<span><a href="#simpleCyclicEncoder">¶</a>Figure 7.1:</span> Simple diagram of cyclic encoder.
+						</figcaption>
+					</figure>
 
 					<img src="/static/images/streaming-diagram-tmp.jpeg" />
 
