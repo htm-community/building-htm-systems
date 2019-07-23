@@ -1,11 +1,5 @@
 import React from 'react'
 import * as d3 from 'd3'
-import PropTypes from 'prop-types'
-import simplehtm from 'simplehtm'
-
-var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-const { BoundedScalarEncoder, CyclicEncoder, DayOfWeekCategoryEncoder, WeekendEncoder } = simplehtm.encoders
 
 const offColor = '#FFF'
 const combinedColor = '#BBB'
@@ -18,54 +12,33 @@ const weekendColor = '#00AC9F'
 const diagramPadding = 40
 
 class CombinedEncoding extends React.Component {
+	params = this.props.params
 	svgRef = React.createRef() // this will give you reference to HTML DOM element
-
-	encoding = undefined
-
-	scalarEncoder = new BoundedScalarEncoder({
-		w: 10, n: 50, min: -1, max: 1
-	})
-	dayOfWeekEncoder = new DayOfWeekCategoryEncoder({
-		w: 3
-	})
-	dayOfMonthEncoder = new CyclicEncoder({
-		w: 5, n: 20,
-		min: 1, max: 31,
-	})
-	hourOfDayEncoder = new CyclicEncoder({
-		w: 7, n: 50,
-		min: 0, max: 23,
-	})
-	weekendEncoder = new WeekendEncoder({ w: 7 })
 
 	// handle setting up when params are set/changed
 	update() {
-		this.encode()
-		this.renderOutputCells()
+		if (this.props.scalarEncoding) {
+			this.createData()
+			this.renderOutputCells()
+		}
 	}
 
-	encode() {
-		const { data: { time, value }, combined } = this.props
+	createData() {
 		const encoding = []
-		const jointColor = combined == 'combined' ? combinedColor : undefined;
-		// scalar
-		this.scalarEncoder.encode(value).forEach(bit => {
+		const jointColor = this.props.combined == 'combined' ? combinedColor : undefined;
+		this.props.scalarEncoding.forEach(bit => {
 			encoding.push(bit ? jointColor || scalarColor : offColor)
 		})
-		// day of week (discrete)
-		this.dayOfWeekEncoder.encode(days[time.getDay()]).forEach(bit => {
+		this.props.dayOfWeekEncoding.forEach(bit => {
 			encoding.push(bit ? jointColor || dayOfWeekColor : offColor)
 		})
-		// day of month
-		this.dayOfMonthEncoder.encode(time.getDate()).forEach(bit => {
+		this.props.dayOfMonthEncoding.forEach(bit => {
 			encoding.push(bit ? jointColor || dayOfMonthColor : offColor)
 		})
-		// hour of day
-		this.hourOfDayEncoder.encode(time.getHours()).forEach(bit => {
+		this.props.hourOfDayEncoding.forEach(bit => {
 			encoding.push(bit ? jointColor || hourOfDayColor : offColor)
 		})
-		// weekend
-		this.weekendEncoder.encode(time).forEach(bit => {
+		this.props.weekendEncoding.forEach(bit => {
 			encoding.push(bit ? jointColor || weekendColor : offColor)
 		})
 		this.encoding = encoding
@@ -127,11 +100,6 @@ class CombinedEncoding extends React.Component {
 			</svg>
 		)
 	}
-}
-
-CombinedEncoding.propTypes = {
-	id: PropTypes.string.isRequired,
-	data: PropTypes.object,
 }
 
 export default CombinedEncoding

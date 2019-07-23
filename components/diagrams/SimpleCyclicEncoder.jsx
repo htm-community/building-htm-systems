@@ -1,9 +1,5 @@
 import React from 'react'
 import * as d3 from 'd3'
-import simplehtm from 'simplehtm'
-import { precisionRound } from './helpers'
-
-const { CyclicEncoder } = simplehtm.encoders
 
 const offColor = 'white'
 const sideGutter = 10
@@ -11,24 +7,18 @@ const sideGutter = 10
 class SimpleCyclicEncoder extends React.Component {
 	svgRef = React.createRef() // this will give you reference to HTML DOM element
 
-	encoding = undefined
-	encoder = undefined
-	value = this.props.value
-
 	// handle setting up when params are set/changed
 	update() {
-		this.resetEncoder(this.value)
-		this.orientD3()
-		this.renderOutputCells()
-		this.renderLabel()
+		if (this.props.encoding) {
+			this.orientD3()
+			this.renderOutputCells()
+			this.renderLabel()
+		}
 	}
 
 	// setup any time params change
-	componentDidUpdate(prevProps) {
-		if (prevProps.value != this.props.value) {
-			this.value = this.props.value
-			this.update()
-		}
+	componentDidUpdate() {
+		this.update()
 	}
 	// setup on initial mount
 	componentDidMount() {
@@ -40,37 +30,16 @@ class SimpleCyclicEncoder extends React.Component {
 	}
 
 	orientD3() {
-		const {
-			diagramWidth, n
-		} = this.props
-		const {
-			min, max
-		} = this.encoder
-		// Create D3 scales
-		this.valToScreen = d3.scaleLinear()
-			.domain([min, max])
-			.range([sideGutter, diagramWidth - sideGutter])
 		this.bitsToOutputDisplay = d3.scaleLinear()
-			.domain([0, n])
-			.range([0 + sideGutter, diagramWidth - sideGutter])
-	}
-
-	resetEncoder(value) {
-		const {
-			min, max, resolution, n, w
-		} = this.props
-		this.encoder = new CyclicEncoder({
-			min, max, resolution, w, n
-		})
-		this.encoding = this.encoder.encode(value)
+			.domain([0, this.props.encoding.length])
+			.range([0 + sideGutter, this.props.diagramWidth - sideGutter])
 	}
 
 	renderOutputCells() {
-		const { diagramWidth, displayState, n } = this.props
+		const diagramWidth = this.props.diagramWidth
 		const g = this.root.select('.output-cells')
-		const buckets = this.encoder.n
+		const buckets = this.props.encoding.length
 		const bucketSpread = (2 * Math.PI) / buckets
-		const transitioning = this._transition !== undefined
 		const maxCircleRadius = 20
 		const size = diagramWidth
 		const radius = size / 2.5
@@ -98,9 +67,7 @@ class SimpleCyclicEncoder extends React.Component {
 				})
 		}
 
-		console.log(displayState)
-
-		let data = this.encoding.map((bit, i) => {
+		let data = this.props.encoding.map((bit, i) => {
 			// Adding pi starts it at the top of the circle (180 into it)
 			let theta = i * bucketSpread + Math.PI
 			let out = { bit: bit }
@@ -108,7 +75,7 @@ class SimpleCyclicEncoder extends React.Component {
 			const circleBottom = center.y + radius * Math.cos(theta)
 			out.cx = circleRight
 			out.cy = circleBottom
-			out.radius = Math.min(circumference / n / 2, maxCircleRadius)
+			out.radius = Math.min(circumference / buckets / 2, maxCircleRadius)
 			return out
 		})
 
@@ -130,10 +97,10 @@ class SimpleCyclicEncoder extends React.Component {
 		const textWrapper = this.root.select('.label foreignObject')
 		const labelText = this.root.select('.label foreignObject p')
 
-		const labelWidth = this.props.diagramWidth * .8
-		const labelHeight = this.props.diagramWidth / 2
-		const x = this.props.diagramWidth * .2 - borderWidth * 2
-		const y = this.props.diagramWidth / 4
+		const labelWidth = this.props.diagramWidth * .6
+		const labelHeight = this.props.diagramWidth / 3
+		const x = this.props.diagramWidth * .4 - borderWidth * 2
+		const y = this.props.diagramWidth / 3
 
 		labelRect
 			.attr('x', x)
@@ -164,7 +131,11 @@ class SimpleCyclicEncoder extends React.Component {
 				<g className="label">
 					<rect></rect>
 					<foreignObject >
-						<p xmlns="http://www.w3.org/1999/xhtml" style={{ padding: "0px 10px" }}></p>
+						<p xmlns="http://www.w3.org/1999/xhtml" style={{
+							padding: "0px 14px",
+							fontSize: "22pt",
+							textAlign: "center",
+						}}></p>
 					</foreignObject>
 				</g>
 

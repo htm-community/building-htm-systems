@@ -29,6 +29,7 @@ import CompetitionStackRank from '../components/diagrams/CompetitionStackRank'
 // import DiagramStub from '../components/diagrams/DiagramStub'
 
 var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
 const { BoundedScalarEncoder, CyclicEncoder, DayOfWeekCategoryEncoder, WeekendEncoder } = simplehtm.encoders
 
 const SpatialPooler = simplehtm.algorithms.SpatialPooler
@@ -38,6 +39,14 @@ const dayOfWeekColor = '#F3C300'
 const dayOfMonthColor = '#DF0024'
 const hourOfDayColor = '#2E6DB4'
 const weekendColor = '#00AC9F'
+
+const encodingParams = {
+	scalar: { n: 50, w: 10 , min: -1, max: 1 },
+	dayOfWeek: { n: 17, w: 5 },
+	dayOfMonth: { n: 20, w: 3, min: 1, max: 31 },
+	hourOfDay: { n: 21, w: 5, min: 0, max: 23  },
+	weekend: { w: 15},
+}
 
 class SpatialPooling extends React.Component {
 
@@ -50,6 +59,11 @@ class SpatialPooling extends React.Component {
 		distributionCenter: 0.5,
 		connectedPercent: 0.85,
 		// Calculated updon automated data change
+		scalarEncoding: undefined,
+		dayOfWeekEncoding: undefined,
+		dayOfMonthEncoding: undefined,
+		hourOfDayEncoding: undefined,
+		weekendEncoding: undefined,
 		potentialPools: undefined,
 		permanences: undefined,
 		encoding: undefined,
@@ -68,20 +82,31 @@ class SpatialPooling extends React.Component {
 	}
 
 	scalarEncoder = new BoundedScalarEncoder({
-		w: 10, n: 50, min: -1, max: 1
+		w: encodingParams.scalar.w,
+		n: encodingParams.scalar.n,
+		min: encodingParams.scalar.min,
+		max: encodingParams.scalar.max,
 	})
 	dayOfWeekEncoder = new DayOfWeekCategoryEncoder({
-		w: 3
+		w: encodingParams.dayOfWeek.w,
+		n: encodingParams.dayOfWeek.n,
 	})
 	dayOfMonthEncoder = new CyclicEncoder({
-		w: 5, n: 20,
-		min: 1, max: 31,
+		w: encodingParams.dayOfMonth.w,
+		n: encodingParams.dayOfMonth.n,
+		min: encodingParams.dayOfMonth.min,
+		max: encodingParams.dayOfMonth.max,
 	})
 	hourOfDayEncoder = new CyclicEncoder({
-		w: 7, n: 50,
-		min: 0, max: 23,
+		w: encodingParams.hourOfDay.w,
+		n: encodingParams.hourOfDay.n,
+		min: encodingParams.hourOfDay.min,
+		max: encodingParams.hourOfDay.max,
 	})
-	weekendEncoder = new WeekendEncoder({ w: 7 })
+	weekendEncoder = new WeekendEncoder({
+		n: encodingParams.weekend.n,
+		w: encodingParams.weekend.w,
+	})
 
 	sp = undefined
 
@@ -99,8 +124,15 @@ class SpatialPooling extends React.Component {
 			}
 			const winners = this.sp.compete(encoding)
 			const winnerIndices = winners.map(w => w.index)
+			const { time, value } = this.props.data
 			this.setState({
 				winners: winnerIndices,
+				scalarEncoding: this.scalarEncoder.encode(value),
+				// Time encodings are reverse() because I want them to cycle clockwise
+				dayOfWeekEncoding: this.dayOfWeekEncoder.encode(days[time.getDay()]).reverse(),
+				dayOfMonthEncoding: this.dayOfMonthEncoder.encode(time.getDate()).reverse(),
+				hourOfDayEncoding: this.hourOfDayEncoder.encode(time.getHours()).reverse(),
+				weekendEncoding: this.weekendEncoder.encode(time).reverse(),
 				potentialPools: this.sp.getPotentialPools(),
 				permanences: this.sp.getPermanences(),
 				overlaps: this.sp.getOverlaps(),
@@ -120,7 +152,6 @@ class SpatialPooling extends React.Component {
 				this.initializeSpatialPooler(this.state.encoding.length)
 			} else {
 				// For any other SP param changes, we won't even check, we'll just update them all
-				console.log('Updating SP params')
 				// FIXME: inappropriate intimacy
 				this.sp.opts.permanenceInc = this.state.permanenceInc
 				this.sp.opts.permanenceDec = this.state.permanenceDec
@@ -280,8 +311,8 @@ class SpatialPooling extends React.Component {
 						<table>
 							<tbody>
 								<tr>
-									<td colspan="2">
-										placeholder
+									<td colSpan="2">
+										scalar stream placeholder
 									</td>
 								</tr>
 								<tr>
@@ -290,12 +321,8 @@ class SpatialPooling extends React.Component {
 											id="dayOfWeek"
 											diagramWidth={250}
 											label="day of week"
-											value={this.state.value}
-											max={this.state.max}
-											min={this.state.min}
 											color={dayOfWeekColor}
-											n={20}
-											w={5}
+											encoding={this.state.dayOfWeekEncoding}
 										/>
 									</td>
 									<td>
@@ -303,12 +330,8 @@ class SpatialPooling extends React.Component {
 											id="weekend"
 											diagramWidth={250}
 											label="weekend"
-											value={this.state.value}
-											max={this.state.max}
-											min={this.state.min}
 											color={weekendColor}
-											n={15}
-											w={4}
+											encoding={this.state.weekendEncoding}
 										/>
 									</td>
 								</tr>
@@ -318,12 +341,8 @@ class SpatialPooling extends React.Component {
 											id="dayOfMonth"
 											diagramWidth={250}
 											label="day of month"
-											value={this.state.value}
-											max={this.state.max}
-											min={this.state.min}
 											color={dayOfMonthColor}
-											n={20}
-											w={5}
+											encoding={this.state.dayOfMonthEncoding}
 										/>
 									</td>
 									<td>
@@ -331,12 +350,8 @@ class SpatialPooling extends React.Component {
 											id="hourOfDay"
 											diagramWidth={250}
 											label="hour of day"
-											value={this.state.value}
-											max={this.state.max}
-											min={this.state.min}
 											color={hourOfDayColor}
-											n={15}
-											w={4}
+											encoding={this.state.hourOfDayEncoding}
 										/>
 									</td>
 								</tr>
@@ -347,7 +362,9 @@ class SpatialPooling extends React.Component {
 						</figcaption>
 					</figure>
 
+					<br/>
 					<img src="/static/images/streaming-diagram-tmp.jpeg" />
+					<br/>
 
 					<p>
 						These semantics can be combined into one encoding that spans the entire input space for a population of neurons performing Spatial Pooling.
@@ -359,8 +376,13 @@ class SpatialPooling extends React.Component {
 						<CombinedEncoding
 							id="combinedEncoding"
 							diagramWidth={250}
-							data={this.props.data}
+							params={encodingParams}
 							combined={this.state.combined}
+							scalarEncoding={this.state.scalarEncoding}
+							dayOfWeekEncoding={this.state.dayOfWeekEncoding}
+							weekendEncoding={this.state.weekendEncoding}
+							dayOfMonthEncoding={this.state.dayOfMonthEncoding}
+							hourOfDayEncoding={this.state.hourOfDayEncoding}
 						/>
 						<figcaption className="figure-caption">
 							<span><a href="#combinedEncoding">¶</a>Figure 1:</span> Combined encoding.
