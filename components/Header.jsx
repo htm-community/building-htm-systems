@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 const Header = () => (
 
-	<nav className="nav">
+	<nav className="nav header">
 		<Link href="/">
 			<a className="nav-link active">Home</a>
 		</Link>

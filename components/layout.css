@@ -1,3 +1,31 @@
+body {
+	background-color: #66BFFF;
+}
+
+.nav {
+	background-color: #0D5080;
+	color: white;
+}
+.nav a {
+	color: white;
+	font-weight: bold;
+}
+.header {
+	border-radius: 0 0 10px 10px;
+	box-shadow: 4px 4px 5px -4px rgba(0,0,0,0.75);
+}
+.footer {
+	border-radius: 10px 10px 0 0;
+	box-shadow: 4px 4px 5px -4px rgba(0,0,0,0.75);
+}
+
+.container {
+	background-color: white;
+	border-width: 0 3px 3px 3px !important;
+	border: solid #0D5080;
+	box-shadow: 4px 4px 5px -4px rgba(0,0,0,0.75);
+}
+
 .aside {
 	border: solid navy 1px;
 	background-color: lightgoldenrodyellow;
