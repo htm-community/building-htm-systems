@@ -237,13 +237,13 @@ class ScalarOverlap extends React.Component {
 				<g className="valueA range">
 					<path className="left"></path>
 					<path className="right"></path>
-					<text id={`${this.props.id}-valueA`}></text>
+					<text className="scrubbable" id={`${this.props.id}-valueA`}></text>
 				</g>
 
 				<g className="valueB range">
 					<path className="left"></path>
 					<path className="right"></path>
-					<text id={`${this.props.id}-valueB`}></text>
+					<text className="scrubbable" id={`${this.props.id}-valueB`}></text>
 				</g>
 
 			</svg>

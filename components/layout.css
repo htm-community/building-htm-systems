@@ -67,3 +67,7 @@ table.streaming tr.section {
 foreignObject.label {
 	box-shadow: 4px 4px 5px -4px rgba(0,0,0,0.75);
 }
+
+text.scrubbable {
+	cursor: col-resize;
+}
