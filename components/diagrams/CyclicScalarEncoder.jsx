@@ -13,10 +13,6 @@ const sideGutter = 10
 const numberLineY = 40
 const outputCellsTop = 100
 
-const debugStyle = {
-	border: 'solid red 1px'
-}
-
 class CyclicScalarEncoder extends React.Component {
 	svgRef = React.createRef() // this will give you reference to HTML DOM element
 
@@ -38,30 +34,40 @@ class CyclicScalarEncoder extends React.Component {
 	componentDidUpdate(prevProps) {
 		const me = this
 		const speed = 100
+		const diagramWidth = this.props.diagramWidth
+		const svg = this.root = d3.select(`svg#${this.props.id}`)
 		if (prevProps.value != this.props.value) {
 			this.value = this.props.value
 			this.update()
 		} else if (prevProps.displayState != this.props.displayState) {
 			// create animation handle
 			const cuts = 16
+			// Initially set for "circle" displayState
+			let heightDomain = [diagramWidth / 4, diagramWidth]
+			if (this.props.displayState == 'line') {
+				heightDomain = [diagramWidth, diagramWidth / 4]
+			}
+			const heightScale = d3.scaleLinear([0, cuts], heightDomain)
 			let count = 0
 			this._transition = 0
 			this.animationHandle = setInterval(() => {
 				me._transition = count / cuts
-				if (count++ >= cuts) {
+				if (count >= cuts) {
 					clearInterval(me.animationHandle)
 					delete me._transition
 				}
+				svg.attr('height', heightScale(count))
 				me.renderOutputCells()
+				count++
 			}, speed)
 		}
 	}
 	// setup on initial mount
 	componentDidMount() {
+		const diagramWidth = this.props.diagramWidth
 		// Sets up the d3 diagram on an SVG element.
 		this.root = d3.select(`svg#${this.props.id}`)
-			.attr('width', this.props.diagramWidth)
-			.attr('height', this.props.diagramWidth)
+			.attr('width', diagramWidth)
 		this.update()
 	}
 
@@ -249,7 +255,6 @@ class CyclicScalarEncoder extends React.Component {
 		return (
 			<svg id={this.props.id}
 				ref={this.svgRef}
-				style={debugStyle}
 				onMouseMove={
 					(e) => this.handleNumberLineHover(e)
 				}>

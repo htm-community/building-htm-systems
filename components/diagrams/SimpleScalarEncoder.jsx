@@ -12,10 +12,6 @@ const outputCellsTopMargin = 120
 const sideGutter = 10
 const topGutter = 40
 
-const debugStyle = {
-	border: 'solid red 1px'
-}
-
 class SimpleScalarEncoder extends React.Component {
 	svgRef = React.createRef() // this will give you reference to HTML DOM element
 
@@ -251,7 +247,6 @@ class SimpleScalarEncoder extends React.Component {
 		return (
 			<svg id={this.props.id}
 				ref={this.svgRef}
-				style={debugStyle}
 				onMouseMove={
 					(e) => e.target.className.animVal === 'bit' ? this.handleOutputCellHover(e) : this.handleNumberLineHover(e)
 				}>
