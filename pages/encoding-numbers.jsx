@@ -111,10 +111,9 @@ class EncodingNumbers extends React.Component {
 						<CodeSyntax>{examples.code[0]}</CodeSyntax>
 					</div>
 
-					<span>
-						<a href="#code-example-1">¶</a>Code Example 1:
-					</span>
-					Given constant values for the input value range and output parameters, a complete scalar encoder.
+					<div className="figure-caption">
+						<a href="#code-example-1">¶</a>Code Example 1: Given constant values for the input value range and output parameters, a complete scalar encoder.
+					</div>
 
 					<p>So, given that <code>value</code>  is a scalar number between <code>0</code> and <code>55</code>, the <code>encode()</code> function above will create an encoding <code>100</code> bits long with <code>18</code> bits on (the <em>bitmask</em>) to represent that specific value. Calling <code>encode(27.5)</code> would return a 100-element array, with a bitmask, or block of <code>1</code>s, in the middle:</p>
 
@@ -319,23 +318,13 @@ class EncodingNumbers extends React.Component {
 
 					<p>Continuous encoding is great for ranges of input values, but sometimes we don't want encodings to overlap. You might want to separate an encoding space into equal sections that encode different categories of data, like this:</p>
 
-					<div className="alert alert-danger" role="alert">
-						<h3>
-							This diagram is broken, see <a href="https://github.com/htm-community/building-htm-systems/issues/25">#25</a>
-							<br />
-							▼
-            </h3>
-					</div>
-
 					<figure className="figure">
 						<DiscreteEncodingDiagram
 							id="discreteEncoding"
 							diagramWidth={500}
-							w={this.state.w}
+							n={this.state.n}
 							categoryLength={this.state.categoryLength}
-							valueA={this.state.valueC}
-							valueB={this.state.valueC}
-							onUpdate={value => this.setState({ valueC: Object.values(value)[0] })}
+							value={this.state.value}
 						/>
 						<figcaption className="figure-caption">
 							<span><a href="#discreteEncoding">¶</a>Figure 9:</span> By limiting the input to discrete values and making <code>n</code> an even multiple of <code>w</code>, it is easy to encode discrete scalar values with a <code>CyclicScalarEncoder</code>.
