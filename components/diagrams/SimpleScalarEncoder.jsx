@@ -84,16 +84,17 @@ class SimpleScalarEncoder extends React.Component {
 		g.attr('transform', `translate(0,${topGutter})`)
 
 		const markerWidth = 1
-		const markerHeight = 20
+		const markerHeight = 16
 
-		const x = this.valToScreen(value) - (markerWidth / 2)
+    const x = this.valToScreen(value) - (markerWidth / 2)
+    const centeredX = x - 10
 		const y = 0 - (markerHeight / 2)
 
 		const text = g.select('text')
 		const mark = g.select('rect')
 
 		// FIXME: standardize some styles for diagrams
-		text.attr('x', x)
+		text.attr('x', centeredX)
 			.attr('y', y)
 			.attr('font-family', 'sans-serif')
 			.attr('font-size', '10pt')
@@ -105,7 +106,7 @@ class SimpleScalarEncoder extends React.Component {
 			.attr('width', markerWidth)
 			.attr('height', markerHeight)
 			.attr('x', x)
-			.attr('y', y)
+			.attr('y', y + 6)
 	}
 
 	renderOutputCells() {
