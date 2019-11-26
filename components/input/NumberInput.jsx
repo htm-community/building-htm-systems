@@ -16,7 +16,14 @@ const NumberInput =
 			max={high}
 			step={step}
 			style={style}
-			onChange={(e) => onUpdate(e.target.value)}
+      onChange={(e) => { 
+        let min = parseInt(e.target.min)
+        let max = parseInt(e.target.max)
+        let val = parseFloat(e.target.value)
+        if (min < val && val <= max) {
+          onUpdate(val)
+        }
+      }}
 		/>
 	
 NumberInput.propTypes = {
