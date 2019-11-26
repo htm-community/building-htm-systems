@@ -32,7 +32,8 @@ class ScalarOverlap extends React.Component {
 	update() {
 		this.resetEncoder()
 		this.orientD3()
-		this.renderOutputCells()
+    this.renderOutputCells()
+    this.drawBrackets()
 	}
 
 	// setup any time params change
@@ -122,8 +123,6 @@ class ScalarOverlap extends React.Component {
 
 		// Exit
 		rects.exit().remove()
-
-		this.drawBrackets()
 	}
 
 	drawBrackets() {
@@ -174,10 +173,11 @@ class ScalarOverlap extends React.Component {
 		let w = encoder.w
 		let uiRange = [sideGutter, diagramWidth - sideGutter]
 
-		let cx = sideGutter + index * cellWidth // center x
+    let cx = sideGutter + index * cellWidth // center x
+    let centeredX = cx - 10
 		let cy = cellHeight * 2.2 // center y
 
-		label.attr('x', cx)
+		label.attr('x', centeredX)
 				.attr('y', cy + 15)
 				.html(precisionRound(value, 1))
 		
