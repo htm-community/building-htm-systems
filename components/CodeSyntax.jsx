@@ -44,7 +44,7 @@ const copyToClipboard = str => {
 }
 
 
-const CodeSyntax = ({ children, highlightedLines, language, showLineNumbers }) => {
+const CodeSyntax = ({ id, children, highlightedLines, language, showLineNumbers }) => {
 
 	const copyCodeToClipboard = () => {
 		copyToClipboard(children)
@@ -56,7 +56,7 @@ const CodeSyntax = ({ children, highlightedLines, language, showLineNumbers }) =
 		newHighlightedLines[lineNumber] = 1
 	})
 	return (
-		<div>
+		<div id={id}>
 			<SyntaxHighlighter
 				style={githubGist}
 				language={language || 'javascript'}
@@ -74,6 +74,7 @@ const CodeSyntax = ({ children, highlightedLines, language, showLineNumbers }) =
 }
 
 CodeSyntax.propTypes = {
+	id: PropTypes.string.isRequired,
 	children: PropTypes.any.isRequired,
 	highlightedLines: PropTypes.array,
 	language: PropTypes.string,
