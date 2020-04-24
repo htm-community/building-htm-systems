@@ -29,6 +29,34 @@ import CompetitionStackRank from '../components/diagrams/CompetitionStackRank'
 import StreamingScalarDiagram from '../components/diagrams/StreamingScalarDiagram'
 // import DiagramStub from '../components/diagrams/DiagramStub'
 
+//Legends
+import PotentialPoolsLegend from '../components/DiagramLegend';
+let legendData = [
+    {
+        fillColor: '#FFF0A6',
+        label: 'Potential Pool',
+        marker: ''
+    },
+    {
+        fillColor: '#fff',
+        label: 'Feed Forward Input',
+        marker: ''
+    },
+    {
+        fillColor: '#BFBFBF',
+        label: 'Ignored Input',
+        marker: '✘',
+        markerFillColor: 'white'
+
+    },
+    {
+        fillColor: '#FFF0A6',
+        label: 'Observed Input',
+        marker: '✓',
+        markerFillColor: 'green'
+    },
+]
+
 var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const { BoundedScalarEncoder, CyclicEncoder, DayOfWeekCategoryEncoder, WeekendEncoder } = simplehtm.encoders
@@ -430,6 +458,10 @@ class SpatialPooling extends React.Component {
 							selectedMinicolumn={this.state.selectedMinicolumn}
 							onUpdate={selectedMinicolumn => this.setState({ selectedMinicolumn })}
 						/>
+						<PotentialPoolsLegend
+							style={{marginLeft: diagramWidth / 2}}
+							legendData={legendData}
+							id="potentialPoolLegend"/>
 						<figcaption className="figure-caption">
 							<span><a href="#potentialPools">¶</a>Figure 2:</span> Potential Pools.
 						</figcaption>
