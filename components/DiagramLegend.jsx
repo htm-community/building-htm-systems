@@ -29,7 +29,7 @@ class DiagramLegend extends React.Component {
                         .attr('style', `fontSize: 15px; fill: ${legendData.markerFillColor}; `)
                         .attr('x', 2.5)
                         .attr('y', 12.5)
-                        console.log("Marker exists for ", legendData.label );
+                        // console.log("Marker exists for ", legendData.label );
                 }
 
             groupYCoord+=25;
